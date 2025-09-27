@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Text, View, ScrollView, TouchableOpacity, Image } from 'react-native';
 import { commonStyles, colors, buttonStyles } from '../styles/commonStyles';
@@ -8,15 +7,21 @@ import Icon from '../components/Icon';
 
 export default function ShopScreen() {
   const router = useRouter();
-  const [quantity, setQuantity] = useState(1);
-  const [selectedSize, setSelectedSize] = useState('16oz');
-  
-  const price = selectedSize === '16oz' ? 12.99 : 19.99;
-  
+  const [selectedSize, setSelectedSize] = useState('8oz');
+  const [packSize, setPackSize] = useState(6);
+
+  // Updated bottle prices
+  const bottlePrices = {
+    '8oz': 4.99,
+    '12oz': 6.99
+  };
+
   const sizes = [
-    { label: '16oz Bottle', value: '16oz', price: 12.99 },
-    { label: '32oz Bottle', value: '32oz', price: 19.99 }
+    { label: '8oz Bottle', value: '8oz', price: 4.99 },
+    { label: '12oz Bottle', value: '12oz', price: 6.99 }
   ];
+
+  const packSizes = [6, 12];
 
   const faqs = [
     {
@@ -34,10 +39,11 @@ export default function ShopScreen() {
   ];
 
   const handleAddToCart = () => {
-    console.log(`Added ${quantity} x ${selectedSize} Basil Tea to cart`);
-    // In a real app, this would add to cart state/context
-    alert(`Added ${quantity} x ${selectedSize} Basil Tea with Honey to cart!`);
+    console.log(`Added pack of ${packSize} x ${selectedSize} Basil Tea to cart`);
+    alert(`Added pack of ${packSize} x ${selectedSize} Basil Tea with Honey to cart!`);
   };
+
+  const price = bottlePrices[selectedSize] * packSize;
 
   return (
     <SafeAreaView style={commonStyles.container}>
@@ -107,46 +113,38 @@ export default function ShopScreen() {
             ))}
           </View>
 
-          {/* Quantity Selection */}
-          <Text style={[commonStyles.textMedium, { marginBottom: 12 }]}>Quantity:</Text>
-          <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 32 }}>
-            <TouchableOpacity
-              style={{
-                width: 40,
-                height: 40,
-                borderRadius: 20,
-                backgroundColor: colors.border,
-                alignItems: 'center',
-                justifyContent: 'center'
-              }}
-              onPress={() => setQuantity(Math.max(1, quantity - 1))}
-            >
-              <Icon name="remove" size={20} color={colors.text} />
-            </TouchableOpacity>
-            
-            <Text style={[commonStyles.textMedium, { marginHorizontal: 20, minWidth: 30, textAlign: 'center' }]}>
-              {quantity}
-            </Text>
-            
-            <TouchableOpacity
-              style={{
-                width: 40,
-                height: 40,
-                borderRadius: 20,
-                backgroundColor: colors.primary,
-                alignItems: 'center',
-                justifyContent: 'center'
-              }}
-              onPress={() => setQuantity(quantity + 1)}
-            >
-              <Icon name="add" size={20} color={colors.textLight} />
-            </TouchableOpacity>
+          {/* Pack Size Selection */}
+          <Text style={[commonStyles.textMedium, { marginBottom: 12 }]}>Pack Size:</Text>
+          <View style={{ flexDirection: 'row', marginBottom: 32 }}>
+            {packSizes.map((size) => (
+              <TouchableOpacity
+                key={size}
+                style={{
+                  flex: 1,
+                  padding: 12,
+                  borderRadius: 8,
+                  borderWidth: 2,
+                  borderColor: packSize === size ? colors.primary : colors.border,
+                  backgroundColor: packSize === size ? colors.primary : colors.backgroundAlt,
+                  marginRight: 8,
+                  alignItems: 'center'
+                }}
+                onPress={() => setPackSize(size)}
+              >
+                <Text style={[
+                  commonStyles.textMedium,
+                  { color: packSize === size ? colors.textLight : colors.text }
+                ]}>
+                  Pack of {size}
+                </Text>
+              </TouchableOpacity>
+            ))}
           </View>
 
           {/* Add to Cart Button */}
           <TouchableOpacity style={buttonStyles.primary} onPress={handleAddToCart}>
             <Text style={commonStyles.buttonText}>
-              Add to Cart - ${(price * quantity).toFixed(2)}
+              Add to Cart - ${price.toFixed(2)}
             </Text>
           </TouchableOpacity>
         </View>
