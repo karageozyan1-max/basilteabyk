@@ -55,7 +55,7 @@ export default function ContactScreen() {
           
           <Text style={[commonStyles.text, { marginBottom: 24 }]}>
             We&apos;d love to hear from you! Whether you have questions about our tea, 
-            need help with an order, or just want to share your experience, we&apos;re here to help.
+            need help with an order, or just want to share your experience, we are here to help.
           </Text>
 
           <View style={[commonStyles.card, { marginBottom: 20 }]}>
@@ -63,7 +63,7 @@ export default function ContactScreen() {
               <Icon name="mail" size={20} color={colors.primary} style={{ marginRight: 12 }} />
               <Text style={commonStyles.textMedium}>Email</Text>
             </View>
-            <Text style={commonStyles.text}>hello@basilteabyk.com</Text>
+            <Text style={commonStyles.text}>basilteabyk@gmail.com</Text>
           </View>
 
           <View style={[commonStyles.card, { marginBottom: 20 }]}>
