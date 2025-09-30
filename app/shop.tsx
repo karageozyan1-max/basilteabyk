@@ -5,8 +5,12 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import Icon from '../components/Icon';
 
+import { SIZES_PRICES, formatPrice } from './prices';
+import { useCart } from './CartContext';
+
 export default function ShopScreen() {
   const router = useRouter();
+  const { addToCart } = useCart();
   const [selectedSize, setSelectedSize] = useState('8oz');
   const [packSize, setPackSize] = useState(6);
 
@@ -17,8 +21,8 @@ export default function ShopScreen() {
   };
 
   const sizes = [
-    { label: '8oz Bottle', value: '8oz', price: 4.99 },
-    { label: '12oz Bottle', value: '12oz', price: 6.99 }
+    { label: '8oz Bottle', value: '8oz', price: SIZE_PRICES['8oz'] },
+    { label: '12oz Bottle', value: '12oz', price: SIZE_PRICES['12oz'] },
   ];
 
   const packSizes = [6, 12];
@@ -39,8 +43,18 @@ export default function ShopScreen() {
   ];
 
   const handleAddToCart = () => {
-    console.log(`Added pack of ${packSize} x ${selectedSize} Basil Tea to cart`);
+   const selectedProduct = sizes.find(s => s.value === selectedSize);
+    if (selectedProduct) {
+      addToCart({
+        id: Date.now(),
+        name: 'Basil Tea with Honey',
+        size: selectedProduct.value,
+        packsize,
+        prices: selectedProduct.price,
+        quantity: 1,
+      });
     alert(`Added pack of ${packSize} x ${selectedSize} Basil Tea with Honey to cart!`);
+    }
   };
 
   const price = bottlePrices[selectedSize] * packSize;
