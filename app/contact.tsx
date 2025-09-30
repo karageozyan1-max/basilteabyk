@@ -244,10 +244,10 @@ export default function ContactScreen() {
                 boxShadow: '0px 2px 8px rgba(15, 61, 46, 0.1)',
                 elevation: 2
               }}
-              onPress={() => console.log('Twitter pressed')}
+              onPress={() => Linking.openURL(https://www.tiktok.com/@basilteabyk.com)}
             >
-              <Icon name="logo-twitter" size={24} color={colors.primary} />
-              <Text style={[commonStyles.textSmall, { marginTop: 8 }]}>Twitter</Text>
+              <MaterialCommunityIcons name="tiktok" size={24} color={colors.primary} />
+              <Text style={[commonStyles.textSmall, { marginTop: 8 }]}>TikTok</Text>
             </TouchableOpacity>
           </View>
         </View>
