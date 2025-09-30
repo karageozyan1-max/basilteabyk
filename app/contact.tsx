@@ -6,7 +6,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import Icon from '../components/Icon';
 
-import { MaterialCommunityIcons } from 'expo/vector-icons';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { Linking } from 'react-native';
 
 export default function ContactScreen() {
