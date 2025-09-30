@@ -1,6 +1,5 @@
-// app/cart.tsx
 import React from 'react';
-import { Text, View, ScrollView, TouchableOpacity, Image, Alert } from 'react-native';
+import { Text, View, ScrollView, TouchableOpacity, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 
@@ -14,10 +13,9 @@ export default function CartScreen() {
   const router = useRouter();
   const { cartItems, updateQuantity, removeFromCart, clearCart } = useCart();
 
-  // totals
   const subtotal = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
   const shipping = subtotal >= 25 ? 0 : 4.99;
-  const tax = subtotal * 0.08; // 8%
+  const tax = subtotal * 0.08;
   const total = subtotal + shipping + tax;
 
   const handleCheckout = () => {
@@ -25,7 +23,7 @@ export default function CartScreen() {
       Alert.alert('Cart is empty', 'Add something first 🙂');
       return;
     }
-    Alert.alert('Checkout', 'This is where your payment flow would start.');
+    Alert.alert('Checkout', 'Start your payment flow here.');
   };
 
   return (
@@ -52,7 +50,7 @@ export default function CartScreen() {
           </View>
         ) : (
           <View>
-            {cartItems.map((item) => (
+            {cartItems.map(item => (
               <View
                 key={item.id}
                 style={{
@@ -145,7 +143,6 @@ export default function CartScreen() {
   );
 }
 
-/** small helper row */
 function Row({ label, value, bold = false }: { label: string; value: string; bold?: boolean }) {
   return (
     <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 6 }}>
