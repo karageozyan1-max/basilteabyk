@@ -1,6 +1,6 @@
 import { Stack } from 'expo-router';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
-import { Platform, View } from 'react-native';
+import { View } from 'react-native';
 import { useEffect } from 'react';
 import * as SplashScreen from 'expo-splash-screen';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
@@ -20,7 +20,6 @@ import {
 import BottomNavigation from '../components/BottomNavigation';
 import { CartProvider } from './CartContext';
 
-// Keep the splash screen visible while we fetch resources
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
@@ -33,26 +32,17 @@ export default function RootLayout() {
   });
 
   useEffect(() => {
-    if (fontsLoaded) {
-      SplashScreen.hideAsync();
-    }
+    if (fontsLoaded) SplashScreen.hideAsync();
   }, [fontsLoaded]);
 
-  if (!fontsLoaded) {
-    return null;
-  }
+  if (!fontsLoaded) return null;
 
   return (
     <CartProvider>
       <SafeAreaProvider>
         <GestureHandlerRootView style={{ flex: 1 }}>
           <View style={{ flex: 1 }}>
-            <Stack
-              screenOptions={{
-                headerShown: false,
-                animation: 'default',
-              }}
-            />
+            <Stack screenOptions={{ headerShown: false, animation: 'default' }} />
             <BottomNavigation />
           </View>
         </GestureHandlerRootView>
