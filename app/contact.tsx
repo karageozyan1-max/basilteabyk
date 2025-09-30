@@ -54,8 +54,8 @@ export default function ContactScreen() {
           </Text>
           
           <Text style={[commonStyles.text, { marginBottom: 24 }]}>
-            We&apos;d love to hear from you! Whether you have questions about our tea, 
-            need help with an order, or just want to share your experience, we&apos;re here to help.
+            We would love to hear from you! Whether you have questions about our tea, 
+            need help with an order, or just want to share your experience, we are here to help.
           </Text>
 
           <View style={[commonStyles.card, { marginBottom: 20 }]}>
