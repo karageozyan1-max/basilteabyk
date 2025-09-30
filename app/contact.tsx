@@ -244,7 +244,7 @@ export default function ContactScreen() {
                 boxShadow: '0px 2px 8px rgba(15, 61, 46, 0.1)',
                 elevation: 2
               }}
-              onPress={() => Linking.openURL(https://www.tiktok.com/@basilteabyk.com)}
+              onPress={() => Linking.openURL('https://www.tiktok.com/@basilteabyk.com')}
             >
               <MaterialCommunityIcons name="tiktok" size={24} color={colors.primary} />
               <Text style={[commonStyles.textSmall, { marginTop: 8 }]}>TikTok</Text>
