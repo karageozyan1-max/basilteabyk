@@ -1,100 +1,83 @@
-// app/shop.tsx
 import React, { useState } from 'react';
-import { Text, View, ScrollView, TouchableOpacity, Image } from 'react-native';
+import { Text, View, ScrollView, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
-
-import { commonStyles, colors, buttonStyles } from '../styles/commonStyles';
-import Icon from '../components/Icon';
-
 import { useCart } from './CartContext';
 import { SIZE_PRICES, formatPrice } from './prices';
 
 export default function ShopScreen() {
-  const router = useRouter();
-  const { addToCart } = useCart();
+  const router = useRouter();
+  const { addToCart } = useCart();
 
-  const [selectedSize, setSelectedSize] = useState<'8oz' | '12oz'>('8oz');
-  const [packSize, setPackSize] = useState<6 | 12>(6);
+  const [selectedSize, setSelectedSize] = useState<'8oz' | '12oz'>('8oz');
+  const [packSize, setPackSize] = useState<6 | 12>(6);
+  const sizes = ['8oz', '12oz'] as const;
+  const totalPrice = SIZE_PRICES[selectedSize] * packSize;
 
-  const sizes = [
-    { label: '8oz Bottle',  value: '8oz' as const,  price: SIZE_PRICES['8oz']  },
-    { label: '12oz Bottle', value: '12oz' as const, price: SIZE_PRICES['12oz'] },
-  ];
-  const packSizes: (6 | 12)[] = [6, 12];
+  const handleAddToCart = () => {
+    addToCart({
+      id: Date.now(),
+      name: 'Basil Tea with Honey',
+      size: selectedSize,
+      packSize,
+      price: SIZE_PRICES[selectedSize],
+      quantity: 1,
+    });
+    router.push('/cart');
+  };
 
-  const totalPrice = SIZE_PRICES[selectedSize] * packSize;
+  return (
+    <SafeAreaView style={{ flex: 1, backgroundColor: '#fff' }}>
+      <ScrollView contentContainerStyle={{ padding: 16 }}>
+        <Text style={{ fontSize: 28, fontWeight: '700', marginBottom: 12 }}>Shop</Text>
 
-  const handleAddToCart = () => {
-    addToCart({
-      id: Date.now(),
-      name: 'Basil Tea with Honey',
-      size: selectedSize,
-      packSize,
-      price: SIZE_PRICES[selectedSize],
-      quantity: 1,
-    });
-    router.push('/cart');
-  };
+        <Text style={{ fontSize: 18, fontWeight: '600' }}>Choose Size</Text>
+        <View style={{ flexDirection: 'row', marginVertical: 12 }}>
+          {sizes.map(s => (
+            <TouchableOpacity
+              key={s}
+              onPress={() => setSelectedSize(s)}
+              style={{
+                paddingVertical: 10, paddingHorizontal: 14, borderRadius: 10,
+                backgroundColor: selectedSize === s ? '#0f3d2e' : '#f0f0f0', marginRight: 8,
+              }}
+            >
+              <Text style={{ color: selectedSize === s ? '#fff' : '#222' }}>
+                {s} ({formatPrice(SIZE_PRICES[s])})
+              </Text>
+            </TouchableOpacity>
+          ))}
+        </View>
 
- return (
-  <SafeAreaView style={commonStyles.container}>
-    <ScrollView contentContainerStyle={{ padding: 16 }}>
-      
-      {/* Title */}
-      <Text style={commonStyles.heading}>Shop</Text>
+        <Text style={{ fontSize: 18, fontWeight: '600' }}>Choose Pack</Text>
+        <View style={{ flexDirection: 'row', marginVertical: 12 }}>
+          {[6, 12].map(p => (
+            <TouchableOpacity
+              key={p}
+              onPress={() => setPackSize(p as 6 | 12)}
+              style={{
+                paddingVertical: 10, paddingHorizontal: 14, borderRadius: 10,
+                backgroundColor: packSize === p ? '#0f3d2e' : '#f0f0f0', marginRight: 8,
+              }}
+            >
+              <Text style={{ color: packSize === p ? '#fff' : '#222' }}>{p}-pack</Text>
+            </TouchableOpacity>
+          ))}
+        </View>
 
-      {/* Choose Size */}
-      <Text style={commonStyles.text}>Choose Size</Text>
-      {sizes.map((s) => (
-        <TouchableOpacity
-          key={s.value}
-          style={{
-            padding: 12,
-            marginVertical: 4,
-            backgroundColor: selectedSize === s.value ? colors.primary : colors.card,
-            borderRadius: 8,
-          }}
-          onPress={() => setSelectedSize(s.value)}
-        >
-          <Text style={{ color: colors.text }}>
-            {s.label} ({formatPrice(s.price)})
-          </Text>
-        </TouchableOpacity>
-      ))}
+        <Text style={{ marginTop: 8, marginBottom: 12 }}>
+          Total: <Text style={{ fontWeight: '700' }}>{formatPrice(totalPrice)}</Text>
+        </Text>
 
-      {/* Choose Pack */}
-      <Text style={[commonStyles.text, { marginTop: 16 }]}>Choose Pack</Text>
-      {packSizes.map((p) => (
-        <TouchableOpacity
-          key={p}
-          style={{
-            padding: 12,
-            marginVertical: 4,
-            backgroundColor: packSize === p ? colors.primary : colors.card,
-            borderRadius: 8,
-          }}
-          onPress={() => setPackSize(p)}
-        >
-          <Text style={{ color: colors.text }}>{p}-pack</Text>
-        </TouchableOpacity>
-      ))}
-
-      {/* Total */}
-      <Text style={[commonStyles.text, { marginTop: 16 }]}>
-        Total: {formatPrice(totalPrice)}
-      </Text>
-
-      {/* Add to Cart Button */}
-      <TouchableOpacity
-        style={[buttonStyles.primary, { marginTop: 20 }]}
-        onPress={handleAddToCart}
-      >
-        <Text style={buttonStyles.buttonText}>
-          Add to Cart – {formatPrice(totalPrice)}
-        </Text>
-      </TouchableOpacity>
-
-    </ScrollView>
-  </SafeAreaView>
-);
+        <TouchableOpacity
+          onPress={handleAddToCart}
+          style={{ paddingVertical: 14, borderRadius: 10, backgroundColor: '#0f3d2e', alignItems: 'center' }}
+        >
+          <Text style={{ color: '#fff', fontWeight: '700' }}>
+            Add to Cart — {formatPrice(totalPrice)}
+          </Text>
+        </TouchableOpacity>
+      </ScrollView>
+    </SafeAreaView>
+  );
+}
