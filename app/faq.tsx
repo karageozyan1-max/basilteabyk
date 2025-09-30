@@ -40,12 +40,12 @@ export default function FAQScreen() {
           answer: 'Keep refrigerated at all times. Once opened, consume within 7 days for best quality and taste.'
         },
         {
-          question: 'What&apos;s the shelf life?',
+          question: 'What is the shelf life?',
           answer: 'Unopened bottles have a shelf life of 6 months when properly refrigerated. Check the expiration date on each bottle.'
         },
         {
           question: 'Can I freeze the tea?',
-          answer: 'We don&apos;t recommend freezing as it may affect the texture and flavor. Refrigeration is the best storage method.'
+          answer: 'We dont recommend freezing as it may affect the texture and flavor. Refrigeration is the best storage method.'
         }
       ]
     },
@@ -62,15 +62,15 @@ export default function FAQScreen() {
         },
         {
           question: 'Do you ship internationally?',
-          answer: 'Currently, we only ship within the United States. We&apos;re working on expanding to international shipping soon.'
+          answer: 'Currently, we only ship within the United States. We are working on expanding to international shipping soon.'
         },
         {
-          question: 'What&apos;s your return policy?',
-          answer: 'We offer a 30-day satisfaction guarantee. If you&apos;re not completely happy with your purchase, contact us for a full refund.'
+          question: 'What is your return policy?',
+          answer: 'We offer a 30-day satisfaction guarantee. If you are not completely happy with your purchase, contact us for a full refund.'
         },
         {
           question: 'How do I track my order?',
-          answer: 'You&apos;ll receive a tracking number via email once your order ships. You can use this to track your package on our website or the carrier&apos;s site.'
+          answer: 'Youll receive a tracking number via email once your order ships. You can use this to track your package on our website or the carriers site.'
         }
       ]
     },
@@ -79,7 +79,7 @@ export default function FAQScreen() {
       questions: [
         {
           question: 'Are there any allergens in the tea?',
-          answer: 'Our tea contains honey, which may not be suitable for infants under 12 months. It&apos;s gluten-free and contains no nuts, dairy, or soy.'
+          answer: 'Our tea contains honey, which may not be suitable for infants under 12 months. Its gluten-free and contains no nuts, dairy, or soy.'
         },
         {
           question: 'Is it safe during pregnancy?',
@@ -87,7 +87,7 @@ export default function FAQScreen() {
         },
         {
           question: 'Can children drink this tea?',
-          answer: 'Yes, children over 12 months can enjoy our tea. However, due to the honey content, it&apos;s not suitable for infants under 12 months.'
+          answer: 'Yes, children over 12 months can enjoy our tea. However, due to the honey content, its not suitable for infants under 12 months.'
         },
         {
           question: 'Are there any health benefits?',
@@ -165,7 +165,7 @@ export default function FAQScreen() {
             Still Have Questions?
           </Text>
           <Text style={[commonStyles.text, { textAlign: 'center', marginBottom: 24 }]}>
-            We&apos;re here to help! Reach out to us and we&apos;ll get back to you as soon as possible.
+            We are here to help! Reach out to us and we will get back to you as soon as possible.
           </Text>
           
           <TouchableOpacity 
