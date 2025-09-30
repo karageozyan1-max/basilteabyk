@@ -1,42 +1,39 @@
-
+// app/shop.tsx
 import React, { useState } from 'react';
 import { Text, View, ScrollView, TouchableOpacity, Image } from 'react-native';
-import { commonStyles, colors, buttonStyles } from '../styles/commonStyles';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
+
+import { commonStyles, colors, buttonStyles } from '../styles/commonStyles';
 import Icon from '../components/Icon';
+
+import { useCart } from './CartContext';
+import { SIZE_PRICES, formatPrice } from './prices';
 
 export default function ShopScreen() {
   const router = useRouter();
+  const { addToCart } = useCart();
+
   const [quantity, setQuantity] = useState(1);
-  const [selectedSize, setSelectedSize] = useState('16oz');
-  
-  const price = selectedSize === '16oz' ? 12.99 : 19.99;
-  
+  const [selectedSize, setSelectedSize] = useState<'16oz' | '32oz'>('16oz');
+
   const sizes = [
-    { label: '16oz Bottle', value: '16oz', price: 12.99 },
-    { label: '32oz Bottle', value: '32oz', price: 19.99 }
+    { label: '16oz Bottle', value: '16oz' as const, price: 12.99 },
+    { label: '32oz Bottle', value: '32oz' as const, price: 19.99 }
   ];
 
-  const faqs = [
-    {
-      question: 'How should I store the tea?',
-      answer: 'Keep refrigerated and consume within 7 days of opening. Shake well before serving.'
-    },
-    {
-      question: 'Is this tea caffeinated?',
-      answer: 'No, our basil tea is naturally caffeine-free, making it perfect for any time of day.'
-    },
-    {
-      question: 'What are the ingredients?',
-      answer: 'Basil leaves, purified water, natural honey, lemon essence (trace). Nothing artificial.'
-    }
-  ];
+  const price = selectedSize === '16oz' ? SIZE_PRICES['8oz'] ?? 12.99 : SIZE_PRICES['12oz'] ?? 19.99;
 
   const handleAddToCart = () => {
-    console.log(`Added ${quantity} x ${selectedSize} Basil Tea to cart`);
-    // In a real app, this would add to cart state/context
-    alert(`Added ${quantity} x ${selectedSize} Basil Tea with Honey to cart!`);
+    addToCart({
+      id: Date.now(),
+      name: 'Basil Tea with Honey',
+      size: selectedSize,
+      packSize: quantity,
+      price,
+      quantity: 1,
+    });
+    router.push('/cart');
   };
 
   return (
@@ -65,8 +62,8 @@ export default function ShopScreen() {
         {/* Product Info */}
         <View style={commonStyles.section}>
           <Text style={commonStyles.title}>Basil Tea with Honey</Text>
-          <Text style={commonStyles.priceText}>${price.toFixed(2)}</Text>
-          
+          <Text style={commonStyles.priceText}>{formatPrice(price)}</Text>
+
           <Text style={[commonStyles.text, { marginBottom: 20 }]}>
             A refreshing blend of basil tea infused with natural honey—smooth, lightly sweet, and calming.
           </Text>
@@ -101,7 +98,7 @@ export default function ShopScreen() {
                   commonStyles.textSmall,
                   { color: selectedSize === size.value ? colors.textLight : colors.grey }
                 ]}>
-                  ${size.price.toFixed(2)}
+                  {formatPrice(size.price)}
                 </Text>
               </TouchableOpacity>
             ))}
@@ -123,11 +120,11 @@ export default function ShopScreen() {
             >
               <Icon name="remove" size={20} color={colors.text} />
             </TouchableOpacity>
-            
+
             <Text style={[commonStyles.textMedium, { marginHorizontal: 20, minWidth: 30, textAlign: 'center' }]}>
               {quantity}
             </Text>
-            
+
             <TouchableOpacity
               style={{
                 width: 40,
@@ -146,54 +143,12 @@ export default function ShopScreen() {
           {/* Add to Cart Button */}
           <TouchableOpacity style={buttonStyles.primary} onPress={handleAddToCart}>
             <Text style={commonStyles.buttonText}>
-              Add to Cart - ${(price * quantity).toFixed(2)}
+              Add to Cart - {formatPrice(price * quantity)}
             </Text>
           </TouchableOpacity>
         </View>
 
-        {/* Product Details */}
-        <View style={[commonStyles.section, { paddingTop: 40 }]}>
-          <Text style={[commonStyles.heading, { marginBottom: 16 }]}>Ingredients</Text>
-          <Text style={commonStyles.text}>
-            Basil leaves, purified water, natural honey, lemon essence (trace), nothing artificial.
-          </Text>
-        </View>
-
-        <View style={commonStyles.section}>
-          <Text style={[commonStyles.heading, { marginBottom: 16 }]}>Benefits</Text>
-          <Text style={commonStyles.text}>
-            • Soothing aroma from fresh basil leaves{'\n'}
-            • Gentle sweetness from pure honey{'\n'}
-            • Feel-good balance for mind and body{'\n'}
-            • No artificial flavors or preservatives
-          </Text>
-        </View>
-
-        <View style={commonStyles.section}>
-          <Text style={[commonStyles.heading, { marginBottom: 16 }]}>Brewing & Serving</Text>
-          <Text style={commonStyles.text}>
-            Chill and sip over ice for a refreshing treat, or warm gently for a cozy experience. 
-            Always shake well before serving to ensure the perfect blend of flavors.
-          </Text>
-        </View>
-
-        {/* FAQs */}
-        <View style={[commonStyles.section, { paddingTop: 40 }]}>
-          <Text style={[commonStyles.subtitle, { marginBottom: 24 }]}>Frequently Asked Questions</Text>
-          
-          {faqs.map((faq, index) => (
-            <View key={index} style={[commonStyles.card, { marginBottom: 16 }]}>
-              <Text style={[commonStyles.textMedium, { marginBottom: 8 }]}>
-                {faq.question}
-              </Text>
-              <Text style={commonStyles.text}>
-                {faq.answer}
-              </Text>
-            </View>
-          ))}
-        </View>
-
-        {/* Bottom Spacing for Navigation */}
+        {/* Extra spacing for nav */}
         <View style={{ height: 100 }} />
       </ScrollView>
     </SafeAreaView>
