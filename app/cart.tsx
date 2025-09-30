@@ -1,11 +1,11 @@
+// app/cart.tsx
 import React from 'react';
 import { View, Text, ScrollView, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
-
 import { useCart } from './CartContext';
-import { commonStyles, buttonStyles } from '../styles/commonStyles';
-import { formatPrice } from './prices';
+
+const fmt = (n: number) => `$${n.toFixed(2)}`;
 
 export default function CartScreen() {
   const router = useRouter();
@@ -15,18 +15,18 @@ export default function CartScreen() {
   const cartTotal = cart.reduce((sum, item) => sum + lineTotal(item), 0);
 
   return (
-    <SafeAreaView style={commonStyles.container}>
-      <ScrollView showsVerticalScrollIndicator={false}>
-        <Text style={[commonStyles.heading, { marginBottom: 20 }]}>Your Cart</Text>
+    <SafeAreaView style={{ flex: 1, backgroundColor: '#fff' }}>
+      <ScrollView contentContainerStyle={{ padding: 16 }}>
+        <Text style={{ fontSize: 26, fontWeight: '700', marginBottom: 16 }}>Your Cart</Text>
 
         {cart.length === 0 ? (
           <>
-            <Text style={commonStyles.text}>Your cart is empty.</Text>
+            <Text>Your cart is empty.</Text>
             <TouchableOpacity
-              style={[buttonStyles.primary, { marginTop: 16 }]}
+              style={{ marginTop: 12, padding: 12, backgroundColor: '#0f3d2e', borderRadius: 8, alignItems: 'center' }}
               onPress={() => router.push('/shop')}
             >
-              <Text style={commonStyles.buttonText}>Go to Shop</Text>
+              <Text style={{ color: '#fff', fontWeight: '700' }}>Go to Shop</Text>
             </TouchableOpacity>
           </>
         ) : (
@@ -35,20 +35,17 @@ export default function CartScreen() {
               <View
                 key={item.id}
                 style={{
-                  padding: 16,
-                  borderWidth: 1,
-                  borderColor: '#ddd',
+                  padding: 12,
                   borderRadius: 8,
+                  backgroundColor: '#f6f6f6',
                   marginBottom: 12,
                 }}
               >
-                <Text style={commonStyles.textMedium}>{item.name}</Text>
-                <Text style={[commonStyles.text, { marginTop: 6 }]}>
-                  {formatPrice(lineTotal(item))}
-                </Text>
+                <Text style={{ fontWeight: '700', marginBottom: 6 }}>{item.name}</Text>
 
-                {/* Simple + / − and Remove */}
-                <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 10 }}>
+                <Text style={{ marginBottom: 8 }}>{fmt(lineTotal(item))}</Text>
+
+                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                   <TouchableOpacity
                     onPress={() => updateQuantity(item.id, Math.max(0, item.quantity - 1))}
                     style={{ paddingVertical: 6, paddingHorizontal: 12, borderWidth: 1, borderRadius: 6, marginRight: 8 }}
@@ -69,24 +66,22 @@ export default function CartScreen() {
               </View>
             ))}
 
-            <View style={{ marginTop: 20 }}>
-              <Text style={commonStyles.textMedium}>
-                Total: {formatPrice(cartTotal)}
-              </Text>
+            <View style={{ marginTop: 12 }}>
+              <Text style={{ fontSize: 16, fontWeight: '700' }}>Total: {fmt(cartTotal)}</Text>
             </View>
 
             <TouchableOpacity
-              style={[buttonStyles.primary, { marginTop: 20 }]}
+              style={{ marginTop: 16, padding: 14, backgroundColor: '#0f3d2e', borderRadius: 10, alignItems: 'center' }}
               onPress={() => alert('Checkout coming soon')}
             >
-              <Text style={commonStyles.buttonText}>Proceed to Checkout</Text>
+              <Text style={{ color: '#fff', fontWeight: '700' }}>Proceed to Checkout</Text>
             </TouchableOpacity>
 
             <TouchableOpacity
-              style={[buttonStyles.secondary, { marginTop: 10 }]}
+              style={{ marginTop: 10, padding: 12, borderWidth: 1, borderRadius: 8, alignItems: 'center' }}
               onPress={clearCart}
             >
-              <Text style={commonStyles.buttonText}>Clear Cart</Text>
+              <Text>Clear Cart</Text>
             </TouchableOpacity>
           </>
         )}
