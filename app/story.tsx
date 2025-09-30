@@ -39,7 +39,7 @@ export default function StoryScreen() {
           </Text>
           
           <Text style={[commonStyles.text, { marginBottom: 20 }]}>
-            It all started in my grandmother&apos;s garden, where rows of fragrant basil grew alongside 
+            It all started in my grandmothers garden, where rows of fragrant basil grew alongside 
             wildflowers that attracted the most industrious bees. She would brew fresh basil tea 
             and sweeten it with honey from her own hives, creating a drink that was both soothing 
             and energizing.
@@ -53,7 +53,7 @@ export default function StoryScreen() {
           </Text>
 
           <Text style={[commonStyles.text, { marginBottom: 32 }]}>
-            That&apos;s when Basil Tea by K. was born—from a desire to share this feeling of 
+            Thats when Basil Tea by K. was born—from a desire to share this feeling of 
             balance and abundance with others who need a moment of peace in their busy lives.
           </Text>
         </View>
@@ -101,7 +101,7 @@ export default function StoryScreen() {
           <Text style={[commonStyles.subtitle, { marginBottom: 20 }]}>Our Sourcing</Text>
           
           <Text style={[commonStyles.text, { marginBottom: 16 }]}>
-            Our basil comes from organic farms in California&apos;s Central Valley, where the 
+            Our basil comes from organic farms in Californias Central Valley, where the 
             Mediterranean climate creates ideal growing conditions. The leaves are harvested 
             at peak freshness and processed within hours to preserve their essential oils 
             and aromatic compounds.
