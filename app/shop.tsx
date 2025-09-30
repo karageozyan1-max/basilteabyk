@@ -12,11 +12,11 @@ export default function ShopScreen() {
   const { addToCart } = useCart();
 
   const [quantity, setQuantity] = useState(1);
-  const [selectedSize, setSelectedSize] = useState('16oz');
+  const [selectedSize, setSelectedSize] = useState('8oz');
 
   const sizes = [
-    { label: '16oz Bottle', value: '16oz', price: 12.99 },
-    { label: '32oz Bottle', value: '32oz', price: 19.99 }
+    { label: '8oz Bottle', value: '8oz', price: 4.99 },
+    { label: '12oz Bottle', value: '12oz', price: 6.99 }
   ];
 
   const price = sizes.find((s) => s.value === selectedSize)?.price || 0;
