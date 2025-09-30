@@ -10,16 +10,8 @@ export default function CartScreen() {
   const router = useRouter();
   
   // Mock cart data - in a real app this would come from state management
-  const [cartItems, setCartItems] = useState([
-    {
-      id: 1,
-      name: 'Basil Tea with Honey',
-      size: '16oz',
-      price: 12.99,
-      quantity: 2,
-      image: require('../assets/images/a5103974-aee6-415a-9faa-72b606dfcdca.png')
-    }
-  ]);
+  const [cartItems, setCartItems] = useState<any[]>([]);
+  
 
   const subtotal = cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
   const shipping = subtotal >= 25 ? 0 : 4.99;
