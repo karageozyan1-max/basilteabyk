@@ -6,7 +6,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import Icon from '../components/Icon';
 
-import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { FontAwesome6 } from '@expo/vector-icons';
 import { Linking } from 'react-native';
 
 export default function ContactScreen() {
@@ -249,7 +249,7 @@ export default function ContactScreen() {
               }}
               onPress={() => Linking.openURL('https://www.tiktok.com/@basilteabyk.com')}
             >
-              <MaterialCommunityIcons name="tiktok" size={24} color={colors.primary} />
+              <FontAwesome6 name="tiktok" size={24} color={colors.primary} />
               <Text style={[commonStyles.textSmall, { marginTop: 8 }]}>TikTok</Text>
             </TouchableOpacity>
           </View>
