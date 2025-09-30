@@ -1,18 +1,10 @@
 import React, { createContext, useContext, useState } from 'react';
 
-export type CartItem = {
-  id: number;
-  name: string;
-  size: '8oz' | '12oz';
-  packSize: number;
-  price: number;      // dollars, e.g. 4.99
-  quantity: number;
-};
-
+type CartItem = { id: number; name: string; size: '8oz' | '12oz'; packSize: number; price: number; quantity: number; };
 type CartCtx = {
   cartItems: CartItem[];
-  addToCart: (item: CartItem) => void;
-  updateQuantity: (id: number, qty: number) => void;
+  addToCart: (i: CartItem) => void;
+  updateQuantity: (id: number, q: number) => void;
   removeFromCart: (id: number) => void;
   clearCart: () => void;
 };
@@ -21,26 +13,12 @@ const Ctx = createContext<CartCtx | null>(null);
 
 export const CartProvider = ({ children }: { children: React.ReactNode }) => {
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
-
-  const addToCart = (item: CartItem) => setCartItems(prev => [...prev, item]);
-
-  const updateQuantity = (id: number, qty: number) =>
-    setCartItems(items =>
-      qty === 0
-        ? items.filter(i => i.id !== id)
-        : items.map(i => (i.id === id ? { ...i, quantity: qty } : i))
-    );
-
-  const removeFromCart = (id: number) =>
-    setCartItems(items => items.filter(i => i.id !== id));
-
+  const addToCart = (i: CartItem) => setCartItems(p => [...p, i]);
+  const updateQuantity = (id: number, q: number) =>
+    setCartItems(items => q === 0 ? items.filter(x => x.id !== id) : items.map(x => x.id === id ? { ...x, quantity: q } : x));
+  const removeFromCart = (id: number) => setCartItems(items => items.filter(x => x.id !== id));
   const clearCart = () => setCartItems([]);
-
-  return (
-    <Ctx.Provider value={{ cartItems, addToCart, updateQuantity, removeFromCart, clearCart }}>
-      {children}
-    </Ctx.Provider>
-  );
+  return <Ctx.Provider value={{ cartItems, addToCart, updateQuantity, removeFromCart, clearCart }}>{children}</Ctx.Provider>;
 };
 
 export const useCart = () => {
