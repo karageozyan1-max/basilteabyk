@@ -14,11 +14,6 @@ export default function ShopScreen() {
   const [selectedSize, setSelectedSize] = useState('8oz');
   const [packSize, setPackSize] = useState(6);
 
-  // Updated bottle prices
-  const bottlePrices = {
-    '8oz': 4.99,
-    '12oz': 6.99
-  };
 
   const sizes = [
     { label: '8oz Bottle', value: '8oz', price: SIZE_PRICES['8oz'] },
@@ -42,20 +37,20 @@ export default function ShopScreen() {
     }
   ];
 
-  const handleAddToCart = () => {
-   const selectedProduct = sizes.find(s => s.value === selectedSize);
-    if (selectedProduct) {
-      addToCart({
-        id: Date.now(),
-        name: 'Basil Tea with Honey',
-        size: selectedProduct.value,
-        packsize,
-        prices: selectedProduct.price,
-        quantity: 1,
-      });
-    alert(`Added pack of ${packSize} x ${selectedSize} Basil Tea with Honey to cart!`);
-    }
-  };
+ const handleAddToCart = () => {
+  const selectedProduct = sizes.find(s => s.value === selectedSize);
+  if (selectedProduct) {
+    addToCart({
+      id: Date.now(),
+      name: 'Basil Tea with Honey',
+      size: selectedProduct.value,
+      packSize,
+      price: selectedProduct.price,
+      quantity: 1,
+    });
+    alert(`Added pack of ${packSize} x ${selectedSize} Basil Tea with Honey to cart`);
+  }
+};
 
   const price = bottlePrices[selectedSize] * packSize;
 
@@ -156,11 +151,11 @@ export default function ShopScreen() {
           </View>
 
           {/* Add to Cart Button */}
-          <TouchableOpacity style={buttonStyles.primary} onPress={handleAddToCart}>
-            <Text style={commonStyles.buttonText}>
-              Add to Cart - ${price.toFixed(2)}
-            </Text>
-          </TouchableOpacity>
+<TouchableOpacity style={buttonStyles.primary} onPress={handleAddToCart}>
+  <Text style={commonStyles.buttonText}>
+    Add to Cart - {formatPrice(SIZE_PRICES[selectedSize] * packSize)}
+  </Text>
+</TouchableOpacity>
         </View>
 
         {/* Product Details */}
