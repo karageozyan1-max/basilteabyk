@@ -63,7 +63,7 @@ export default function ContactScreen() {
               <Icon name="mail" size={20} color={colors.primary} style={{ marginRight: 12 }} />
               <Text style={commonStyles.textMedium}>Email</Text>
             </View>
-            <Text style={commonStyles.text}>hello@basilteabyk.com</Text>
+            <Text style={commonStyles.text}>basilteabyk@gmail.com</Text>
           </View>
 
           <View style={[commonStyles.card, { marginBottom: 20 }]}>
