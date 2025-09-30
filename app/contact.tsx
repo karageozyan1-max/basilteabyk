@@ -215,7 +215,7 @@ export default function ContactScreen() {
               }}
               onPress={() => Linking.openURL('https://www.instagram.com/basilteabyk/')}
             >
-              <Icon name="logo-instagram" size={24} color={colors.primary} />
+              <FontAwesome6 name="instagram" size={24} color={colors.primary} />
               <Text style={[commonStyles.textSmall, { marginTop: 8 }]}>Instagram</Text>
             </TouchableOpacity>
 
