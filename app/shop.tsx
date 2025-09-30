@@ -1,4 +1,3 @@
-// app/shop.tsx
 import React, { useState } from 'react';
 import { Text, View, ScrollView, TouchableOpacity, Image } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -18,17 +17,16 @@ export default function ShopScreen() {
   const [selectedSize, setSelectedSize] = useState<'8oz' | '12oz'>('8oz');
   const [packSize, setPackSize] = useState<1 | 6 | 12>(1);
 
-  // Options shown to the user
+  // Options
   const sizes = [
     { label: '8oz Bottle', value: '8oz' as const, price: SIZE_PRICES['8oz'] },
     { label: '12oz Bottle', value: '12oz' as const, price: SIZE_PRICES['12oz'] },
   ];
   const packSizes: (1 | 6 | 12)[] = [1, 6, 12];
 
-  // Final total = per-bottle price × pack
+  // Final total
   const totalPrice = SIZE_PRICES[selectedSize] * packSize;
 
-  // Add to cart with the final price only (no per-bottle math in cart)
   const handleAddToCart = () => {
     const isSingle = packSize === 1;
     addToCart({
@@ -37,9 +35,9 @@ export default function ShopScreen() {
         ? `1 bottle of ${selectedSize} Basil Tea with Honey`
         : `${packSize}-pack of ${selectedSize} Basil Tea with Honey`,
       size: selectedSize,
-      packSize,                 // how many bottles were chosen
-      price: totalPrice,        // final price (what you want to show in cart)
-      quantity: 1,              // keep cart line quantity as 1
+      packSize,
+      price: totalPrice,   // final total for this selection
+      quantity: 1,
     });
     router.push('/cart');
   };
@@ -58,7 +56,7 @@ export default function ShopScreen() {
           </TouchableOpacity>
         </View>
 
-        {/* Product Image (comment out if this path causes a blank screen) */}
+        {/* Product Image */}
         <View style={[commonStyles.section, { alignItems: 'center', paddingVertical: 20 }]}>
           <Image
             source={require('../assets/images/a5103974-aee6-415a-9faa-72b606dfcdca.png')}
@@ -155,7 +153,6 @@ export default function ShopScreen() {
           </TouchableOpacity>
         </View>
 
-        {/* Bottom spacing for nav */}
         <View style={{ height: 100 }} />
       </ScrollView>
     </SafeAreaView>
