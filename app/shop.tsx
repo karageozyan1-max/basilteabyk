@@ -1,45 +1,31 @@
 import React, { useState } from 'react';
 import { Text, View, ScrollView, TouchableOpacity, Image } from 'react-native';
-import { commonStyles, colors, buttonStyles } from '../styles/commonStyles';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
+
+import { commonStyles, colors, buttonStyles } from '../styles/commonStyles';
 import Icon from '../components/Icon';
 
-import { SIZES_PRICES, formatPrice } from './prices';
 import { useCart } from './CartContext';
+import { SIZE_PRICES, formatPrice } from './prices';
 
 export default function ShopScreen() {
   const router = useRouter();
   const { addToCart } = useCart();
-  const [selectedSize, setSelectedSize] = useState('8oz');
-  const [packSize, setPackSize] = useState(6);
 
+  const [selectedSize, setSelectedSize] = useState<'8oz' | '12oz'>('8oz');
+  const [packSize, setPackSize] = useState<number>(6);
 
   const sizes = [
-    { label: '8oz Bottle', value: '8oz', price: SIZE_PRICES['8oz'] },
-    { label: '12oz Bottle', value: '12oz', price: SIZE_PRICES['12oz'] },
+    { label: '8oz Bottle',  value: '8oz' as const,  price: SIZE_PRICES['8oz']  },
+    { label: '12oz Bottle', value: '12oz' as const, price: SIZE_PRICES['12oz'] },
   ];
-
   const packSizes = [6, 12];
 
-  const faqs = [
-    {
-      question: 'How should I store the tea?',
-      answer: 'Keep refrigerated and consume within 7 days of opening. Shake well before serving.'
-    },
-    {
-      question: 'Is this tea caffeinated?',
-      answer: 'No, our basil tea is naturally caffeine-free, making it perfect for any time of day.'
-    },
-    {
-      question: 'What are the ingredients?',
-      answer: 'Basil leaves, purified water, natural honey, lemon essence (trace). Nothing artificial.'
-    }
-  ];
+  const handleAddToCart = () => {
+    const selectedProduct = sizes.find(s => s.value === selectedSize);
+    if (!selectedProduct) return;
 
- const handleAddToCart = () => {
-  const selectedProduct = sizes.find(s => s.value === selectedSize);
-  if (selectedProduct) {
     addToCart({
       id: Date.now(),
       name: 'Basil Tea with Honey',
@@ -48,17 +34,15 @@ export default function ShopScreen() {
       price: selectedProduct.price,
       quantity: 1,
     });
-    alert(`Added pack of ${packSize} x ${selectedSize} Basil Tea with Honey to cart`);
-  }
-};
+  };
 
-  const price = bottlePrices[selectedSize] * packSize;
+  const totalPrice = SIZE_PRICES[selectedSize] * packSize;
 
   return (
     <SafeAreaView style={commonStyles.container}>
       <ScrollView showsVerticalScrollIndicator={false}>
         {/* Header */}
-        <View style={[commonStyles.section, { flexDirection: 'row', alignItems: 'center', paddingTop: 10 }]}>
+        <View style={[commonStyles.section, { flexDirection: 'row', alignItems: 'center', paddingTop: 18 }]}>
           <TouchableOpacity onPress={() => router.back()} style={{ marginRight: 16 }}>
             <Icon name="arrow-back" size={24} color={colors.text} />
           </TouchableOpacity>
@@ -68,140 +52,69 @@ export default function ShopScreen() {
           </TouchableOpacity>
         </View>
 
-        {/* Product Image */}
+        {/* Product image (optional) */}
         <View style={[commonStyles.section, { alignItems: 'center', paddingVertical: 20 }]}>
           <Image
-            source={require('../assets/images/a5103974-aee6-415a-9faa-72b606dfcdca.png')}
-            style={[commonStyles.productImage, { width: 320, height: 320 }]}
+            source={require('../assets/images/a5183974-aee6-415a-9faa-72b686dfdcea.png')}
+            style={commonStyles.productImage}
             resizeMode="cover"
           />
         </View>
 
-        {/* Product Info */}
-        <View style={commonStyles.section}>
-          <Text style={commonStyles.title}>Basil Tea with Honey</Text>
-          <Text style={commonStyles.priceText}>${price.toFixed(2)}</Text>
-          
-          <Text style={[commonStyles.text, { marginBottom: 20 }]}>
-            A refreshing blend of basil tea infused with natural honey—smooth, lightly sweet, and calming.
-          </Text>
-
-          {/* Size Selection */}
-          <Text style={[commonStyles.textMedium, { marginBottom: 12 }]}>Size:</Text>
-          <View style={{ flexDirection: 'row', marginBottom: 24 }}>
-            {sizes.map((size) => (
+        {/* Size selector */}
+        <View style={[commonStyles.section]}>
+          <Text style={[commonStyles.heading, { marginBottom: 10 }]}>Choose Size</Text>
+          <View style={{ flexDirection: 'row' }}>
+            {sizes.map(s => (
               <TouchableOpacity
-                key={size.value}
-                style={[
-                  {
-                    flex: 1,
-                    padding: 12,
-                    borderRadius: 8,
-                    borderWidth: 2,
-                    borderColor: selectedSize === size.value ? colors.primary : colors.border,
-                    backgroundColor: selectedSize === size.value ? colors.primary : colors.backgroundAlt,
-                    marginRight: 8,
-                    alignItems: 'center'
-                  }
-                ]}
-                onPress={() => setSelectedSize(size.value)}
-              >
-                <Text style={[
-                  commonStyles.textMedium,
-                  { color: selectedSize === size.value ? colors.textLight : colors.text }
-                ]}>
-                  {size.label}
-                </Text>
-                <Text style={[
-                  commonStyles.textSmall,
-                  { color: selectedSize === size.value ? colors.textLight : colors.grey }
-                ]}>
-                  ${size.price.toFixed(2)}
-                </Text>
-              </TouchableOpacity>
-            ))}
-          </View>
-
-          {/* Pack Size Selection */}
-          <Text style={[commonStyles.textMedium, { marginBottom: 12 }]}>Pack Size:</Text>
-          <View style={{ flexDirection: 'row', marginBottom: 32 }}>
-            {packSizes.map((size) => (
-              <TouchableOpacity
-                key={size}
+                key={s.value}
+                onPress={() => setSelectedSize(s.value)}
                 style={{
-                  flex: 1,
-                  padding: 12,
-                  borderRadius: 8,
-                  borderWidth: 2,
-                  borderColor: packSize === size ? colors.primary : colors.border,
-                  backgroundColor: packSize === size ? colors.primary : colors.backgroundAlt,
+                  paddingVertical: 10,
+                  paddingHorizontal: 14,
+                  borderRadius: 10,
+                  backgroundColor: selectedSize === s.value ? colors.primary : colors.card,
                   marginRight: 8,
-                  alignItems: 'center'
                 }}
-                onPress={() => setPackSize(size)}
               >
-                <Text style={[
-                  commonStyles.textMedium,
-                  { color: packSize === size ? colors.textLight : colors.text }
-                ]}>
-                  Pack of {size}
+                <Text style={{ color: selectedSize === s.value ? '#fff' : colors.text }}>
+                  {s.label} ({formatPrice(s.price)})
                 </Text>
               </TouchableOpacity>
             ))}
           </View>
-
-          {/* Add to Cart Button */}
-<TouchableOpacity style={buttonStyles.primary} onPress={handleAddToCart}>
-  <Text style={commonStyles.buttonText}>
-    Add to Cart - {formatPrice(SIZE_PRICES[selectedSize] * packSize)}
-  </Text>
-</TouchableOpacity>
         </View>
 
-        {/* Product Details */}
-        <View style={[commonStyles.section, { paddingTop: 40 }]}>
-          <Text style={[commonStyles.heading, { marginBottom: 16 }]}>Ingredients</Text>
-          <Text style={commonStyles.text}>
-            Basil leaves, purified water, natural honey, lemon essence (trace), nothing artificial.
-          </Text>
+        {/* Pack selector */}
+        <View style={[commonStyles.section]}>
+          <Text style={[commonStyles.heading, { marginBottom: 10 }]}>Choose Pack</Text>
+          <View style={{ flexDirection: 'row' }}>
+            {packSizes.map(ps => (
+              <TouchableOpacity
+                key={ps}
+                onPress={() => setPackSize(ps)}
+                style={{
+                  paddingVertical: 10,
+                  paddingHorizontal: 14,
+                  borderRadius: 10,
+                  backgroundColor: packSize === ps ? colors.primary : colors.card,
+                  marginRight: 8,
+                }}
+              >
+                <Text style={{ color: packSize === ps ? '#fff' : colors.text }}>{ps}-pack</Text>
+              </TouchableOpacity>
+            ))}
+          </View>
         </View>
 
-        <View style={commonStyles.section}>
-          <Text style={[commonStyles.heading, { marginBottom: 16 }]}>Benefits</Text>
-          <Text style={commonStyles.text}>
-            • Soothing aroma from fresh basil leaves{'\n'}
-            • Gentle sweetness from pure honey{'\n'}
-            • Feel-good balance for mind and body{'\n'}
-            • No artificial flavors or preservatives
-          </Text>
+        {/* Add to cart */}
+        <View style={[commonStyles.section, { marginTop: 10 }]}>
+          <TouchableOpacity style={buttonStyles.primary} onPress={handleAddToCart}>
+            <Text style={commonStyles.buttonText}>
+              Add to Cart – {formatPrice(totalPrice)}
+            </Text>
+          </TouchableOpacity>
         </View>
-
-        <View style={commonStyles.section}>
-          <Text style={[commonStyles.heading, { marginBottom: 16 }]}>Brewing & Serving</Text>
-          <Text style={commonStyles.text}>
-            Chill and sip over ice for a refreshing treat, or warm gently for a cozy experience. 
-            Always shake well before serving to ensure the perfect blend of flavors.
-          </Text>
-        </View>
-
-        {/* FAQs */}
-        <View style={[commonStyles.section, { paddingTop: 40 }]}>
-          <Text style={[commonStyles.subtitle, { marginBottom: 24 }]}>Frequently Asked Questions</Text>
-          
-          {faqs.map((faq, index) => (
-            <View key={index} style={[commonStyles.card, { marginBottom: 16 }]}>
-              <Text style={[commonStyles.textMedium, { marginBottom: 8 }]}>
-                {faq.question}
-              </Text>
-              <Text style={commonStyles.text}>
-                {faq.answer}
-              </Text>
-            </View>
-          ))}
-        </View>
-
-        {/* Bottom Spacing for Navigation */}
-        <View style={{ height: 100 }} />
       </ScrollView>
     </SafeAreaView>
   );
