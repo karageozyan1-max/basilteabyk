@@ -241,7 +241,7 @@ export default function ContactScreen() {
                 alignItems: 'center',
                 padding: 16,
                 borderRadius: 12,
-                backgroundColor: 'pink',
+                backgroundColor: colors.card,
                 flex: 1,
                 marginLeft: 8,
                 boxShadow: '0px 2px 8px rgba(15, 61, 46, 0.1)',
@@ -250,7 +250,7 @@ export default function ContactScreen() {
               onPress={() => Linking.openURL('https://www.tiktok.com/@basilteabyk.com')}
             >
               <MaterialCommunityIcons name="tiktok" size={24} color={colors.primary} />
-              <Text style={[commonStyles.textSmall, { marginTop: 8 }]}>TikTok (TEST)</Text>
+              <Text style={[commonStyles.textSmall, { marginTop: 8 }]}>TikTok</Text>
             </TouchableOpacity>
           </View>
         </View>
