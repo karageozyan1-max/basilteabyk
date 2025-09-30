@@ -2,17 +2,14 @@
 import { Stack } from 'expo-router';
 import { View } from 'react-native';
 import { CartProvider } from './CartContext';
-
-// ✅ make sure this path matches your project structure
-// If _layout.tsx is in app/, and the component is in components/BottomNavigation.tsx:
-import BottomNavigation from '../components/BottomNavigation';
+import BottomNavigation from '../components/BottomNavigation'; // ✅ correct path
 
 export default function RootLayout() {
   return (
     <CartProvider>
       <View style={{ flex: 1 }}>
         <Stack screenOptions={{ headerShown: false }} />
-        {/* Bottom tab bar */}
+        {/* Bottom bar at the bottom of every screen */}
         <BottomNavigation />
       </View>
     </CartProvider>
