@@ -28,7 +28,7 @@ export default function FAQScreen() {
         },
         {
           question: 'What does it taste like?',
-          answer: 'Our tea has a unique, refreshing flavor with herbal notes from the basil and gentle sweetness from natural honey. It&apos;s smooth, calming, and lightly sweet.'
+          answer: 'Our tea has a unique, refreshing flavor with herbal notes from the basil and gentle sweetness from natural honey. Its smooth, calming, and lightly sweet.'
         }
       ]
     },
