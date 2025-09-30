@@ -1,65 +1,95 @@
 import React from 'react';
-import { Text, View, ScrollView, TouchableOpacity } from 'react-native';
+import { View, Text, ScrollView, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
+
 import { useCart } from './CartContext';
+import { commonStyles, buttonStyles } from '../styles/commonStyles';
 import { formatPrice } from './prices';
 
 export default function CartScreen() {
   const router = useRouter();
-  const { cartItems, updateQuantity, removeFromCart } = useCart();
+  const { cart, updateQuantity, removeFromCart, clearCart } = useCart();
 
-  const subtotal = cartItems.reduce((s, i) => s + i.price * i.quantity, 0);
-  const shipping = subtotal >= 25 ? 0 : 4.99;
-  const tax = subtotal * 0.08;
-  const total = subtotal + shipping + tax;
+  const lineTotal = (item: { price: number; quantity: number }) => item.price * item.quantity;
+  const cartTotal = cart.reduce((sum, item) => sum + lineTotal(item), 0);
 
   return (
-    <SafeAreaView style={{ flex: 1 }}>
-      <ScrollView contentContainerStyle={{ padding: 16 }}>
-        <Text style={{ fontSize: 28, fontWeight: '700', marginBottom: 12 }}>Your Cart</Text>
+    <SafeAreaView style={commonStyles.container}>
+      <ScrollView showsVerticalScrollIndicator={false}>
+        <Text style={[commonStyles.heading, { marginBottom: 20 }]}>Your Cart</Text>
 
-        {cartItems.length === 0 ? (
+        {cart.length === 0 ? (
           <>
-            <Text>Your cart is empty.</Text>
-            <TouchableOpacity onPress={() => router.push('/shop')} style={{ marginTop: 12 }}>
-              <Text style={{ color: '#0f3d2e' }}>Go to Shop</Text>
+            <Text style={commonStyles.text}>Your cart is empty.</Text>
+            <TouchableOpacity
+              style={[buttonStyles.primary, { marginTop: 16 }]}
+              onPress={() => router.push('/shop')}
+            >
+              <Text style={commonStyles.buttonText}>Go to Shop</Text>
             </TouchableOpacity>
           </>
         ) : (
-          cartItems.map(item => (
-            <View key={item.id} style={{ padding: 12, borderRadius: 8, backgroundColor: '#f6f6f6', marginBottom: 10 }}>
-              <Text style={{ fontWeight: '600' }}>
-                {item.packSize} × {item.size} {item.name}
-              </Text>
-              <Text>{formatPrice(item.price)} each</Text>
+          <>
+            {cart.map((item) => (
+              <View
+                key={item.id}
+                style={{
+                  padding: 16,
+                  borderWidth: 1,
+                  borderColor: '#ddd',
+                  borderRadius: 8,
+                  marginBottom: 12,
+                }}
+              >
+                <Text style={commonStyles.textMedium}>{item.name}</Text>
+                <Text style={[commonStyles.text, { marginTop: 6 }]}>
+                  {formatPrice(lineTotal(item))}
+                </Text>
 
-              <View style={{ flexDirection: 'row', marginTop: 8 }}>
-                <TouchableOpacity onPress={() => updateQuantity(item.id, Math.max(0, item.quantity - 1))}>
-                  <Text style={{ marginRight: 12 }}>–</Text>
-                </TouchableOpacity>
-                <Text>{item.quantity}</Text>
-                <TouchableOpacity onPress={() => updateQuantity(item.id, item.quantity + 1)}>
-                  <Text style={{ marginLeft: 12 }}>+</Text>
-                </TouchableOpacity>
-                <TouchableOpacity onPress={() => removeFromCart(item.id)} style={{ marginLeft: 16 }}>
-                  <Text style={{ color: '#cc3333' }}>Remove</Text>
-                </TouchableOpacity>
+                {/* Simple + / − and Remove */}
+                <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 10 }}>
+                  <TouchableOpacity
+                    onPress={() => updateQuantity(item.id, Math.max(0, item.quantity - 1))}
+                    style={{ paddingVertical: 6, paddingHorizontal: 12, borderWidth: 1, borderRadius: 6, marginRight: 8 }}
+                  >
+                    <Text>−</Text>
+                  </TouchableOpacity>
+                  <Text style={{ minWidth: 28, textAlign: 'center' }}>{item.quantity}</Text>
+                  <TouchableOpacity
+                    onPress={() => updateQuantity(item.id, item.quantity + 1)}
+                    style={{ paddingVertical: 6, paddingHorizontal: 12, borderWidth: 1, borderRadius: 6, marginLeft: 8 }}
+                  >
+                    <Text>+</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity onPress={() => removeFromCart(item.id)} style={{ marginLeft: 12 }}>
+                    <Text style={{ color: '#cc3333' }}>Remove</Text>
+                  </TouchableOpacity>
+                </View>
               </View>
+            ))}
 
-              <Text style={{ marginTop: 6, fontWeight: '600' }}>
-                Line total: {formatPrice(item.price * item.quantity)}
+            <View style={{ marginTop: 20 }}>
+              <Text style={commonStyles.textMedium}>
+                Total: {formatPrice(cartTotal)}
               </Text>
             </View>
-          ))
-        )}
 
-        <View style={{ marginTop: 16 }}>
-          <Text>Subtotal: {formatPrice(subtotal)}</Text>
-          <Text>Shipping: {formatPrice(shipping)}</Text>
-          <Text>Tax (8%): {formatPrice(tax)}</Text>
-          <Text style={{ fontWeight: '700', marginTop: 6 }}>Total: {formatPrice(total)}</Text>
-        </View>
+            <TouchableOpacity
+              style={[buttonStyles.primary, { marginTop: 20 }]}
+              onPress={() => alert('Checkout coming soon')}
+            >
+              <Text style={commonStyles.buttonText}>Proceed to Checkout</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={[buttonStyles.secondary, { marginTop: 10 }]}
+              onPress={clearCart}
+            >
+              <Text style={commonStyles.buttonText}>Clear Cart</Text>
+            </TouchableOpacity>
+          </>
+        )}
       </ScrollView>
     </SafeAreaView>
   );
