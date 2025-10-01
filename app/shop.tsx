@@ -14,26 +14,44 @@ import { useRouter } from 'expo-router';
 import { commonStyles, colors, buttonStyles } from '../styles/commonStyles';
 import Icon from '../components/Icon';
 
+import { useCart } from './CartContext';
+import { SIZE_PRICES, formatPrice } from './prices';
+
+type SizeOption = '8oz' | '12oz';
+
 export default function ShopScreen() {
   const router = useRouter();
-  const [quantity, setQuantity] = useState(1);
-  const [selectedSize, setSelectedSize] = useState('16oz');
-  const [packSize, setPackSize] = useState(6);
+  const { addToCart } = useCart();
 
+  // UI state
+  const [selectedSize, setSelectedSize] = useState<SizeOption>('8oz');
+  const [packSize, setPackSize] = useState<1 | 6 | 12>(1);
+  const [quantity, setQuantity] = useState(1); // number of sets (lines) to add
+
+  // Options
   const sizes = [
-    { label: '16oz Bottle', value: '16oz', price: 12.99 },
-    { label: '32oz Bottle', value: '32oz', price: 19.99 },
+    { label: '8oz Bottle', value: '8oz' as const, price: SIZE_PRICES['8oz'] },
+    { label: '12oz Bottle', value: '12oz' as const, price: SIZE_PRICES['12oz'] },
   ];
+  const packSizes: (1 | 6 | 12)[] = [1, 6, 12];
 
-  const packSizes = [1, 6, 12]; // added 1 bottle option
-
-  const price =
-    (sizes.find((s) => s.value === selectedSize)?.price || 0) * quantity * packSize;
+  // Totals
+  const perBottle = SIZE_PRICES[selectedSize];
+  const selectionPrice = perBottle * packSize;          // price for one selected pack
+  const totalPrice = selectionPrice * quantity;         // final total for this add
 
   const handleAddToCart = () => {
-    alert(
-      `Added ${quantity} x ${packSize}-pack of ${selectedSize} Basil Tea with Honey to cart!`
-    );
+    const isSingle = packSize === 1;
+    addToCart({
+      // name describes the selection (no qty in the name)
+      name: isSingle
+        ? `1 bottle of ${selectedSize} Basil Tea with Honey`
+        : `${packSize}-pack of ${selectedSize} Basil Tea with Honey`,
+      price: selectionPrice,       // price *per line* (one selection)
+      quantity,                    // how many of that selection to add
+      size: selectedSize,
+      packSize,
+    });
     router.push('/cart');
   };
 
@@ -41,12 +59,7 @@ export default function ShopScreen() {
     <SafeAreaView style={commonStyles.container}>
       <ScrollView showsVerticalScrollIndicator={false}>
         {/* Header */}
-        <View
-          style={[
-            commonStyles.section,
-            { flexDirection: 'row', alignItems: 'center', paddingTop: 10 },
-          ]}
-        >
+        <View style={[commonStyles.section, { flexDirection: 'row', alignItems: 'center', paddingTop: 10 }]}>
           <TouchableOpacity onPress={() => router.back()} style={{ marginRight: 16 }}>
             <Icon name="arrow-back" size={24} color={colors.text} />
           </TouchableOpacity>
@@ -56,7 +69,7 @@ export default function ShopScreen() {
           </TouchableOpacity>
         </View>
 
-        {/* Product Image */}
+        {/* Product Image (comment out if path is wrong to avoid a blank screen) */}
         <View style={[commonStyles.section, { alignItems: 'center', paddingVertical: 20 }]}>
           <Image
             source={require('../assets/images/a5103974-aee6-415a-9faa-72b606dfcdca.png')}
@@ -65,14 +78,14 @@ export default function ShopScreen() {
           />
         </View>
 
-        {/* Product Info */}
+        {/* Title + Total */}
         <View style={commonStyles.section}>
           <Text style={commonStyles.title}>Basil Tea with Honey</Text>
-          <Text style={commonStyles.priceText}>${price.toFixed(2)}</Text>
+          <Text style={commonStyles.priceText}>{formatPrice(totalPrice)}</Text>
 
-          <Text style={[commonStyles.text, { marginBottom: 20 }]}>
-            A refreshing blend of basil tea infused with natural honey—smooth, lightly
-            sweet, and calming.
+          {/* Description */}
+          <Text style={[commonStyles.text, { marginBottom: 16 }]}>
+            A refreshing blend of basil tea infused with natural honey—smooth, lightly sweet, and calming.
           </Text>
 
           {/* Size Selection */}
@@ -90,7 +103,7 @@ export default function ShopScreen() {
                       : { borderColor: colors.border, backgroundColor: colors.backgroundAlt },
                   ]}
                   onPress={() => setSelectedSize(s.value)}
-                  activeOpacity={0.8}
+                  activeOpacity={0.85}
                 >
                   <Text
                     style={[
@@ -106,7 +119,7 @@ export default function ShopScreen() {
                       { color: isActive ? colors.textLight : colors.grey },
                     ]}
                   >
-                    ${s.price.toFixed(2)}
+                    {formatPrice(s.price)}
                   </Text>
                 </TouchableOpacity>
               );
@@ -128,7 +141,7 @@ export default function ShopScreen() {
                       : { borderColor: colors.border, backgroundColor: colors.backgroundAlt },
                   ]}
                   onPress={() => setPackSize(p)}
-                  activeOpacity={0.8}
+                  activeOpacity={0.85}
                 >
                   <Text
                     style={[
@@ -136,32 +149,25 @@ export default function ShopScreen() {
                       { color: isActive ? colors.textLight : colors.text },
                     ]}
                   >
-                    {p}-pack
+                    {p === 1 ? '1 bottle' : `${p}-pack`}
                   </Text>
                 </TouchableOpacity>
               );
             })}
           </View>
 
-          {/* Quantity Selection */}
-          <Text style={[commonStyles.textMedium, { marginBottom: 12 }]}>Quantity:</Text>
-          <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 32 }}>
+          {/* Quantity (how many of that selection) */}
+          <Text style={[commonStyles.textMedium, { marginBottom: 12 }]}>Quantity</Text>
+          <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 24 }}>
             <TouchableOpacity
               style={ui.circleBtn}
               onPress={() => setQuantity(Math.max(1, quantity - 1))}
             >
               <Icon name="remove" size={20} color={colors.text} />
             </TouchableOpacity>
-
-            <Text
-              style={[
-                commonStyles.textMedium,
-                { marginHorizontal: 20, minWidth: 30, textAlign: 'center' },
-              ]}
-            >
+            <Text style={[commonStyles.textMedium, { marginHorizontal: 18, minWidth: 30, textAlign: 'center' }]}>
               {quantity}
             </Text>
-
             <TouchableOpacity
               style={[ui.circleBtn, { backgroundColor: colors.primary }]}
               onPress={() => setQuantity(quantity + 1)}
@@ -170,24 +176,22 @@ export default function ShopScreen() {
             </TouchableOpacity>
           </View>
 
-          {/* Add to Cart Button */}
+          {/* Add to Cart */}
           <TouchableOpacity style={buttonStyles.primary} onPress={handleAddToCart}>
             <Text style={commonStyles.buttonText}>
-              Add to Cart - ${price.toFixed(2)}
+              Add to Cart – {formatPrice(totalPrice)}
             </Text>
           </TouchableOpacity>
         </View>
 
-        {/* Bottom spacing for navigation */}
         <View style={{ height: 100 }} />
       </ScrollView>
     </SafeAreaView>
   );
 }
 
-// Compact UI for mobile
+// Compact, mobile-friendly chips
 const SCREEN_W = Dimensions.get('window').width;
-
 const ui = StyleSheet.create({
   rowWrap: {
     flexDirection: 'row',
@@ -202,7 +206,7 @@ const ui = StyleSheet.create({
     borderWidth: 2,
     marginBottom: 10,
     alignItems: 'center',
-    minWidth: '48%',
+    minWidth: '48%',                                  // two per row on phones
     maxWidth: Math.min(170, (SCREEN_W - 48) / 2),
   },
   chipLabel: { fontSize: 14, fontWeight: '600' },
