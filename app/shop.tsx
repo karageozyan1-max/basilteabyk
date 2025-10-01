@@ -26,7 +26,7 @@ export default function ShopScreen() {
   // UI state
   const [selectedSize, setSelectedSize] = useState<SizeOption>('8oz');
   const [packSize, setPackSize] = useState<1 | 6 | 12>(1);
-  const [quantity, setQuantity] = useState(1); // number of sets (lines) to add
+  const [quantity, setQuantity] = useState(1); // number of sets
 
   // Options
   const sizes = [
@@ -37,18 +37,17 @@ export default function ShopScreen() {
 
   // Totals
   const perBottle = SIZE_PRICES[selectedSize];
-  const selectionPrice = perBottle * packSize;          // price for one selected pack
-  const totalPrice = selectionPrice * quantity;         // final total for this add
+  const selectionPrice = perBottle * packSize;      // price per selection
+  const totalPrice = selectionPrice * quantity;     // grand total
 
   const handleAddToCart = () => {
     const isSingle = packSize === 1;
     addToCart({
-      // name describes the selection (no qty in the name)
       name: isSingle
         ? `1 bottle of ${selectedSize} Basil Tea with Honey`
         : `${packSize}-pack of ${selectedSize} Basil Tea with Honey`,
-      price: selectionPrice,       // price *per line* (one selection)
-      quantity,                    // how many of that selection to add
+      price: selectionPrice,
+      quantity,
       size: selectedSize,
       packSize,
     });
@@ -69,7 +68,7 @@ export default function ShopScreen() {
           </TouchableOpacity>
         </View>
 
-        {/* Product Image (comment out if path is wrong to avoid a blank screen) */}
+        {/* Product Image */}
         <View style={[commonStyles.section, { alignItems: 'center', paddingVertical: 20 }]}>
           <Image
             source={require('../assets/images/a5103974-aee6-415a-9faa-72b606dfcdca.png')}
@@ -156,7 +155,7 @@ export default function ShopScreen() {
             })}
           </View>
 
-          {/* Quantity (how many of that selection) */}
+          {/* Quantity */}
           <Text style={[commonStyles.textMedium, { marginBottom: 12 }]}>Quantity</Text>
           <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 24 }}>
             <TouchableOpacity
@@ -196,7 +195,7 @@ const ui = StyleSheet.create({
   rowWrap: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    justifyContent: 'space-between',
+    justifyContent: 'center',   // ✅ keeps last button (12-pack) centered
     marginBottom: 16,
   },
   chip: {
@@ -205,9 +204,10 @@ const ui = StyleSheet.create({
     borderRadius: 8,
     borderWidth: 2,
     marginBottom: 10,
+    marginHorizontal: 6,        // adds spacing between buttons
     alignItems: 'center',
-    minWidth: '48%',                                  // two per row on phones
-    maxWidth: Math.min(170, (SCREEN_W - 48) / 2),
+    minWidth: '40%',
+    maxWidth: 150,
   },
   chipLabel: { fontSize: 14, fontWeight: '600' },
   chipSub: { fontSize: 12, marginTop: 2 },
