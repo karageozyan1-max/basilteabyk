@@ -1,44 +1,39 @@
+// app/shop.tsx
 import React, { useState } from 'react';
-import { Text, View, ScrollView, TouchableOpacity, Image } from 'react-native';
+import {
+  Text,
+  View,
+  ScrollView,
+  TouchableOpacity,
+  Image,
+  Dimensions,
+  StyleSheet,
+} from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
-
 import { commonStyles, colors, buttonStyles } from '../styles/commonStyles';
 import Icon from '../components/Icon';
 
-import { useCart } from './CartContext';
-import { SIZE_PRICES, formatPrice } from './prices';
-
 export default function ShopScreen() {
   const router = useRouter();
-  const { addToCart } = useCart();
+  const [quantity, setQuantity] = useState(1);
+  const [selectedSize, setSelectedSize] = useState('16oz');
+  const [packSize, setPackSize] = useState(6);
 
-  // UI state
-  const [selectedSize, setSelectedSize] = useState<'8oz' | '12oz'>('8oz');
-  const [packSize, setPackSize] = useState<1 | 6 | 12>(1);
-
-  // Options
   const sizes = [
-    { label: '8oz Bottle', value: '8oz' as const, price: SIZE_PRICES['8oz'] },
-    { label: '12oz Bottle', value: '12oz' as const, price: SIZE_PRICES['12oz'] },
+    { label: '16oz Bottle', value: '16oz', price: 12.99 },
+    { label: '32oz Bottle', value: '32oz', price: 19.99 },
   ];
-  const packSizes: (1 | 6 | 12)[] = [1, 6, 12];
 
-  // Final total
-  const totalPrice = SIZE_PRICES[selectedSize] * packSize;
+  const packSizes = [1, 6, 12]; // added 1 bottle option
+
+  const price =
+    (sizes.find((s) => s.value === selectedSize)?.price || 0) * quantity * packSize;
 
   const handleAddToCart = () => {
-    const isSingle = packSize === 1;
-    addToCart({
-      id: Date.now(),
-      name: isSingle
-        ? `1 bottle of ${selectedSize} Basil Tea with Honey`
-        : `${packSize}-pack of ${selectedSize} Basil Tea with Honey`,
-      size: selectedSize,
-      packSize,
-      price: totalPrice,   // final total for this selection
-      quantity: 1,
-    });
+    alert(
+      `Added ${quantity} x ${packSize}-pack of ${selectedSize} Basil Tea with Honey to cart!`
+    );
     router.push('/cart');
   };
 
@@ -46,7 +41,12 @@ export default function ShopScreen() {
     <SafeAreaView style={commonStyles.container}>
       <ScrollView showsVerticalScrollIndicator={false}>
         {/* Header */}
-        <View style={[commonStyles.section, { flexDirection: 'row', alignItems: 'center', paddingTop: 10 }]}>
+        <View
+          style={[
+            commonStyles.section,
+            { flexDirection: 'row', alignItems: 'center', paddingTop: 10 },
+          ]}
+        >
           <TouchableOpacity onPress={() => router.back()} style={{ marginRight: 16 }}>
             <Icon name="arrow-back" size={24} color={colors.text} />
           </TouchableOpacity>
@@ -60,101 +60,159 @@ export default function ShopScreen() {
         <View style={[commonStyles.section, { alignItems: 'center', paddingVertical: 20 }]}>
           <Image
             source={require('../assets/images/a5103974-aee6-415a-9faa-72b606dfcdca.png')}
-            style={[commonStyles.productImage, { width: 320, height: 320 }]}
+            style={[commonStyles.productImage, { width: 260, height: 260 }]}
             resizeMode="cover"
           />
         </View>
 
-        {/* Choose Size */}
+        {/* Product Info */}
         <View style={commonStyles.section}>
-          <Text style={[commonStyles.textMedium, { marginBottom: 12 }]}>Choose Size:</Text>
-          <View style={{ flexDirection: 'row', marginBottom: 12 }}>
-            {sizes.map((s, idx) => (
-              <TouchableOpacity
-                key={s.value}
-                onPress={() => setSelectedSize(s.value)}
-                style={{
-                  flex: 1,
-                  padding: 12,
-                  borderRadius: 8,
-                  borderWidth: 2,
-                  borderColor: selectedSize === s.value ? colors.primary : colors.border,
-                  backgroundColor: selectedSize === s.value ? colors.primary : colors.backgroundAlt,
-                  marginRight: idx === 0 ? 8 : 0,
-                  alignItems: 'center',
-                }}
-              >
-                <Text
-                  style={[
-                    commonStyles.textMedium,
-                    { color: selectedSize === s.value ? colors.textLight : colors.text },
-                  ]}
-                >
-                  {s.label}
-                </Text>
-                <Text
-                  style={[
-                    commonStyles.textSmall,
-                    { color: selectedSize === s.value ? colors.textLight : colors.grey },
-                  ]}
-                >
-                  {formatPrice(s.price)}
-                </Text>
-              </TouchableOpacity>
-            ))}
-          </View>
-        </View>
+          <Text style={commonStyles.title}>Basil Tea with Honey</Text>
+          <Text style={commonStyles.priceText}>${price.toFixed(2)}</Text>
 
-        {/* Choose Pack */}
-        <View style={commonStyles.section}>
-          <Text style={[commonStyles.textMedium, { marginBottom: 12 }]}>Choose Pack:</Text>
-          <View style={{ flexDirection: 'row' }}>
-            {packSizes.map((p, idx) => (
-              <TouchableOpacity
-                key={p}
-                onPress={() => setPackSize(p)}
-                style={{
-                  flex: 1,
-                  padding: 12,
-                  borderRadius: 8,
-                  borderWidth: 2,
-                  borderColor: packSize === p ? colors.primary : colors.border,
-                  backgroundColor: packSize === p ? colors.primary : colors.backgroundAlt,
-                  marginRight: idx < packSizes.length - 1 ? 8 : 0,
-                  alignItems: 'center',
-                }}
-              >
-                <Text
-                  style={[
-                    commonStyles.textMedium,
-                    { color: packSize === p ? colors.textLight : colors.text },
-                  ]}
-                >
-                  {p === 1 ? '1 bottle' : `${p}-pack`}
-                </Text>
-              </TouchableOpacity>
-            ))}
-          </View>
-        </View>
-
-        {/* Total */}
-        <View style={[commonStyles.section, { marginTop: 10 }]}>
-          <Text style={commonStyles.text}>
-            Total: <Text style={{ fontWeight: '700' }}>{formatPrice(totalPrice)}</Text>
+          <Text style={[commonStyles.text, { marginBottom: 20 }]}>
+            A refreshing blend of basil tea infused with natural honey—smooth, lightly
+            sweet, and calming.
           </Text>
-        </View>
 
-        {/* Add to Cart */}
-        <View style={[commonStyles.section, { marginTop: 10 }]}>
+          {/* Size Selection */}
+          <Text style={[commonStyles.textMedium, { marginBottom: 8 }]}>Choose Size</Text>
+          <View style={ui.rowWrap}>
+            {sizes.map((s) => {
+              const isActive = selectedSize === s.value;
+              return (
+                <TouchableOpacity
+                  key={s.value}
+                  style={[
+                    ui.chip,
+                    isActive
+                      ? { borderColor: colors.primary, backgroundColor: colors.primary }
+                      : { borderColor: colors.border, backgroundColor: colors.backgroundAlt },
+                  ]}
+                  onPress={() => setSelectedSize(s.value)}
+                  activeOpacity={0.8}
+                >
+                  <Text
+                    style={[
+                      ui.chipLabel,
+                      { color: isActive ? colors.textLight : colors.text },
+                    ]}
+                  >
+                    {s.label}
+                  </Text>
+                  <Text
+                    style={[
+                      ui.chipSub,
+                      { color: isActive ? colors.textLight : colors.grey },
+                    ]}
+                  >
+                    ${s.price.toFixed(2)}
+                  </Text>
+                </TouchableOpacity>
+              );
+            })}
+          </View>
+
+          {/* Pack Selection */}
+          <Text style={[commonStyles.textMedium, { marginBottom: 8 }]}>Choose Pack</Text>
+          <View style={ui.rowWrap}>
+            {packSizes.map((p) => {
+              const isActive = packSize === p;
+              return (
+                <TouchableOpacity
+                  key={p}
+                  style={[
+                    ui.chip,
+                    isActive
+                      ? { borderColor: colors.primary, backgroundColor: colors.primary }
+                      : { borderColor: colors.border, backgroundColor: colors.backgroundAlt },
+                  ]}
+                  onPress={() => setPackSize(p)}
+                  activeOpacity={0.8}
+                >
+                  <Text
+                    style={[
+                      ui.chipLabel,
+                      { color: isActive ? colors.textLight : colors.text },
+                    ]}
+                  >
+                    {p}-pack
+                  </Text>
+                </TouchableOpacity>
+              );
+            })}
+          </View>
+
+          {/* Quantity Selection */}
+          <Text style={[commonStyles.textMedium, { marginBottom: 12 }]}>Quantity:</Text>
+          <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 32 }}>
+            <TouchableOpacity
+              style={ui.circleBtn}
+              onPress={() => setQuantity(Math.max(1, quantity - 1))}
+            >
+              <Icon name="remove" size={20} color={colors.text} />
+            </TouchableOpacity>
+
+            <Text
+              style={[
+                commonStyles.textMedium,
+                { marginHorizontal: 20, minWidth: 30, textAlign: 'center' },
+              ]}
+            >
+              {quantity}
+            </Text>
+
+            <TouchableOpacity
+              style={[ui.circleBtn, { backgroundColor: colors.primary }]}
+              onPress={() => setQuantity(quantity + 1)}
+            >
+              <Icon name="add" size={20} color={colors.textLight} />
+            </TouchableOpacity>
+          </View>
+
+          {/* Add to Cart Button */}
           <TouchableOpacity style={buttonStyles.primary} onPress={handleAddToCart}>
             <Text style={commonStyles.buttonText}>
-              Add to Cart – {formatPrice(totalPrice)}
+              Add to Cart - ${price.toFixed(2)}
             </Text>
           </TouchableOpacity>
         </View>
 
+        {/* Bottom spacing for navigation */}
         <View style={{ height: 100 }} />
       </ScrollView>
     </SafeAreaView>
   );
 }
+
+// Compact UI for mobile
+const SCREEN_W = Dimensions.get('window').width;
+
+const ui = StyleSheet.create({
+  rowWrap: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
+    marginBottom: 16,
+  },
+  chip: {
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+    borderRadius: 8,
+    borderWidth: 2,
+    marginBottom: 10,
+    alignItems: 'center',
+    minWidth: '48%',
+    maxWidth: Math.min(170, (SCREEN_W - 48) / 2),
+  },
+  chipLabel: { fontSize: 14, fontWeight: '600' },
+  chipSub: { fontSize: 12, marginTop: 2 },
+  circleBtn: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: colors.border,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+});
