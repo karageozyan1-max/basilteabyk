@@ -8,21 +8,19 @@ import { SIZE_PRICES } from './prices';
 import { useCart } from './CartContext';
 
 type SizeKey = '8oz' | '12oz';
-const PACK_OPTIONS = [2, 6, 12];               // change to [1,6,12] to allow single bottles
-const MIN_QTY = 1;
-const MAX_QTY = 10;                            // max number of packs per add
+const PACK_OPTIONS = [2, 6, 12];
 
 export default function ShopScreen() {
   const router = useRouter();
-  const { item } = useCart();                  // for badge only
-
+  const { item } = useCart();
   const [size, setSize] = useState<SizeKey>('8oz');
   const [pack, setPack] = useState<number>(PACK_OPTIONS[0]);
-  const [qty, setQty] = useState<number>(1);   // number of packs
-
-  const totalPrice = useMemo(() => SIZE_PRICES[size] * pack * qty, [size, pack, qty]);
-
+  const totalPrice = useMemo(() => SIZE_PRICES[size] * pack, [size, pack]);
   const badgeCount = item?.qty ?? 0;
+
+  function goToCart() {
+    router.push({ pathname: '/cart', params: { size, pack: String(pack) } });
+  }
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: '#fafafa' }}>
@@ -35,99 +33,65 @@ export default function ShopScreen() {
               style={{ width: 80, height: 80, marginRight: 12 }}
               resizeMode="contain"
             />
-
-            {/* text column */}
             <View style={{ flex: 1, minWidth: 0 }}>
               <Text style={styles.title}>Shop — Basil Tea by K</Text>
-              <Text style={styles.subtitle}>
-                Honey-infused basil tea in glass bottles
-              </Text>
+              {/* ✅ subtitle fixed */}
+              <Text style={styles.subtitle}>Honey-infused basil tea in glass bottles</Text>
             </View>
-
-            {/* Cart button (no auto-add) + badge */}
             <TouchableOpacity style={styles.headerCartBtn} onPress={() => router.push('/cart')}>
               <Text style={{ color: '#111', fontWeight: '700' }}>Cart</Text>
               {badgeCount > 0 && (
-                <View style={styles.badge}><Text style={styles.badgeText}>{badgeCount}</Text></View>
+                <View style={styles.badge}>
+                  <Text style={styles.badgeText}>{badgeCount}</Text>
+                </View>
               )}
             </TouchableOpacity>
           </View>
 
-          {/* Size (2 columns) */}
+          {/* Size */}
           <Text style={styles.sectionTitle}>Size</Text>
-          <View style={styles.row2}>
-            <Choice label="8 oz"  selected={size === '8oz'}  onPress={() => setSize('8oz')} />
+          <View style={styles.btnRow}>
+            <Choice label="8 oz" selected={size === '8oz'} onPress={() => setSize('8oz')} />
             <Choice label="12 oz" selected={size === '12oz'} onPress={() => setSize('12oz')} />
           </View>
 
-          {/* Pack (3 columns) */}
+          {/* Pack */}
           <Text style={[styles.sectionTitle, { marginTop: 18 }]}>Pack</Text>
-          <View style={styles.row3}>
+          <View style={styles.btnRow}>
             {PACK_OPTIONS.map((p) => (
-              <Choice key={p} label={`${p}-pack`} selected={pack === p} onPress={() => setPack(p)} three />
+              <Choice key={p} label={`${p}-pack`} selected={pack === p} onPress={() => setPack(p)} />
             ))}
           </View>
 
-          {/* Quantity (number of packs) */}
-          <Text style={[styles.sectionTitle, { marginTop: 18 }]}>Quantity</Text>
-          <View style={styles.qtyRow}>
-            <TouchableOpacity
-              style={styles.qtyBtn}
-              onPress={() => setQty((q) => Math.max(MIN_QTY, q - 1))}
-              accessibilityLabel="Decrease quantity"
-            >
-              <Text style={styles.qtyBtnText}>−</Text>
-            </TouchableOpacity>
-            <Text style={styles.qtyValue}>{qty}</Text>
-            <TouchableOpacity
-              style={styles.qtyBtn}
-              onPress={() => setQty((q) => Math.min(MAX_QTY, q + 1))}
-              accessibilityLabel="Increase quantity"
-            >
-              <Text style={styles.qtyBtnText}>+</Text>
-            </TouchableOpacity>
-          </View>
-
-          {/* Price + CTA */}
+          {/* Price */}
           <View style={{ marginVertical: 12 }}>
             <Text style={styles.priceValue}>${totalPrice.toFixed(2)}</Text>
-            <Text style={styles.note}>{qty} × {pack}-pack • {size}</Text>
+            <Text style={styles.note}>{pack}-pack • {size}</Text>
           </View>
 
-          <AddToCart size={size} pack={pack} qty={qty} />
+          {/* CTA */}
+          <TouchableOpacity style={styles.primaryBtn} onPress={goToCart}>
+            <Text style={styles.primaryBtnText}>Add to Cart</Text>
+          </TouchableOpacity>
+        </View>
+
+        {/* ✅ Footer merged directly here */}
+        <View style={styles.footer}>
+          <FooterLink label="Shop" onPress={() => router.push('/shop')} />
+          <FooterLink label="FAQs" onPress={() => router.push('/faqs')} />
+          <FooterLink label="Contact" onPress={() => router.push('/contact')} />
+          <FooterLink label="Our Story" onPress={() => router.push('/story')} />
         </View>
       </ScrollView>
     </SafeAreaView>
   );
 }
 
-function AddToCart({ size, pack, qty }: { size: SizeKey; pack: number; qty: number }) {
-  const router = useRouter();
-  const { setItem } = useCart();
-
-  function handleAdd() {
-    setItem({ size, pack, qty });
-    router.push('/cart');
-  }
-
-  return (
-    <TouchableOpacity style={styles.primaryBtn} onPress={handleAdd}>
-      <Text style={styles.primaryBtnText}>Add to Cart</Text>
-    </TouchableOpacity>
-  );
-}
-
-function Choice({
-  label, selected, onPress, three = false,
-}: { label: string; selected: boolean; onPress: () => void; three?: boolean }) {
+function Choice({ label, selected, onPress }: { label: string; selected: boolean; onPress: () => void }) {
   return (
     <TouchableOpacity
       onPress={onPress}
-      style={[
-        styles.choiceBase,
-        three ? styles.threeCol : styles.twoCol,
-        selected && styles.choiceSelected,
-      ]}
+      style={[styles.choiceBtn, selected && styles.choiceBtnSelected]}
       accessibilityState={{ selected }}
     >
       <Text style={[styles.choiceText, selected && styles.choiceTextSelected]}>{label}</Text>
@@ -135,13 +99,28 @@ function Choice({
   );
 }
 
+function FooterLink({ label, onPress }: { label: string; onPress: () => void }) {
+  return (
+    <TouchableOpacity onPress={onPress} style={styles.footerBtn}>
+      <Text style={styles.footerText}>{label}</Text>
+    </TouchableOpacity>
+  );
+}
+
 const styles = StyleSheet.create({
-  page: { padding: 20 },
-  card: { backgroundColor: '#fff', borderRadius: 14, padding: 18, borderWidth: 1, borderColor: '#e8e8e8' },
+  page: { padding: 20, paddingBottom: 80 },
+  card: { backgroundColor: '#fff', borderRadius: 14, padding: 18, borderWidth: 1, borderColor: '#e8e8e8', gap: 12 },
 
   headerRow: { flexDirection: 'row', alignItems: 'center' },
   title: { fontSize: 20, fontWeight: '800', flexShrink: 1 },
-  subtitle: { marginTop: 4, color: '#666', flexShrink: 1, flexWrap: 'wrap', textAlign: 'left' },
+  subtitle: {
+    marginTop: 4,
+    color: '#666',
+    flexShrink: 1,
+    minWidth: 0,
+    flexWrap: 'wrap',
+    textAlign: 'left',
+  },
 
   headerCartBtn: {
     paddingVertical: 8, paddingHorizontal: 10, borderWidth: 1, borderColor: '#ddd', borderRadius: 10,
@@ -153,37 +132,37 @@ const styles = StyleSheet.create({
   },
   badgeText: { color: '#fff', fontSize: 11, fontWeight: '800' },
 
-  sectionTitle: { fontSize: 14, fontWeight: '700', marginTop: 12, marginBottom: 8 },
-
-  // perfectly even rows on mobile & desktop:
-  row2: { flexDirection: 'row', justifyContent: 'space-between' },
-  row3: { flexDirection: 'row', justifyContent: 'space-between' },
-
-  choiceBase: {
-    paddingVertical: 12, borderWidth: 1, borderColor: '#dcdcdc', borderRadius: 12,
+  sectionTitle: { fontSize: 14, fontWeight: '700', marginTop: 6 },
+  btnRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 10 },
+  choiceBtn: {
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+    borderWidth: 1,
+    borderColor: '#dcdcdc',
+    borderRadius: 10,
+    backgroundColor: '#fff',
+    width: '48%',
     alignItems: 'center',
   },
-  twoCol: { width: '48%' },
-  threeCol: { width: '31%' },
-  choiceSelected: { backgroundColor: '#111', borderColor: '#111' },
-  choiceText: { fontSize: 14, fontWeight: '600', color: '#111' },
+  choiceBtnSelected: { backgroundColor: '#111', borderColor: '#111' },
+  choiceText: { fontSize: 13, fontWeight: '600', color: '#111' },
   choiceTextSelected: { color: '#fff' },
-
-  qtyRow: {
-    flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 12,
-  },
-  qtyBtn: {
-    width: 44, height: 44, borderRadius: 10, borderWidth: 1, borderColor: '#dcdcdc',
-    alignItems: 'center', justifyContent: 'center',
-  },
-  qtyBtnText: { fontSize: 22, fontWeight: '800', color: '#111', lineHeight: 22 },
-  qtyValue: { minWidth: 36, textAlign: 'center', fontSize: 18, fontWeight: '700' },
 
   priceValue: { fontSize: 22, fontWeight: '800' },
   note: { fontSize: 12, color: '#888', marginTop: 2 },
 
-  primaryBtn: {
-    marginTop: 8, paddingVertical: 12, borderRadius: 10, backgroundColor: '#111', alignItems: 'center',
-  },
+  primaryBtn: { marginTop: 6, paddingVertical: 12, borderRadius: 10, backgroundColor: '#111', alignItems: 'center' },
   primaryBtnText: { color: '#fff', fontSize: 15, fontWeight: '700' },
+
+  footer: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    borderTopWidth: 1,
+    borderTopColor: '#ddd',
+    paddingVertical: 12,
+    marginTop: 24,
+    backgroundColor: '#fff',
+  },
+  footerBtn: { paddingHorizontal: 8 },
+  footerText: { fontSize: 14, fontWeight: '700', color: '#111' },
 });
