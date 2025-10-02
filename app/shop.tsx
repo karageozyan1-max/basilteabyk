@@ -11,7 +11,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
-import { SIZE_PRICES } from '../prices'; // adjust if your prices.ts is elsewhere
+import { SIZE_PRICES } from './prices'; // <-- correct path
 
 type SizeKey = '8oz' | '12oz';
 type PackKey = 6 | 12;
@@ -25,7 +25,6 @@ export default function ShopScreen() {
   const unitPrice = useMemo(() => SIZE_PRICES[size][pack], [size, pack]);
 
   function goToCart() {
-    // push selection to /cart
     router.push({ pathname: '/cart', params: { size, pack: String(pack) } });
   }
 
@@ -42,40 +41,22 @@ export default function ShopScreen() {
             />
             <View style={{ flex: 1 }}>
               <Text style={styles.title}>Shop — Basil Tea by K</Text>
-              <Text style={styles.subtitle}>
-                Honey-infused basil tea in glass bottles
-              </Text>
+              <Text style={styles.subtitle}>Honey-infused basil tea in glass bottles</Text>
             </View>
           </View>
 
           {/* Size */}
           <Text style={styles.sectionTitle}>Size</Text>
           <View style={styles.btnRow}>
-            <Choice
-              label="8 oz"
-              selected={size === '8oz'}
-              onPress={() => setSize('8oz')}
-            />
-            <Choice
-              label="12 oz"
-              selected={size === '12oz'}
-              onPress={() => setSize('12oz')}
-            />
+            <Choice label="8 oz" selected={size === '8oz'} onPress={() => setSize('8oz')} />
+            <Choice label="12 oz" selected={size === '12oz'} onPress={() => setSize('12oz')} />
           </View>
 
           {/* Pack */}
           <Text style={[styles.sectionTitle, { marginTop: 18 }]}>Pack</Text>
           <View style={styles.btnRow}>
-            <Choice
-              label="6-pack"
-              selected={pack === 6}
-              onPress={() => setPack(6)}
-            />
-            <Choice
-              label="12-pack"
-              selected={pack === 12}
-              onPress={() => setPack(12)}
-            />
+            <Choice label="6-pack" selected={pack === 6} onPress={() => setPack(6)} />
+            <Choice label="12-pack" selected={pack === 12} onPress={() => setPack(12)} />
           </View>
 
           {/* Price + CTA */}
@@ -83,9 +64,7 @@ export default function ShopScreen() {
             <View>
               <Text style={styles.priceLabel}>Price</Text>
               <Text style={styles.priceValue}>${unitPrice.toFixed(2)}</Text>
-              <Text style={styles.note}>
-                {pack}-pack • {size}
-              </Text>
+              <Text style={styles.note}>{pack}-pack • {size}</Text>
             </View>
           </View>
 
@@ -99,23 +78,15 @@ export default function ShopScreen() {
 }
 
 function Choice({
-  label,
-  selected,
-  onPress,
-}: {
-  label: string;
-  selected: boolean;
-  onPress: () => void;
-}) {
+  label, selected, onPress,
+}: { label: string; selected: boolean; onPress: () => void }) {
   return (
     <TouchableOpacity
       onPress={onPress}
       style={[styles.choiceBtn, selected && styles.choiceBtnSelected]}
       accessibilityState={{ selected }}
     >
-      <Text style={[styles.choiceText, selected && styles.choiceTextSelected]}>
-        {label}
-      </Text>
+      <Text style={[styles.choiceText, selected && styles.choiceTextSelected]}>{label}</Text>
     </TouchableOpacity>
   );
 }
@@ -123,12 +94,8 @@ function Choice({
 const styles = StyleSheet.create({
   page: { padding: 20 },
   card: {
-    backgroundColor: '#fff',
-    borderRadius: 14,
-    padding: 18,
-    borderWidth: 1,
-    borderColor: '#e8e8e8',
-    gap: 12,
+    backgroundColor: '#fff', borderRadius: 14, padding: 18,
+    borderWidth: 1, borderColor: '#e8e8e8', gap: 12,
   },
   headerRow: { flexDirection: 'row', alignItems: 'center' },
   title: { fontSize: 20, fontWeight: '800' },
@@ -152,21 +119,14 @@ const styles = StyleSheet.create({
   choiceText: { fontSize: 13, fontWeight: '600', color: '#111' },
   choiceTextSelected: { color: '#fff' },
 
-  priceRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginVertical: 10,
-  },
+  priceRow: { flexDirection: 'row', justifyContent: 'space-between', marginVertical: 10 },
   priceLabel: { fontSize: 12, color: '#666' },
   priceValue: { fontSize: 22, fontWeight: '800', marginTop: 2 },
   note: { fontSize: 12, color: '#888' },
 
   primaryBtn: {
-    marginTop: 6,
-    paddingVertical: 12,
-    borderRadius: 10,
-    backgroundColor: '#111',
-    alignItems: 'center',
+    marginTop: 6, paddingVertical: 12, borderRadius: 10,
+    backgroundColor: '#111', alignItems: 'center',
   },
   primaryBtnText: { color: '#fff', fontSize: 15, fontWeight: '700' },
 });
