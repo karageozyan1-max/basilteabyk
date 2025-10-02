@@ -1,16 +1,10 @@
 'use client';
 
 import React, { useMemo } from 'react';
-import {
-  View,
-  Text,
-  Image,
-  StyleSheet,
-  ScrollView,
-} from 'react-native';
+import { View, Text, Image, StyleSheet, ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useLocalSearchParams } from 'expo-router';
-import { SIZE_PRICES } from './prices'; // <-- correct path
+import { SIZE_PRICES } from './prices'; // <-- prices.ts is in /app
 
 type SizeKey = '8oz' | '12oz';
 type PackKey = 6 | 12;
