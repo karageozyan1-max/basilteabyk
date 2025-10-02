@@ -18,17 +18,19 @@ type SizeKey = '8oz' | '12oz';
 
 export default function CartPage() {
   const router = useRouter();
-  const params = useLocalSearchParams<{ size?: string; pack?: string }>();
+  const params = useLocalSearchParams<{ size?: string; pack?: string; qty?: string }>();
 
   const size: SizeKey = (params.size as SizeKey) || '8oz';
-  const pack = (parseInt(params.pack || '0', 10) as number) || 0;
+  const pack = Math.max(0, parseInt(params.pack || '0', 10));
+  const qty  = Math.max(1, parseInt(params.qty || '1', 10));
 
-  const total = useMemo(() => {
-    if (!pack) return 0;
-    return SIZE_PRICES[size] * pack;
-  }, [size, pack]);
+  const unit = SIZE_PRICES[size] ?? 0;
+  const total = useMemo(() => unit * pack * qty, [unit, pack, qty]);
+  const hasItem = pack > 0 && qty > 0;
 
-  const hasItem = pack > 0;
+  function goCheckout() {
+    router.push({ pathname: '/checkout', params: { size, pack: String(pack), qty: String(qty) } });
+  }
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: BG_CREAM }}>
@@ -44,7 +46,7 @@ export default function CartPage() {
                 />
                 <View style={{ flex: 1, minWidth: 0 }}>
                   <Text style={styles.title}>Your Cart</Text>
-                  <Text style={styles.subtitle}>{pack}-pack • {size}</Text>
+                  <Text style={styles.subtitle}>{qty} × {pack}-pack • {size}</Text>
                 </View>
               </View>
 
@@ -53,7 +55,7 @@ export default function CartPage() {
                 <Text style={styles.priceValue}>${total.toFixed(2)}</Text>
               </View>
 
-              <TouchableOpacity style={styles.primaryBtn} onPress={() => router.push('/checkout')}>
+              <TouchableOpacity style={styles.primaryBtn} onPress={goCheckout}>
                 <Text style={styles.primaryBtnText}>Checkout</Text>
               </TouchableOpacity>
 
@@ -111,14 +113,8 @@ const styles = StyleSheet.create({
     alignSelf: 'flex-start',
   },
   subtitle: {
-    marginTop: 6,
-    color: GOLD,
-    flexShrink: 1,
-    minWidth: 0,
-    flexWrap: 'wrap',
-    textAlign: 'left',
-    fontSize: isSmall ? 13 : 15,
-    fontWeight: '600',
+    marginTop: 6, color: GOLD, flexShrink: 1, minWidth: 0, flexWrap: 'wrap', textAlign: 'left',
+    fontSize: isSmall ? 13 : 15, fontWeight: '600',
   },
 
   priceLabel: { fontSize: 12, color: GOLD },
