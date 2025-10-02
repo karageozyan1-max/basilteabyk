@@ -7,16 +7,15 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import { SIZE_PRICES } from './prices';
 
 type SizeKey = '8oz' | '12oz';
-// Match whatever you choose in shop.tsx
-type PackKey = 2 | 6 | 12; // use `1 | 6 | 12` if you choose single
+type PackKey = 2 | 6 | 12;  // match Shop
 
 export default function CartPage() {
   const router = useRouter();
   const params = useLocalSearchParams<{ size?: string; pack?: string }>();
   const size = (params.size as SizeKey) || '8oz';
-  const pack = (parseInt(params.pack || '6', 10) as PackKey);
+  const pack = (parseInt(params.pack || '2', 10) as PackKey);
 
-  const totalPrice = useMemo(() => SIZE_PRICES[size] * (pack || 6), [size, pack]);
+  const totalPrice = useMemo(() => SIZE_PRICES[size] * (pack || 2), [size, pack]);
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: '#fafafa' }}>
@@ -39,7 +38,11 @@ export default function CartPage() {
             <Text style={styles.priceValue}>${totalPrice.toFixed(2)}</Text>
           </View>
 
-          <TouchableOpacity style={styles.primaryBtn} onPress={() => router.push('/checkout')}>
+          {/* Actions */}
+          <TouchableOpacity
+            style={styles.primaryBtn}
+            onPress={() => router.push({ pathname: '/checkout', params: { size, pack: String(pack) } })}
+          >
             <Text style={styles.primaryBtnText}>Checkout</Text>
           </TouchableOpacity>
 
