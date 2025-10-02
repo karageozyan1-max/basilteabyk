@@ -1,9 +1,16 @@
 'use client';
+
 import React, { useMemo } from 'react';
-import { View, Text, Image, StyleSheet, ScrollView } from 'react-native';
+import {
+  View,
+  Text,
+  Image,
+  StyleSheet,
+  ScrollView,
+} from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useLocalSearchParams } from 'expo-router';
-import { SIZE_PRICES } from '../prices';
+import { SIZE_PRICES } from './prices'; // <-- correct path
 
 type SizeKey = '8oz' | '12oz';
 type PackKey = 6 | 12;
@@ -44,8 +51,11 @@ export default function CartPage() {
 const styles = StyleSheet.create({
   page: { padding: 20 },
   card: {
-    backgroundColor: '#fff', borderRadius: 14, padding: 18,
-    borderWidth: 1, borderColor: '#e8e8e8',
+    backgroundColor: '#fff',
+    borderRadius: 14,
+    padding: 18,
+    borderWidth: 1,
+    borderColor: '#e8e8e8',
   },
   headerRow: { flexDirection: 'row', alignItems: 'center' },
   title: { fontSize: 22, fontWeight: '800' },
