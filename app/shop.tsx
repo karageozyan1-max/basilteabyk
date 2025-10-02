@@ -14,17 +14,23 @@ type SizeKey = '8oz' | '12oz';
 const PACK_OPTIONS = [2, 6, 12];
 
 const { width } = Dimensions.get('window');
-const isSmall = width < 380; // iPhone mini-ish
+const isSmall = width < 380;
+const BTN_H = isSmall ? 44 : 52;
 
 export default function ShopScreen() {
   const router = useRouter();
   const [size, setSize] = useState<SizeKey>('8oz');
   const [pack, setPack] = useState<number>(PACK_OPTIONS[0]);
+  const [qty, setQty] = useState<number>(1); // 👈 NEW
 
-  const totalPrice = useMemo(() => SIZE_PRICES[size] * pack, [size, pack]);
+  const unit = SIZE_PRICES[size];
+  const total = useMemo(() => unit * pack * qty, [unit, pack, qty]);
 
   function goToCart() {
-    router.push({ pathname: '/cart', params: { size, pack: String(pack) } });
+    router.push({
+      pathname: '/cart',
+      params: { size, pack: String(pack), qty: String(qty) },
+    });
   }
 
   return (
@@ -47,25 +53,35 @@ export default function ShopScreen() {
             </TouchableOpacity>
           </View>
 
-          {/* Size (even buttons) */}
+          {/* Size */}
           <Text style={styles.sectionTitle}>Size</Text>
           <View style={styles.row2}>
             <Choice label="8 oz"  selected={size === '8oz'}  onPress={() => setSize('8oz')} />
             <Choice label="12 oz" selected={size === '12oz'} onPress={() => setSize('12oz')} />
           </View>
 
-          {/* Pack (3 per row, wraps cleanly) */}
+          {/* Pack */}
           <Text style={[styles.sectionTitle, { marginTop: 18 }]}>Pack</Text>
           <View style={styles.row3}>
-            {PACK_OPTIONS.map((p) => (
+            {PACK_OPTIONS.map(p => (
               <Choice key={p} label={`${p}-pack`} selected={pack === p} onPress={() => setPack(p)} three />
             ))}
           </View>
 
+          {/* Quantity 👇 */}
+          <Text style={[styles.sectionTitle, { marginTop: 18 }]}>Quantity</Text>
+          <View style={styles.qtyRow}>
+            <QtyBtn label="–" onPress={() => setQty(q => Math.max(1, q - 1))} />
+            <Text style={styles.qtyText}>{qty}</Text>
+            <QtyBtn label="+" onPress={() => setQty(q => Math.min(99, q + 1))} />
+          </View>
+
           {/* Price + CTA */}
           <View style={{ marginVertical: 12 }}>
-            <Text style={styles.priceValue}>${totalPrice.toFixed(2)}</Text>
-            <Text style={styles.note}>{pack}-pack • {size}</Text>
+            <Text style={styles.priceValue}>${total.toFixed(2)}</Text>
+            <Text style={styles.note}>
+              {qty} × {pack}-pack • {size}
+            </Text>
           </View>
 
           <TouchableOpacity style={styles.primaryBtn} onPress={goToCart}>
@@ -97,7 +113,13 @@ function Choice({
   );
 }
 
-const BTN_H = isSmall ? 44 : 52;
+function QtyBtn({ label, onPress }: { label: string; onPress: () => void }) {
+  return (
+    <TouchableOpacity onPress={onPress} style={styles.qtyBtn}>
+      <Text style={styles.qtyBtnText}>{label}</Text>
+    </TouchableOpacity>
+  );
+}
 
 const styles = StyleSheet.create({
   page: { padding: 20 },
@@ -125,16 +147,9 @@ const styles = StyleSheet.create({
     borderRadius: 6,
     alignSelf: 'flex-start',
   },
-  // wrap-friendly subtitle
   subtitle: {
-    marginTop: 6,
-    color: GOLD,
-    flexShrink: 1,
-    minWidth: 0,
-    flexWrap: 'wrap',
-    textAlign: 'left',
-    fontSize: isSmall ? 13 : 15,
-    fontWeight: '600',
+    marginTop: 6, color: GOLD, flexShrink: 1, minWidth: 0, flexWrap: 'wrap',
+    textAlign: 'left', fontSize: isSmall ? 13 : 15, fontWeight: '600',
   },
 
   headerCartBtn: {
@@ -146,7 +161,6 @@ const styles = StyleSheet.create({
 
   sectionTitle: { fontSize: 14, fontWeight: '700', marginTop: 6, color: GREEN },
 
-  // even buttons (2 per row / 3 per row)
   row2: { flexDirection: 'row', justifyContent: 'space-between', gap: 10 },
   row3: { flexDirection: 'row', justifyContent: 'space-between', gap: 10, flexWrap: 'wrap' },
 
@@ -164,8 +178,18 @@ const styles = StyleSheet.create({
   threeCol: { width: '31%' },
 
   choiceSelected: { backgroundColor: GREEN, borderColor: GREEN },
-  choiceText: { fontSize: isSmall ? 13 : 14, fontWeight: '700', color: GREEN },
+  choiceText: { fontSize: isSmall ? 13 : 14, fontWeight: '700', color: GREEN, textAlign: 'center' },
   choiceTextSelected: { color: BG_CREAM },
+
+  qtyRow: { flexDirection: 'row', alignItems: 'center', gap: 14 },
+  qtyBtn: {
+    height: BTN_H, width: BTN_H,
+    alignItems: 'center', justifyContent: 'center',
+    borderRadius: 10,
+    backgroundColor: GREEN,
+  },
+  qtyBtnText: { color: BG_CREAM, fontSize: isSmall ? 18 : 22, fontWeight: '800' },
+  qtyText: { minWidth: 36, textAlign: 'center', fontSize: isSmall ? 16 : 18, fontWeight: '800', color: GREEN },
 
   priceValue: { fontSize: isSmall ? 20 : 22, fontWeight: '800', color: GREEN },
   note: { fontSize: isSmall ? 12 : 13, color: GOLD, marginTop: 2 },
