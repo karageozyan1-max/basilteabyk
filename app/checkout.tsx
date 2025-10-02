@@ -43,7 +43,7 @@ export default function CheckoutScreen() {
                   style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 12 }}
                 >
                   <Image
-                    source={require('../assets/images/a5103974-aee6-415a-9faa-72b606dfcdca.png')}
+                    source={require('../assets/images/basil-bottle.png')}
                     style={{ width: 60, height: 60, borderRadius: 8, marginRight: 10 }}
                     resizeMode="cover"
                   />
