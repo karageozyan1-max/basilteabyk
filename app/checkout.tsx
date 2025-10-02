@@ -3,20 +3,36 @@
 import React, { useMemo } from 'react';
 import { View, Text, Image, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useLocalSearchParams, useRouter } from 'expo-router';
+import { useRouter } from 'expo-router';
+import { useCart } from './CartContext';
 import { SIZE_PRICES } from './prices';
-
-type SizeKey = '8oz' | '12oz';
 
 export default function CheckoutScreen() {
   const router = useRouter();
-  const params = useLocalSearchParams<{ size?: string; pack?: string }>();
-  const size = (params.size as SizeKey) || '8oz';
-  const pack = Math.max(parseInt(params.pack || '2', 10), 1);
-  const price = useMemo(() => SIZE_PRICES[size] * pack, [size, pack]);
+  const { item, clear } = useCart();
+
+  if (!item) {
+    return (
+      <SafeAreaView style={{ flex: 1, backgroundColor: '#fafafa' }}>
+        <ScrollView contentContainerStyle={styles.page}>
+          <View style={styles.card}>
+            <Text style={styles.title}>Checkout</Text>
+            <Text style={{ color: '#666', marginTop: 6 }}>Your cart is empty.</Text>
+            <TouchableOpacity style={styles.primaryBtn} onPress={() => router.push('/shop')}>
+              <Text style={styles.primaryBtnText}>Back to Shop</Text>
+            </TouchableOpacity>
+          </View>
+        </ScrollView>
+      </SafeAreaView>
+    );
+  }
+
+  const { size, pack, qty } = item;
+  const total = useMemo(() => SIZE_PRICES[size] * pack * qty, [size, pack, qty]);
 
   function placeOrder() {
-    // call your real payment flow here
+    // TODO: hook up real payment
+    clear();                      // clear AFTER “placing” the order
     router.replace('/order-success');
   }
 
@@ -32,11 +48,11 @@ export default function CheckoutScreen() {
               style={{ width: 60, height: 60, borderRadius: 8, marginRight: 10 }}
               resizeMode="cover"
             />
-            <View style={{ flex: 1 }}>
+            <View style={{ flex: 1, minWidth: 0 }}>
               <Text style={{ fontWeight: '700' }}>Basil Tea Bottle</Text>
-              <Text style={{ color: '#666' }}>{pack}-pack • {size}</Text>
+              <Text style={{ color: '#666' }}>{qty} × {pack}-pack • {size}</Text>
             </View>
-            <Text style={{ fontWeight: '700' }}>${price.toFixed(2)}</Text>
+            <Text style={{ fontWeight: '700' }}>${total.toFixed(2)}</Text>
           </View>
 
           <TouchableOpacity style={styles.primaryBtn} onPress={placeOrder}>
