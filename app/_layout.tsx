@@ -1,68 +1,68 @@
 'use client';
 
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Platform } from 'react-native';
-import { Stack, useRouter } from 'expo-router';
+import { View, Text, TouchableOpacity } from 'react-native';
+import { Stack, useRouter, usePathname } from 'expo-router';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
-const FOOTER_HEIGHT = 64;
+const BG_CREAM = '#fdf6ec';
+const GREEN = '#0b3d2e';
+const BORDER = '#eadccf';
 
-export default function RootLayout() {
+export default function Layout() {
   const router = useRouter();
+  const pathname = usePathname();
+
+  const NavItem = ({ label, href }: { label: string; href: string }) => {
+    // treat both "" and "/" as home
+    const isActive = pathname === href || (href === '/' && (pathname === '/' || pathname === ''));
+    return (
+      <TouchableOpacity onPress={() => router.push(href)} style={{ paddingHorizontal: 6, paddingVertical: 4 }}>
+        <Text
+          style={{
+            color: GREEN,
+            fontWeight: isActive ? '800' : '700',
+            fontSize: isActive ? 15 : 14,
+          }}
+          numberOfLines={1}
+        >
+          {label}
+        </Text>
+      </TouchableOpacity>
+    );
+  };
 
   return (
-    <View style={{ flex: 1, backgroundColor: '#fdf6ec' }}>
-      {/* Give every page space so the fixed footer never overlaps content */}
-      <View style={{ flex: 1, paddingBottom: FOOTER_HEIGHT + 12 }}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: BG_CREAM }}>
+      {/* Give every screen bottom padding so sticky footer never covers content */}
+      <View style={{ flex: 1, paddingBottom: 64 }}>
         <Stack screenOptions={{ headerShown: false }} />
       </View>
 
-      {/* Global sticky footer (safe on web + native) */}
+      {/* Sticky footer on every page */}
       <View
-        style={[
-          styles.footer,
-          Platform.select({
-            web: { position: 'fixed' as const },
-            default: { position: 'absolute' as const },
-          }),
-        ]}
+        style={{
+          position: 'absolute',
+          left: 0,
+          right: 0,
+          bottom: 0,
+          height: 56,                 // tighter height (was larger)
+          backgroundColor: BG_CREAM,
+          borderTopWidth: 1,
+          borderTopColor: BORDER,
+          flexDirection: 'row',
+          alignItems: 'center',
+          justifyContent: 'space-around',
+          paddingHorizontal: 12,
+        }}
       >
-        {(
-          [
-            ['Home', '/'],
-            ['Shop', '/shop'],
-            ['FAQs', '/faqs'],
-            ['Our Story', '/story'],
-            ['Contact', '/contact'],
-            ['Cart', '/cart'],
-          ] as const
-        ).map(([label, path]) => (
-          <TouchableOpacity key={path} onPress={() => router.push(path)}>
-            <Text style={styles.link}>{label}</Text>
-          </TouchableOpacity>
-        ))}
+        <NavItem label="Home" href="/" />
+        <NavItem label="Shop" href="/shop" />
+        <NavItem label="FAQs" href="/faqs" />
+        <NavItem label="Our Story" href="/story" />
+        <NavItem label="Contact" href="/contact" />
+        <NavItem label="Cart" href="/cart" />
       </View>
-    </View>
+    </SafeAreaView>
   );
 }
-
-const styles = StyleSheet.create({
-  footer: {
-    left: 0,
-    right: 0,
-    bottom: 0,
-    height: FOOTER_HEIGHT,
-    backgroundColor: '#fdf6ec',
-    borderTopWidth: 1,
-    borderTopColor: '#eadccf',
-    paddingHorizontal: 16,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-around',
-    zIndex: 1000,
-  },
-  link: {
-    color: '#0b3d2e',
-    fontSize: 14,
-    fontWeight: '700',
-  },
-});
