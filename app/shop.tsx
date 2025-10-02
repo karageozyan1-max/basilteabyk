@@ -11,7 +11,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
-import { SIZE_PRICES } from './prices'; // <-- correct path
+import { SIZE_PRICES } from './prices'; // <-- prices.ts is in /app
 
 type SizeKey = '8oz' | '12oz';
 type PackKey = 6 | 12;
@@ -94,8 +94,12 @@ function Choice({
 const styles = StyleSheet.create({
   page: { padding: 20 },
   card: {
-    backgroundColor: '#fff', borderRadius: 14, padding: 18,
-    borderWidth: 1, borderColor: '#e8e8e8', gap: 12,
+    backgroundColor: '#fff',
+    borderRadius: 14,
+    padding: 18,
+    borderWidth: 1,
+    borderColor: '#e8e8e8',
+    gap: 12,
   },
   headerRow: { flexDirection: 'row', alignItems: 'center' },
   title: { fontSize: 20, fontWeight: '800' },
@@ -104,7 +108,7 @@ const styles = StyleSheet.create({
   sectionTitle: { fontSize: 14, fontWeight: '700', marginTop: 6 },
   btnRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 10 },
 
-  // Smaller, neat buttons (2 per row on phones)
+  // Smaller, tidy buttons (2 per row on phones)
   choiceBtn: {
     paddingVertical: 8,
     paddingHorizontal: 12,
@@ -125,8 +129,11 @@ const styles = StyleSheet.create({
   note: { fontSize: 12, color: '#888' },
 
   primaryBtn: {
-    marginTop: 6, paddingVertical: 12, borderRadius: 10,
-    backgroundColor: '#111', alignItems: 'center',
+    marginTop: 6,
+    paddingVertical: 12,
+    borderRadius: 10,
+    backgroundColor: '#111',
+    alignItems: 'center',
   },
   primaryBtnText: { color: '#fff', fontSize: 15, fontWeight: '700' },
 });
