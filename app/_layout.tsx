@@ -1,4 +1,5 @@
 'use client';
+
 import React from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 import { Stack, useRouter, usePathname } from 'expo-router';
@@ -7,7 +8,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 const BG_CREAM = '#fdf6ec';
 const GREEN = '#0b3d2e';
 const BORDER = '#eadccf';
-const FOOTER_H = 48;               // ↓ was 56/64
+const FOOTER_H = 48; // compact footer
 
 export default function Layout() {
   const router = useRouter();
@@ -16,8 +17,8 @@ export default function Layout() {
   const NavItem = ({ label, href }: { label: string; href: string }) => {
     const isActive = pathname === href || (href === '/' && (pathname === '/' || pathname === ''));
     return (
-      <TouchableOpacity onPress={() => router.push(href)} style={{ paddingHorizontal: 4, paddingVertical: 2 }}>
-        <Text style={{ color: GREEN, fontWeight: isActive ? '800' : '700', fontSize: isActive ? 15 : 14 }}>
+      <TouchableOpacity onPress={() => router.push(href)} style={{ paddingHorizontal: 4 }}>
+        <Text style={{ color: GREEN, fontWeight: isActive ? '800' : '700', fontSize: 15 }}>
           {label}
         </Text>
       </TouchableOpacity>
@@ -26,11 +27,12 @@ export default function Layout() {
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: BG_CREAM }}>
-      {/* Just enough padding so content doesn't sit under the footer */}
+      {/* leave just enough room so content never sits under the footer */}
       <View style={{ flex: 1, paddingBottom: FOOTER_H + 6 }}>
         <Stack screenOptions={{ headerShown: false }} />
       </View>
 
+      {/* sticky footer */}
       <View
         style={{
           position: 'absolute',
@@ -42,7 +44,7 @@ export default function Layout() {
           alignItems: 'center',
           justifyContent: 'space-around',
           paddingHorizontal: 10,
-          paddingVertical: 6,        // ↓ was bigger
+          paddingVertical: 4, // tight so no big blank strip
         }}
       >
         <NavItem label="Home" href="/" />
