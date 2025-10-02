@@ -1,10 +1,11 @@
+// app/cart.tsx
 'use client';
 
 import React, { useMemo } from 'react';
 import { View, Text, Image, StyleSheet, ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useLocalSearchParams } from 'expo-router';
-import { SIZE_PRICES } from './prices'; // <-- prices.ts is in /app
+import { SIZE_PRICES } from './prices';
 
 type SizeKey = '8oz' | '12oz';
 type PackKey = 6 | 12;
@@ -14,7 +15,7 @@ export default function CartPage() {
   const size = (params.size as SizeKey) || '8oz';
   const pack = (parseInt(params.pack || '6', 10) as PackKey) || 6;
 
-  const unitPrice = useMemo(() => SIZE_PRICES[size][pack], [size, pack]);
+  const totalPrice = useMemo(() => SIZE_PRICES[size] * pack, [size, pack]);
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: '#fafafa' }}>
@@ -26,15 +27,17 @@ export default function CartPage() {
               style={{ width: 72, height: 72, marginRight: 12 }}
               resizeMode="contain"
             />
-            <View style={{ flex: 1 }}>
+            <View>
               <Text style={styles.title}>Your Cart</Text>
-              <Text style={styles.subtitle}>{pack}-pack • {size}</Text>
+              <Text style={styles.subtitle}>
+                {pack}-pack • {size}
+              </Text>
             </View>
           </View>
 
-          <View style={{ marginTop: 10 }}>
-            <Text style={styles.priceLabel}>Price</Text>
-            <Text style={styles.priceValue}>${unitPrice.toFixed(2)}</Text>
+          <View style={{ marginTop: 16 }}>
+            <Text style={styles.priceLabel}>Total</Text>
+            <Text style={styles.priceValue}>${totalPrice.toFixed(2)}</Text>
           </View>
         </View>
       </ScrollView>
@@ -44,16 +47,10 @@ export default function CartPage() {
 
 const styles = StyleSheet.create({
   page: { padding: 20 },
-  card: {
-    backgroundColor: '#fff',
-    borderRadius: 14,
-    padding: 18,
-    borderWidth: 1,
-    borderColor: '#e8e8e8',
-  },
+  card: { backgroundColor: '#fff', borderRadius: 14, padding: 18, borderWidth: 1, borderColor: '#ddd' },
   headerRow: { flexDirection: 'row', alignItems: 'center' },
-  title: { fontSize: 22, fontWeight: '800' },
-  subtitle: { marginTop: 4, color: '#666' },
-  priceLabel: { fontSize: 12, color: '#666' },
-  priceValue: { fontSize: 22, fontWeight: '800', marginTop: 2 },
+  title: { fontSize: 20, fontWeight: '800' },
+  subtitle: { color: '#666' },
+  priceLabel: { fontSize: 14, color: '#666' },
+  priceValue: { fontSize: 22, fontWeight: '800', marginTop: 4 },
 });
