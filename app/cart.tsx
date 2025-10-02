@@ -1,123 +1,111 @@
-// app/cart.tsx
 import React from 'react';
-import { View, Text, ScrollView, TouchableOpacity, Image } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { useRouter } from 'expo-router';
+import { View, Text, FlatList, TouchableOpacity, Image } from 'react-native';
 import { useCart } from './CartContext';
-
-const fmt = (n: number) => `$${n.toFixed(2)}`;
+import { useRouter } from 'expo-router';
 
 export default function CartScreen() {
+  const { cart, removeFromCart, clearCart } = useCart();
   const router = useRouter();
-  const { cart, updateQuantity, removeFromCart, clearCart } = useCart();
 
-  const lineTotal = (item: { price: number; quantity: number }) => item.price * item.quantity;
-  const cartTotal = cart.reduce((sum, item) => sum + lineTotal(item), 0);
+  const subtotal = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+  const shipping = subtotal >= 50 ? 0 : 4.99;
+  const tax = subtotal * 0.08;
+  const total = subtotal + shipping + tax;
+
+  const renderItem = ({ item }) => (
+    <View
+      style={{
+        flexDirection: 'row',
+        alignItems: 'center',
+        padding: 12,
+        backgroundColor: '#f9f9f9',
+        borderRadius: 8,
+        marginBottom: 12,
+      }}
+    >
+      <Image
+        source={require('../assets/images/basil-bottle.png')}
+        style={{ width: 60, height: 60, marginRight: 12 }}
+        resizeMode="contain"
+      />
+      <View style={{ flex: 1 }}>
+        <Text
+          style={{ fontSize: 16, fontWeight: '500', flexShrink: 1 }}
+          numberOfLines={1}
+          ellipsizeMode="tail"
+        >
+          {item.quantity} × {item.size} Basil Tea with Honey
+        </Text>
+        <Text style={{ fontSize: 14, color: '#666' }}>
+          ${item.price.toFixed(2)}
+        </Text>
+      </View>
+      <TouchableOpacity onPress={() => removeFromCart(item.id)}>
+        <Text style={{ color: 'red', fontSize: 14 }}>Remove</Text>
+      </TouchableOpacity>
+    </View>
+  );
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: '#fff' }}>
-      <ScrollView contentContainerStyle={{ padding: 16 }}>
-        <Text style={{ fontSize: 26, fontWeight: '700', marginBottom: 16 }}>Your Cart</Text>
+    <View style={{ flex: 1, padding: 20 }}>
+      <Text style={{ fontSize: 22, fontWeight: 'bold', marginBottom: 20 }}>Your Cart</Text>
 
-        {cart.length === 0 ? (
-          <>
-            <Text>Your cart is empty.</Text>
-            <TouchableOpacity
-              style={{
-                marginTop: 12, padding: 12, backgroundColor: '#0f3d2e',
-                borderRadius: 8, alignItems: 'center',
-              }}
-              onPress={() => router.push('/shop')}
-            >
-              <Text style={{ color: '#fff', fontWeight: '700' }}>Go to Shop</Text>
-            </TouchableOpacity>
-          </>
-        ) : (
-          <>
-            {cart.map((item) => (
-              <View
-                key={item.id}
-                style={{
-                  flexDirection: 'row',
-                  alignItems: 'center',
-                  padding: 12,
-                  borderRadius: 8,
-                  backgroundColor: '#f6f6f6',
-                  marginBottom: 12,
-                }}
-              >
-                {/* Product Image */}
-                <Image
-                  source={require('../assets/images/a5103974-aee6-415a-9faa-72b606dfcdca.png')}
-                  style={{ width: 70, height: 70, borderRadius: 8, marginRight: 12 }}
-                  resizeMode="cover"
-                />
+      {cart.length === 0 ? (
+        <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+          <Text style={{ fontSize: 16, marginBottom: 12 }}>Your cart is empty.</Text>
+          <TouchableOpacity
+            style={{
+              backgroundColor: '#0a6847',
+              paddingVertical: 12,
+              paddingHorizontal: 20,
+              borderRadius: 8,
+            }}
+            onPress={() => router.push('/shop')}
+          >
+            <Text style={{ color: 'white', fontSize: 16 }}>Continue Shopping</Text>
+          </TouchableOpacity>
+        </View>
+      ) : (
+        <>
+          <FlatList
+            data={cart}
+            keyExtractor={(item) => item.id.toString()}
+            renderItem={renderItem}
+          />
 
-                {/* Details */}
-                <View style={{ flex: 1 }}>
-                  <Text style={{ fontWeight: '700', marginBottom: 6 }}>{item.name}</Text>
-                  <Text style={{ marginBottom: 8 }}>{fmt(lineTotal(item))}</Text>
+          <View style={{ marginTop: 20 }}>
+            <Text>Subtotal: ${subtotal.toFixed(2)}</Text>
+            <Text>Shipping: ${shipping.toFixed(2)}</Text>
+            <Text>Tax (8%): ${tax.toFixed(2)}</Text>
+            <Text style={{ fontSize: 18, fontWeight: 'bold', marginTop: 8 }}>
+              Total: ${total.toFixed(2)}
+            </Text>
+          </View>
 
-                  <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                    <TouchableOpacity
-                      onPress={() => updateQuantity(item.id, Math.max(0, item.quantity - 1))}
-                      style={{ paddingVertical: 6, paddingHorizontal: 12, borderWidth: 1, borderRadius: 6, marginRight: 8 }}
-                    >
-                      <Text>−</Text>
-                    </TouchableOpacity>
-                    <Text style={{ minWidth: 28, textAlign: 'center' }}>{item.quantity}</Text>
-                    <TouchableOpacity
-                      onPress={() => updateQuantity(item.id, item.quantity + 1)}
-                      style={{ paddingVertical: 6, paddingHorizontal: 12, borderWidth: 1, borderRadius: 6, marginLeft: 8 }}
-                    >
-                      <Text>+</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity onPress={() => removeFromCart(item.id)} style={{ marginLeft: 12 }}>
-                      <Text style={{ color: '#cc3333' }}>Remove</Text>
-                    </TouchableOpacity>
-                  </View>
-                </View>
-              </View>
-            ))}
+          <TouchableOpacity
+            style={{
+              backgroundColor: '#0a6847',
+              paddingVertical: 14,
+              borderRadius: 8,
+              marginTop: 20,
+              alignItems: 'center',
+            }}
+            onPress={() => router.push('/checkout')}
+          >
+            <Text style={{ color: 'white', fontSize: 18 }}>Proceed to Checkout</Text>
+          </TouchableOpacity>
 
-            {/* Continue shopping */}
-            <TouchableOpacity
-              style={{
-                marginTop: 4, padding: 12, borderWidth: 1, borderRadius: 8, alignItems: 'center',
-              }}
-              onPress={() => router.push('/shop')}
-            >
-              <Text>Continue Shopping</Text>
-            </TouchableOpacity>
-
-            {/* Cart total */}
-            <View style={{ marginTop: 16 }}>
-              <Text style={{ fontSize: 16, fontWeight: '700' }}>
-                Total: {fmt(cartTotal)}
-              </Text>
-            </View>
-
-            {/* Proceed to checkout */}
-            <TouchableOpacity
-              style={{
-                marginTop: 12, padding: 14, backgroundColor: '#0f3d2e',
-                borderRadius: 10, alignItems: 'center',
-              }}
-              onPress={() => router.push('/checkout')}
-            >
-              <Text style={{ color: '#fff', fontWeight: '700' }}>Proceed to Checkout</Text>
-            </TouchableOpacity>
-
-            {/* Clear cart */}
-            <TouchableOpacity
-              style={{ marginTop: 10, padding: 12, borderWidth: 1, borderRadius: 8, alignItems: 'center' }}
-              onPress={clearCart}
-            >
-              <Text>Clear Cart</Text>
-            </TouchableOpacity>
-          </>
-        )}
-      </ScrollView>
-    </SafeAreaView>
+          <TouchableOpacity
+            style={{
+              marginTop: 16,
+              alignItems: 'center',
+            }}
+            onPress={clearCart}
+          >
+            <Text style={{ color: 'red' }}>Clear Cart</Text>
+          </TouchableOpacity>
+        </>
+      )}
+    </View>
   );
 }
