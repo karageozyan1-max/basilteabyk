@@ -7,13 +7,8 @@ import { useRouter } from 'expo-router';
 import { SIZE_PRICES } from './prices';
 
 type SizeKey = '8oz' | '12oz';
-// If you want single bottle, include 1; if you want 2-pack, include 2.
-type PackKey = 2 | 6 | 12; // <-- use `1 | 6 | 12` if you prefer single
-
-// 👇 Pick your options here:
-// For 2-pack minimum (recommended): [2, 6, 12]
-// For single bottle option: [1, 6, 12]
-const PACK_OPTIONS: PackKey[] = [2, 6, 12]; // change to `[1, 6, 12]` if you want single
+type PackKey = 2 | 6 | 12;            // change to 1 | 6 | 12 if you want single bottles
+const PACK_OPTIONS: PackKey[] = [2, 6, 12];
 
 export default function ShopScreen() {
   const router = useRouter();
@@ -41,20 +36,25 @@ export default function ShopScreen() {
               <Text style={styles.title}>Shop — Basil Tea by K</Text>
               <Text style={styles.subtitle}>Honey-infused basil tea in glass bottles</Text>
             </View>
+
+            {/* Cart shortcut uses current selection */}
+            <TouchableOpacity style={styles.headerCartBtn} onPress={goToCart}>
+              <Text style={{ color: '#111', fontWeight: '700' }}>Cart</Text>
+            </TouchableOpacity>
           </View>
 
-          {/* Size */}
+          {/* Size (2 columns) */}
           <Text style={styles.sectionTitle}>Size</Text>
-          <View style={styles.btnRow}>
-            <Choice label="8 oz" selected={size === '8oz'} onPress={() => setSize('8oz')} />
-            <Choice label="12 oz" selected={size === '12oz'} onPress={() => setSize('12oz')} />
+          <View style={styles.row}>
+            <ChoiceTwoCol label="8 oz"  selected={size === '8oz'}  onPress={() => setSize('8oz')} />
+            <ChoiceTwoCol label="12 oz" selected={size === '12oz'} onPress={() => setSize('12oz')} />
           </View>
 
-          {/* Pack (generated from PACK_OPTIONS) */}
+          {/* Pack (3 columns) */}
           <Text style={[styles.sectionTitle, { marginTop: 18 }]}>Pack</Text>
-          <View style={styles.btnRow}>
+          <View style={styles.rowBetween}>
             {PACK_OPTIONS.map((p) => (
-              <Choice
+              <ChoiceThreeCol
                 key={p}
                 label={`${p}-pack`}
                 selected={pack === p}
@@ -64,7 +64,7 @@ export default function ShopScreen() {
           </View>
 
           {/* Price + CTA */}
-          <View style={styles.priceRow}>
+          <View style={{ marginVertical: 12 }}>
             <Text style={styles.priceValue}>${totalPrice.toFixed(2)}</Text>
             <Text style={styles.note}>{pack}-pack • {size}</Text>
           </View>
@@ -78,11 +78,27 @@ export default function ShopScreen() {
   );
 }
 
-function Choice({ label, selected, onPress }: { label: string; selected: boolean; onPress: () => void }) {
+function ChoiceTwoCol({ label, selected, onPress }:{
+  label: string; selected: boolean; onPress: () => void;
+}) {
   return (
     <TouchableOpacity
       onPress={onPress}
-      style={[styles.choiceBtn, selected && styles.choiceBtnSelected]}
+      style={[styles.choiceBase, styles.twoCol, selected && styles.choiceSelected]}
+      accessibilityState={{ selected }}
+    >
+      <Text style={[styles.choiceText, selected && styles.choiceTextSelected]}>{label}</Text>
+    </TouchableOpacity>
+  );
+}
+
+function ChoiceThreeCol({ label, selected, onPress }:{
+  label: string; selected: boolean; onPress: () => void;
+}) {
+  return (
+    <TouchableOpacity
+      onPress={onPress}
+      style={[styles.choiceBase, styles.threeCol, selected && styles.choiceSelected]}
       accessibilityState={{ selected }}
     >
       <Text style={[styles.choiceText, selected && styles.choiceTextSelected]}>{label}</Text>
@@ -92,19 +108,39 @@ function Choice({ label, selected, onPress }: { label: string; selected: boolean
 
 const styles = StyleSheet.create({
   page: { padding: 20 },
-  card: { backgroundColor: '#fff', borderRadius: 14, padding: 18, borderWidth: 1, borderColor: '#e8e8e8', gap: 12 },
+  card: { backgroundColor: '#fff', borderRadius: 14, padding: 18, borderWidth: 1, borderColor: '#e8e8e8' },
+
   headerRow: { flexDirection: 'row', alignItems: 'center' },
+  headerCartBtn: { paddingVertical: 8, paddingHorizontal: 10, borderWidth: 1, borderColor: '#ddd', borderRadius: 8 },
+
   title: { fontSize: 20, fontWeight: '800', flexShrink: 1 },
   subtitle: { marginTop: 4, color: '#666', flexShrink: 1 },
-  sectionTitle: { fontSize: 14, fontWeight: '700', marginTop: 6 },
-  btnRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 10 },
-  choiceBtn: { paddingVertical: 8, paddingHorizontal: 12, borderWidth: 1, borderColor: '#dcdcdc', borderRadius: 10, backgroundColor: '#fff', width: '48%', alignItems: 'center' },
-  choiceBtnSelected: { backgroundColor: '#111', borderColor: '#111' },
-  choiceText: { fontSize: 13, fontWeight: '600', color: '#111' },
+
+  sectionTitle: { fontSize: 14, fontWeight: '700', marginTop: 12, marginBottom: 8 },
+
+  // rows
+  row: { flexDirection: 'row', justifyContent: 'space-between' },
+  rowBetween: { flexDirection: 'row', justifyContent: 'space-between' },
+
+  // choice buttons
+  choiceBase: {
+    paddingVertical: 10, paddingHorizontal: 12,
+    borderWidth: 1, borderColor: '#dcdcdc', borderRadius: 12,
+    alignItems: 'center',
+  },
+  twoCol: { width: '48%' },    // 2 per row
+  threeCol: { width: '31%' },  // 3 per row
+
+  choiceSelected: { backgroundColor: '#111', borderColor: '#111' },
+  choiceText: { fontSize: 14, fontWeight: '600', color: '#111' },
   choiceTextSelected: { color: '#fff' },
-  priceRow: { marginVertical: 12 },
+
   priceValue: { fontSize: 22, fontWeight: '800' },
   note: { fontSize: 12, color: '#888', marginTop: 2 },
-  primaryBtn: { marginTop: 6, paddingVertical: 12, borderRadius: 10, backgroundColor: '#111', alignItems: 'center' },
+
+  primaryBtn: {
+    marginTop: 8, paddingVertical: 12, borderRadius: 10,
+    backgroundColor: '#111', alignItems: 'center',
+  },
   primaryBtnText: { color: '#fff', fontSize: 15, fontWeight: '700' },
 });
