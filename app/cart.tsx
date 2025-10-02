@@ -1,111 +1,225 @@
-import React from 'react';
-import { View, Text, FlatList, TouchableOpacity, Image } from 'react-native';
-import { useCart } from './CartContext';
-import { useRouter } from 'expo-router';
+'use client';
 
-export default function CartScreen() {
-  const { cart, removeFromCart, clearCart } = useCart();
-  const router = useRouter();
+import { useMemo, useState } from 'react';
+import Image from 'next/image';
+import { PRICES } from '../prices'; // adjust the path if prices.ts is in a different folder
 
-  const subtotal = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
-  const shipping = subtotal >= 50 ? 0 : 4.99;
-  const tax = subtotal * 0.08;
-  const total = subtotal + shipping + tax;
+export default function CartPage() {
+  const [size, setSize] = useState<'8oz' | '12oz'>('8oz');
+  const [pack, setPack] = useState<6 | 12>(6);
+  const [qty, setQty] = useState<number>(1);
 
-  const renderItem = ({ item }) => (
-    <View
-      style={{
-        flexDirection: 'row',
-        alignItems: 'center',
-        padding: 12,
-        backgroundColor: '#f9f9f9',
-        borderRadius: 8,
-        marginBottom: 12,
-      }}
-    >
-      <Image
-        source={require('../assets/images/basil-bottle.png')}
-        style={{ width: 60, height: 60, marginRight: 12 }}
-        resizeMode="contain"
-      />
-      <View style={{ flex: 1 }}>
-        <Text
-          style={{ fontSize: 16, fontWeight: '500', flexShrink: 1 }}
-          numberOfLines={1}
-          ellipsizeMode="tail"
-        >
-          {item.quantity} × {item.size} Basil Tea with Honey
-        </Text>
-        <Text style={{ fontSize: 14, color: '#666' }}>
-          ${item.price.toFixed(2)}
-        </Text>
-      </View>
-      <TouchableOpacity onPress={() => removeFromCart(item.id)}>
-        <Text style={{ color: 'red', fontSize: 14 }}>Remove</Text>
-      </TouchableOpacity>
-    </View>
-  );
+  // pull from your actual prices.ts
+  const unitPrice = useMemo(() => PRICES[size][pack], [size, pack]);
+  const subtotal = useMemo(() => round2(unitPrice * qty), [unitPrice, qty]);
 
-  return (
-    <View style={{ flex: 1, padding: 20 }}>
-      <Text style={{ fontSize: 22, fontWeight: 'bold', marginBottom: 20 }}>Your Cart</Text>
+  function addToCart() {
+    alert(
+      `Added to cart:\n${qty} × ${pack}-pack (${size})\nSubtotal: ${fmt(subtotal)}`
+    );
+  }
 
-      {cart.length === 0 ? (
-        <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-          <Text style={{ fontSize: 16, marginBottom: 12 }}>Your cart is empty.</Text>
-          <TouchableOpacity
-            style={{
-              backgroundColor: '#0a6847',
-              paddingVertical: 12,
-              paddingHorizontal: 20,
-              borderRadius: 8,
-            }}
-            onPress={() => router.push('/shop')}
-          >
-            <Text style={{ color: 'white', fontSize: 16 }}>Continue Shopping</Text>
-          </TouchableOpacity>
-        </View>
-      ) : (
-        <>
-          <FlatList
-            data={cart}
-            keyExtractor={(item) => item.id.toString()}
-            renderItem={renderItem}
-          />
+  return (
+    <main style={styles.page}>
+      <div style={styles.card}>
+        <div style={styles.headerRow}>
+          <Image
+            src="/basil-bottle.png"
+            alt="Basil Bottle"
+            width={72}
+            height={72}
+            style={{ flexShrink: 0 }}
+          />
+          <div style={{ minWidth: 0 }}>
+            <h1 style={styles.title}>Basil Tea by K</h1>
+            <p style={styles.subtitle}>Honey-infused basil tea in glass bottles</p>
+          </div>
+        </div>
 
-          <View style={{ marginTop: 20 }}>
-            <Text>Subtotal: ${subtotal.toFixed(2)}</Text>
-            <Text>Shipping: ${shipping.toFixed(2)}</Text>
-            <Text>Tax (8%): ${tax.toFixed(2)}</Text>
-            <Text style={{ fontSize: 18, fontWeight: 'bold', marginTop: 8 }}>
-              Total: ${total.toFixed(2)}
-            </Text>
-          </View>
+        {/* Size selector */}
+        <section style={styles.section}>
+          <h2 style={styles.sectionTitle}>Size</h2>
+          <div style={styles.btnRow}>
+            <SelectButton
+              label="8 oz"
+              selected={size === '8oz'}
+              onClick={() => setSize('8oz')}
+            />
+            <SelectButton
+              label="12 oz"
+              selected={size === '12oz'}
+              onClick={() => setSize('12oz')}
+            />
+          </div>
+        </section>
 
-          <TouchableOpacity
-            style={{
-              backgroundColor: '#0a6847',
-              paddingVertical: 14,
-              borderRadius: 8,
-              marginTop: 20,
-              alignItems: 'center',
-            }}
-            onPress={() => router.push('/checkout')}
-          >
-            <Text style={{ color: 'white', fontSize: 18 }}>Proceed to Checkout</Text>
-          </TouchableOpacity>
+        {/* Pack selector */}
+        <section style={styles.section}>
+          <h2 style={styles.sectionTitle}>Pack</h2>
+          <div style={styles.btnRow}>
+            <SelectButton
+              label="6-pack"
+              selected={pack === 6}
+              onClick={() => setPack(6)}
+            />
+            <SelectButton
+              label="12-pack"
+              selected={pack === 12}
+              onClick={() => setPack(12)}
+            />
+          </div>
+        </section>
 
-          <TouchableOpacity
-            style={{
-              marginTop: 16,
-              alignItems: 'center',
-            }}
-            onPress={clearCart}
-          >
-            <Text style={{ color: 'red' }}>Clear Cart</Text>
-          </TouchableOpacity>
-        </>
-      )}
-    </View>
-  );
+        {/* Quantity */}
+        <section style={styles.section}>
+          <h2 style={styles.sectionTitle}>Quantity</h2>
+          <div style={styles.qtyRow}>
+            <button
+              type="button"
+              style={styles.qtyBtn}
+              onClick={() => setQty((q) => Math.max(1, q - 1))}
+            >
+              −
+            </button>
+            <div style={styles.qtyDisplay}>{qty}</div>
+            <button
+              type="button"
+              style={styles.qtyBtn}
+              onClick={() => setQty((q) => q + 1)}
+            >
+              +
+            </button>
+          </div>
+        </section>
+
+        {/* Price + Add to Cart */}
+        <section style={styles.section}>
+          <div style={styles.priceRow}>
+            <div>
+              <div style={styles.priceLabel}>Price</div>
+              <div style={styles.priceValue}>{fmt(unitPrice)}</div>
+              <div style={styles.note}>
+                {pack}-pack • {size}
+              </div>
+            </div>
+            <div style={{ textAlign: 'right' }}>
+              <div style={styles.priceLabel}>Subtotal</div>
+              <div style={styles.priceValue}>{fmt(subtotal)}</div>
+            </div>
+          </div>
+          <button type="button" style={styles.primaryBtn} onClick={addToCart}>
+            Add to Cart
+          </button>
+        </section>
+      </div>
+    </main>
+  );
 }
+
+/* --- Components --- */
+function SelectButton({
+  label,
+  selected,
+  onClick,
+}: {
+  label: string;
+  selected: boolean;
+  onClick: () => void;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      style={{
+        ...styles.choiceBtn,
+        ...(selected ? styles.choiceBtnSelected : null),
+      }}
+    >
+      {label}
+    </button>
+  );
+}
+
+/* --- Helpers --- */
+function fmt(n: number) {
+  return new Intl.NumberFormat(undefined, { style: 'currency', currency: 'USD' }).format(n);
+}
+function round2(n: number) {
+  return Math.round(n * 100) / 100;
+}
+
+/* --- Styles --- */
+const styles: Record<string, React.CSSProperties> = {
+  page: {
+    minHeight: '100dvh',
+    display: 'grid',
+    placeItems: 'center',
+    padding: '24px',
+    background: '#fafafa',
+  },
+  card: {
+    width: '100%',
+    maxWidth: 720,
+    background: '#fff',
+    border: '1px solid #e8e8e8',
+    borderRadius: 14,
+    padding: 20,
+    boxShadow: '0 4px 18px rgba(0,0,0,0.05)',
+  },
+  headerRow: { display: 'flex', alignItems: 'center', gap: 14 },
+  title: { margin: 0, fontSize: 20, fontWeight: 700 },
+  subtitle: { margin: '4px 0 0 0', color: '#666', fontSize: 14 },
+  section: { marginTop: 20 },
+  sectionTitle: { margin: '0 0 10px 0', fontSize: 14, fontWeight: 600 },
+  btnRow: { display: 'flex', flexWrap: 'wrap', gap: 10 },
+  choiceBtn: {
+    padding: '10px 14px',
+    borderRadius: 10,
+    border: '1px solid #dcdcdc',
+    background: '#fff',
+    fontSize: 14,
+    fontWeight: 600,
+    cursor: 'pointer',
+  },
+  choiceBtnSelected: { borderColor: '#111', background: '#111', color: '#fff' },
+  qtyRow: { display: 'flex', alignItems: 'center', gap: 10 },
+  qtyBtn: {
+    width: 40,
+    height: 40,
+    borderRadius: 10,
+    border: '1px solid #dcdcdc',
+    background: '#fff',
+    fontSize: 20,
+    fontWeight: 700,
+    cursor: 'pointer',
+  },
+  qtyDisplay: {
+    minWidth: 44,
+    height: 40,
+    display: 'grid',
+    placeItems: 'center',
+    borderRadius: 10,
+    border: '1px solid #dcdcdc',
+    fontWeight: 700,
+  },
+  priceRow: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'flex-end',
+    marginBottom: 12,
+  },
+  priceLabel: { fontSize: 12, color: '#666' },
+  priceValue: { fontSize: 22, fontWeight: 800, marginTop: 2 },
+  note: { fontSize: 12, color: '#888', marginTop: 2 },
+  primaryBtn: {
+    width: '100%',
+    padding: '14px 16px',
+    borderRadius: 12,
+    border: 'none',
+    background: '#111',
+    color: '#fff',
+    fontWeight: 700,
+    fontSize: 16,
+    cursor: 'pointer',
+  },
+};
