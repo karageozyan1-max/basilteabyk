@@ -1,144 +1,64 @@
 'use client';
 
-import React from 'react';
-import {
-  View,
-  Text,
-  ScrollView,
-  TouchableOpacity,
-  Image,
-} from 'react-native';
+import React, { useMemo } from 'react';
+import { View, Text, Image, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useRouter } from 'expo-router';
-import { useCart } from './CartContext'; // stays the same
+import { useLocalSearchParams, useRouter } from 'expo-router';
+import { SIZE_PRICES } from './prices';
 
-const fmt = (n: number) => `$${n.toFixed(2)}`;
-
-const FREE_SHIP_THRESHOLD = 50;
-const SHIPPING_FLAT = 4.99;
+type SizeKey = '8oz' | '12oz';
 
 export default function CheckoutScreen() {
   const router = useRouter();
-  const { cart, clearCart } = useCart();
-
-  const subtotal = cart.reduce((sum, i) => sum + i.price * i.quantity, 0);
-  const shipping = cart.length === 0
-    ? 0
-    : subtotal >= FREE_SHIP_THRESHOLD
-      ? 0
-      : SHIPPING_FLAT;
-  const tax = cart.length === 0 ? 0 : subtotal * 0.08; // example tax
-  const total = subtotal + shipping + tax;
+  const params = useLocalSearchParams<{ size?: string; pack?: string }>();
+  const size = (params.size as SizeKey) || '8oz';
+  const pack = Math.max(parseInt(params.pack || '2', 10), 1);
+  const price = useMemo(() => SIZE_PRICES[size] * pack, [size, pack]);
 
   function placeOrder() {
-    // your real checkout goes here
-    clearCart();
+    // call your real payment flow here
     router.replace('/order-success');
   }
 
-  if (cart.length === 0) {
-    return (
-      <SafeAreaView style={{ flex: 1, backgroundColor: '#fff' }}>
-        <ScrollView contentContainerStyle={{ padding: 16 }}>
-          <Text style={{ fontSize: 26, fontWeight: '700', marginBottom: 16 }}>
-            Checkout
-          </Text>
-          <Text>Your cart is empty.</Text>
-          <TouchableOpacity
-            onPress={() => router.push('/shop')}
-            style={{
-              marginTop: 16,
-              paddingVertical: 12,
-              paddingHorizontal: 16,
-              backgroundColor: '#111',
-              borderRadius: 8,
-              alignItems: 'center',
-            }}
-          >
-            <Text style={{ color: '#fff', fontWeight: '700' }}>Back to Shop</Text>
-          </TouchableOpacity>
-        </ScrollView>
-      </SafeAreaView>
-    );
-  }
-
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: '#fff' }}>
-      <ScrollView contentContainerStyle={{ padding: 16 }}>
-        <Text style={{ fontSize: 26, fontWeight: '700', marginBottom: 16 }}>
-          Checkout
-        </Text>
+    <SafeAreaView style={{ flex: 1, backgroundColor: '#fafafa' }}>
+      <ScrollView contentContainerStyle={styles.page}>
+        <View style={styles.card}>
+          <Text style={styles.title}>Checkout</Text>
 
-        {/* Items */}
-        {cart.map((item) => (
-          <View
-            key={item.id}
-            style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 12 }}
-          >
+          <View style={styles.row}>
             <Image
               source={require('../assets/images/basil-bottle.png')}
               style={{ width: 60, height: 60, borderRadius: 8, marginRight: 10 }}
               resizeMode="cover"
             />
             <View style={{ flex: 1 }}>
-              <Text style={{ fontWeight: '600' }}>{item.name}</Text>
-              <Text>{fmt(item.price)} × {item.quantity}</Text>
+              <Text style={{ fontWeight: '700' }}>Basil Tea Bottle</Text>
+              <Text style={{ color: '#666' }}>{pack}-pack • {size}</Text>
             </View>
-            <Text style={{ marginLeft: 8, fontWeight: '700' }}>
-              {fmt(item.price * item.quantity)}
-            </Text>
+            <Text style={{ fontWeight: '700' }}>${price.toFixed(2)}</Text>
           </View>
-        ))}
 
-        {/* Totals */}
-        <View style={{ height: 8 }} />
-        <Text>Subtotal: {fmt(subtotal)}</Text>
-        <Text>Shipping: {fmt(shipping)}</Text>
-        <Text>Tax: {fmt(tax)}</Text>
-        <Text style={{ marginTop: 6, fontWeight: '700' }}>
-          Total: {fmt(total)}
-        </Text>
+          <TouchableOpacity style={styles.primaryBtn} onPress={placeOrder}>
+            <Text style={styles.primaryBtnText}>Place Order</Text>
+          </TouchableOpacity>
 
-        {/* Free shipping messaging */}
-        {subtotal < FREE_SHIP_THRESHOLD && (
-          <Text style={{ marginTop: 8, color: '#e63333', fontWeight: '600' }}>
-            Add {fmt(FREE_SHIP_THRESHOLD - subtotal)} more to get FREE shipping 🚚
-          </Text>
-        )}
-        {subtotal >= FREE_SHIP_THRESHOLD && shipping === 0 && (
-          <Text style={{ marginTop: 8, color: 'green', fontWeight: '700' }}>
-            You unlocked FREE shipping! You saved {fmt(SHIPPING_FLAT)} 🎉
-          </Text>
-        )}
-
-        {/* Actions */}
-        <TouchableOpacity
-          style={{
-            marginTop: 16,
-            paddingVertical: 12,
-            backgroundColor: '#1a73e8',
-            borderRadius: 8,
-            alignItems: 'center',
-          }}
-          onPress={placeOrder}
-        >
-          <Text style={{ color: '#fff', fontWeight: '700' }}>Place Order</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          style={{
-            marginTop: 10,
-            paddingVertical: 12,
-            borderRadius: 8,
-            alignItems: 'center',
-            borderWidth: 1,
-            borderColor: '#ddd',
-          }}
-          onPress={() => router.back()}
-        >
-          <Text>Back to Cart</Text>
-        </TouchableOpacity>
+          <TouchableOpacity style={styles.secondaryBtn} onPress={() => router.back()}>
+            <Text style={styles.secondaryBtnText}>Back to Cart</Text>
+          </TouchableOpacity>
+        </View>
       </ScrollView>
     </SafeAreaView>
   );
 }
+
+const styles = StyleSheet.create({
+  page: { padding: 20 },
+  card: { backgroundColor: '#fff', borderRadius: 14, padding: 18, borderWidth: 1, borderColor: '#e8e8e8' },
+  title: { fontSize: 22, fontWeight: '800', marginBottom: 12 },
+  row: { flexDirection: 'row', alignItems: 'center', marginBottom: 12 },
+  primaryBtn: { marginTop: 10, paddingVertical: 12, borderRadius: 10, backgroundColor: '#111', alignItems: 'center' },
+  primaryBtnText: { color: '#fff', fontSize: 15, fontWeight: '700' },
+  secondaryBtn: { marginTop: 10, paddingVertical: 12, borderRadius: 10, borderWidth: 1, borderColor: '#ddd', alignItems: 'center' },
+  secondaryBtnText: { fontSize: 15, fontWeight: '700', color: '#111' },
+});
