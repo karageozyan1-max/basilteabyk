@@ -63,7 +63,7 @@ export default function HomeScreen() {
           
           {/* Hero Product Image */}
           <Image
-            source={require('../assets/images/a5103974-aee6-415a-9faa-72b606dfcdca.png')}
+            source={require('../assets/images/basil-bottle.png')}
             style={commonStyles.productImage}
             resizeMode="cover"
           />
