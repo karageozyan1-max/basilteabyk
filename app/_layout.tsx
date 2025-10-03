@@ -62,7 +62,7 @@ export default function Layout() {
     justifyContent: 'space-around',
     paddingHorizontal: 4,
     paddingVertical: 2
-  }}
+  }
 >
       <View
     style={{
