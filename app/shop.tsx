@@ -226,14 +226,14 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     width: '100%',
-    gap: 10,
+    gap: 12,
   },
 
   // —— smaller choice buttons (no clipping)
   choiceBtn: {
   minWidth: BTN_MIN_W,
   minHeight: BTN_H,            // ⬅️ was `height`; minHeight avoids vertical crop
-  paddingHorizontal: 16,
+  paddingHorizontal: 14,
   borderWidth: 1,
   borderColor: GREEN,
   borderRadius: 10,
