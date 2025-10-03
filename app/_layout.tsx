@@ -5,27 +5,35 @@ import React from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 import { Stack, useRouter, usePathname } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { CartProvider } from './CartContext'; // ✅ add cart provider
+import { CartProvider } from './CartContext';
 
-// Colors + Footer height
 const BG_CREAM = '#fdf6ec';
-const GREEN = '#004d25';
+const GREEN = '#0b3d2e';
 const BORDER = '#d9d9d9';
-const FOOTER_H = 58;
 
-// Footer nav item component
-function NavItem({ label, href }: { label: string; href: string }) {
+// One footer button (kept small so 5 items fit; wraps on tiny phones)
+function FooterItem({ label, href }: { label: string; href: string }) {
   const router = useRouter();
   const pathname = usePathname();
   const active = pathname === href;
   return (
-    <TouchableOpacity onPress={() => router.push(href)} style={{ paddingHorizontal: 6 }}>
+    <TouchableOpacity
+      onPress={() => router.push(href)}
+      style={{
+        flexBasis: '20%',     // 5 items = 20% each
+        flexGrow: 1,
+        alignItems: 'center',
+        paddingVertical: 4,
+      }}
+      accessibilityRole="button"
+    >
       <Text
         style={{
-          color: active ? GREEN : '#666',
+          fontSize: 13,
           fontWeight: active ? '800' : '700',
-          fontSize: 14,
+          color: active ? GREEN : '#666',
         }}
+        numberOfLines={1}
       >
         {label}
       </Text>
@@ -37,31 +45,37 @@ export default function Layout() {
   return (
     <CartProvider>
       <SafeAreaView style={{ flex: 1, backgroundColor: BG_CREAM }}>
+        {/* Your pages */}
         <Stack screenOptions={{ headerShown: false }} />
 
-        {/* Footer */}
+        {/* Sticky footer */}
         <View
           style={{
             position: 'absolute',
             left: 0,
             right: 0,
             bottom: 0,
-            height: FOOTER_H,
             backgroundColor: BG_CREAM,
             borderTopWidth: 1,
             borderTopColor: BORDER,
-            flexDirection: 'row',
-            alignItems: 'center',
-            justifyContent: 'space-around',
-            paddingHorizontal: 8,
-            paddingVertical: 6,
+            paddingHorizontal: 6,
+            paddingVertical: 6,   // compact so it doesn’t eat space
           }}
         >
-          <NavItem label="Home" href="/" />
-          <NavItem label="Shop" href="/shop" />
-          <NavItem label="FAQs" href="/faq" />
-          <NavItem label="Our Story" href="/story" />
-          <NavItem label="Contact" href="/contact" />
+          <View
+            style={{
+              flexDirection: 'row',
+              flexWrap: 'wrap',     // <-- allows wrap on the smallest phones
+              alignItems: 'center',
+              justifyContent: 'space-around',
+            }}
+          >
+            <FooterItem label="Home" href="/" />
+            <FooterItem label="Shop" href="/shop" />
+            <FooterItem label="FAQs" href="/faq" />
+            <FooterItem label="Our Story" href="/story" />
+            <FooterItem label="Contact" href="/contact" />
+          </View>
         </View>
       </SafeAreaView>
     </CartProvider>
