@@ -58,26 +58,50 @@ const CartCtx = createContext<{
 } | null>(null);
 
 export function CartProvider({ children }: { children: React.ReactNode }) {
-  const [state, dispatch] = useReducer(reducer, { items: [] });
+  const [state, dispatch] = useReducer(reducer, { items: [] });
 
-  const subtotal = useMemo(
-    () => state.items.reduce((sum, i) => sum + i.unitPrice * i.pack * i.qty, 0),
-    [state.items]
-  );
+  // Rehydrate once on mount
+  React.useEffect(() => {
+    if (typeof window === 'undefined') return;
+    try {
+      const saved = localStorage.getItem('cart:v1');
+      if (saved) {
+        const items = JSON.parse(saved);
+        if (Array.isArray(items)) {
+          dispatch({ type: 'CLEAR' });
+          for (const it of items) dispatch({ type: 'ADD', payload: it });
+        }
+      }
+    } catch {}
+  }, []);
 
-  const value = useMemo(
-    () => ({
-      items: state.items,
-      addItem: (item: CartItem) => dispatch({ type: 'ADD', payload: item }),
-      updateQty: (id: string, qty: number) => dispatch({ type: 'UPDATE_QTY', id, qty }),
-      removeItem: (id: string) => dispatch({ type: 'REMOVE', id }),
-      clearCart: () => dispatch({ type: 'CLEAR' }),
-      subtotal,
-    }),
-    [state.items, subtotal]
-  );
+  // Persist whenever items change
+  React.useEffect(() => {
+    if (typeof window === 'undefined') return;
+    try {
+      localStorage.setItem('cart:v1', JSON.stringify(state.items));
+    } catch {}
+  }, [state.items]);
 
-  return <CartCtx.Provider value={value}>{children}</CartCtx.Provider>;
+  const subtotal = useMemo(
+    () => state.items.reduce((sum, i) => sum + i.unitPrice * i.qty, 0),
+    [state.items]
+  );
+
+  const value = useMemo(
+    () => ({
+      items: state.items,
+      addItem: (item: CartItem) => dispatch({ type: 'ADD', payload: item }),
+      updateQty: (id: string, qty: number) =>
+        dispatch({ type: 'UPDATE_QTY', id, qty }),
+      removeItem: (id: string) => dispatch({ type: 'REMOVE', id }),
+      clearCart: () => dispatch({ type: 'CLEAR' }),
+      subtotal, // ✅ use your existing subtotal here
+    }),
+    [state.items, subtotal]
+  );
+
+  return <CartCtx.Provider value={value}>{children}</CartCtx.Provider>;
 }
 
 export function useCart() {
