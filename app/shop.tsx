@@ -216,12 +216,12 @@ const styles = StyleSheet.create({
 
   // —— smaller choice buttons (no clipping)
   choiceBtn: {
-    minWidth: 148,
-    height: 44,
-    paddingHorizontal: 12,
+    minWidth: 120,
+    height: 40,
+    paddingHorizontal: 16,
     borderWidth: 1,
     borderColor: GREEN,
-    borderRadius: 10,
+    borderRadius: 8,
     backgroundColor: BG_CREAM,
     alignItems: 'center',
     justifyContent: 'center',
@@ -233,6 +233,8 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     color: GREEN,
     textAlign: 'center',
+    includeFontPaddinf: false,  // helps with cutoff
+    allowFontScaling: false,  // stops zoom cutting
   },
   choiceTextSelected: { color: BG_CREAM },
 
