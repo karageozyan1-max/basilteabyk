@@ -66,14 +66,14 @@ export default function Layout() {
       flexDirection: 'row',
       alignItems: 'center',
       justifyContent: 'center',
-      gap: 12,  // more space between bold items
+      gap: 10,  // more space between bold items
     }}
   >
-    <FooterItem label="Home" href="/" style={{ fontWeight: '700', fontSize: 16, color: GREEN }} />
-    <FooterItem label="Shop" href="/shop" style={{ fontWeight: '700', fontSize: 16, color: GREEN }} />
-    <FooterItem label="FAQs" href="/faq" style={{ fontWeight: '700', fontSize: 16, color: GREEN }} />
-    <FooterItem label="Our Story" href="/story" style={{ fontWeight: '700', fontSize: 16, color: GREEN }} />
-    <FooterItem label="Contact" href="/contact" style={{ fontWeight: '700', fontSize: 16, color: GREEN }} />
+    <FooterItem label="Home" href="/" style={{ fontWeight: '700', fontSize: 20, color: GREEN }} />
+    <FooterItem label="Shop" href="/shop" style={{ fontWeight: '700', fontSize: 20, color: GREEN }} />
+    <FooterItem label="FAQs" href="/faq" style={{ fontWeight: '700', fontSize: 20, color: GREEN }} />
+    <FooterItem label="Our Story" href="/story" style={{ fontWeight: '700', fontSize: 20, color: GREEN }} />
+    <FooterItem label="Contact" href="/contact" style={{ fontWeight: '700', fontSize: 20, color: GREEN }} />
   </View>
 </View>
       </SafeAreaView>
