@@ -2,57 +2,36 @@
 'use client';
 
 import React from 'react';
-import { View, Text, TouchableOpacity } from 'react-native';
-import { Stack, useRouter, usePathname } from 'expo-router';
+import { View } from 'react-native';
+import { Stack, Link } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-// ---- Theme
+// ---- Theme colors
 const BG_CREAM = '#f4f0e6';
 const GREEN    = '#0b3d2e';
 const BORDER   = '#e4dccf';
 
-// compact sticky footer
-const FOOTER_H = 40;
-
 export default function Layout() {
-  const router = useRouter();
-  const pathname = usePathname();
-
-  // simple nav button used in the bold row
-  const FooterItem = ({ label, href }: { label: string; href: string }) => (
-    <TouchableOpacity onPress={() => router.push(href)}>
-      <Text
-        style={{
-          fontWeight: '800',
-          fontSize: 18,
-          color: GREEN,
-        }}
-      >
-        {label}
-      </Text>
-    </TouchableOpacity>
-  );
-
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: BG_CREAM }}>
-      {/* All pages render here */}
+      {/* Render all pages here */}
       <Stack screenOptions={{ headerShown: false }} />
 
-      {/* Sticky footer (compact) */}
+      {/* Sticky footer */}
       <View
         style={{
           position: 'absolute',
           left: 0,
           right: 0,
           bottom: 0,
-          height: FOOTER_H,
+          height: 40,
           backgroundColor: BG_CREAM,
           borderTopWidth: 1,
           borderTopColor: BORDER,
           justifyContent: 'center',
+          zIndex: 10,
         }}
       >
-        {/* Bold row of links (centered, tighter spacing) */}
         <View
           style={{
             flexDirection: 'row',
@@ -62,11 +41,12 @@ export default function Layout() {
             gap: 8,
           }}
         >
-          <FooterItem label="Home"    href="/" />
-          <FooterItem label="Shop"    href="/shop" />
-          <FooterItem label="FAQs"    href="/faqs" />
-          <FooterItem label="Our Story" href="/story" />
-          <FooterItem label="Contact" href="/contact" />
+          <Link href="/"        style={{ fontWeight: '800', fontSize: 18, color: GREEN }}>Home</Link>
+          <Link href="/shop"    style={{ fontWeight: '800', fontSize: 18, color: GREEN }}>Shop</Link>
+          <Link href="/faq"     style={{ fontWeight: '800', fontSize: 18, color: GREEN }}>FAQs</Link>
+          <Link href="/story"   style={{ fontWeight: '800', fontSize: 18, color: GREEN }}>Our Story</Link>
+          <Link href="/contact" style={{ fontWeight: '800', fontSize: 18, color: GREEN }}>Contact</Link>
+          <Link href="/cart"    style={{ fontWeight: '800', fontSize: 18, color: GREEN }}>Cart</Link>
         </View>
       </View>
     </SafeAreaView>
