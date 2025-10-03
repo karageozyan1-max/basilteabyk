@@ -66,7 +66,7 @@ export default function Layout() {
       flexDirection: 'row',
       alignItems: 'center',
       justifyContent: 'center',
-      gap: 22,  // more space between bold items
+      gap: 12,  // more space between bold items
     }}
   >
     <FooterItem label="Home" href="/" style={{ fontWeight: '700', fontSize: 16, color: GREEN }} />
