@@ -3,7 +3,7 @@
 
 import React from 'react';
 import { View, Text, ScrollView, TouchableOpacity, StyleSheet, SafeAreaView } from 'react-native';
-import { Link } from 'expo-router';
+import { Link, router } from 'expo-router';
 import { useCart } from './CartContext';
 
 const FREE_SHIP_THRESHOLD = 50;
