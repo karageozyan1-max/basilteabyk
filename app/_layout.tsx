@@ -1,5 +1,5 @@
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { View, Text } from 'react-native';
+import { View } from 'react-native';
 import { Link } from 'expo-router';
 
 const BG_CREAM = '#faf6ec';
@@ -9,8 +9,8 @@ const GREEN = '#0b3d2e';
 export default function Layout({ children }: { children: React.ReactNode }) {
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: BG_CREAM }}>
-      {/* Main content */}
-      <View style={{ flex: 1 }}>
+      {/* Main content with padding for footer */}
+      <View style={{ flex: 1, paddingBottom: 50 }}>
         {children}
       </View>
 
@@ -21,15 +21,14 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           left: 0,
           right: 0,
           bottom: 0,
-          height: 40,
+          height: 50,
           backgroundColor: BG_CREAM,
           borderTopWidth: 1,
           borderTopColor: BORDER,
           flexDirection: 'row',
           alignItems: 'center',
-          justifyContent: 'space-around',
+          justifyContent: 'space-evenly',
           paddingHorizontal: 4,
-          paddingVertical: 2,
           zIndex: 10,
         }}
       >
