@@ -14,8 +14,12 @@ type SizeKey = '8oz' | '12oz';
 const PACK_OPTIONS = [2, 6, 12];
 
 const { width } = Dimensions.get('window');
-const isSmall = width < 380;
-const BTN_H = isSmall ? 42 : 48;
+const isPhone = width < 768;         // stack on phones, side-by-side on bigger screens
+const isSmallPhone = width < 380;
+
+const BTN_FONT = isSmallPhone ? 14 : 16;
+const BTN_H = isSmallPhone ? 48 : 52; // taller to avoid clipping
+const BTN_MIN_W = isPhone ? 150 : 200;
 
 export default function ShopScreen() {
   const router = useRouter();
@@ -35,33 +39,29 @@ export default function ShopScreen() {
       <ScrollView contentContainerStyle={{ padding: 20, paddingBottom: 54 }} showsVerticalScrollIndicator={false}>
         <View style={styles.card}>
 
-          {/* Header row with tiny brand + Cart button */}
-          <View style={styles.headerRow}>
-            <Image
-              source={require('../assets/images/basil-bottle.png')}
-              style={{ width: 42, height: 42, marginRight: 10 }}
-              resizeMode="contain"
-            />
-            <View style={{ flex: 1, minWidth: 0 }}>
-              <Text style={styles.title}>Shop — Basil Tea by K</Text>
-              <Text style={styles.subtitle}>Honey-infused basil tea in glass bottles</Text>
-            </View>
+          {/* Top bar with page Cart button (NO tiny bottle) */}
+          <View style={styles.topBar}>
+            <View style={{ flex: 1 }} />
             <TouchableOpacity style={styles.headerCartBtn} onPress={() => router.push('/cart')}>
               <Text style={{ color: GREEN, fontWeight: '700' }}>Cart</Text>
             </TouchableOpacity>
           </View>
 
-          {/* Big product image */}
-          <Image
-            source={require('../assets/images/basil-bottle.png')}
-            style={styles.heroImage}
-            resizeMode="contain"
-          />
-
-          {/* Simple description */}
-          <Text style={styles.desc}>
-            Lightly sweet, clean, and refreshing. Real basil brewed in small batches, balanced with honey. Best served chilled.
-          </Text>
+          {/* Hero area: image + title/desc (responsive layout) */}
+          <View style={styles.heroRow}>
+            <Image
+              source={require('../assets/images/basil-bottle.png')}
+              style={styles.heroImage}
+              resizeMode="contain"
+            />
+            <View style={styles.heroText}>
+              <Text style={styles.title}>Basil Tea by K</Text>
+              <Text style={styles.subtitle}>Honey-infused basil tea in glass bottles</Text>
+              <Text style={styles.desc}>
+                Lightly sweet, clean, and refreshing. Real basil brewed in small batches, balanced with honey. Best served chilled.
+              </Text>
+            </View>
+          </View>
 
           {/* Size */}
           <Text style={styles.sectionTitle}>Size</Text>
@@ -95,6 +95,7 @@ export default function ShopScreen() {
           <TouchableOpacity style={styles.primaryBtn} onPress={goToCart}>
             <Text style={styles.primaryBtnText}>Add to Cart</Text>
           </TouchableOpacity>
+
         </View>
       </ScrollView>
     </SafeAreaView>
@@ -139,44 +140,50 @@ const styles = StyleSheet.create({
     padding: 18,
     borderWidth: 1,
     borderColor: '#eadccf',
-    maxWidth: 920,
+    maxWidth: 1000,
     alignSelf: 'center',
     width: '100%',
   },
 
-  headerRow: { flexDirection: 'row', alignItems: 'center', marginBottom: 8 },
-
-  title: {
-    fontSize: isSmall ? 18 : 20,
-    fontWeight: '800',
-    color: '#fff',
-    backgroundColor: GREEN,
-    paddingHorizontal: 10,
-    paddingVertical: 4,
-    borderRadius: 6,
-    alignSelf: 'flex-start',
-  },
-  subtitle: { marginTop: 4, color: GOLD, fontSize: isSmall ? 12 : 14, fontWeight: '600' },
+  /* top-right cart button */
+  topBar: { flexDirection: 'row', alignItems: 'center', marginBottom: 6 },
   headerCartBtn: {
     paddingVertical: 6, paddingHorizontal: 10,
     borderWidth: 1, borderColor: '#eadccf', borderRadius: 10, backgroundColor: BG_CREAM,
     minWidth: 56, alignItems: 'center', justifyContent: 'center',
   },
 
-  heroImage: {
-    alignSelf: 'center',
-    width: '100%',
-    height: isSmall ? 240 : 300, // bigger
-    marginTop: 4,
-    marginBottom: 6,
+  /* hero: image + text, responsive */
+  heroRow: {
+    flexDirection: isPhone ? 'column' : 'row',
+    alignItems: isPhone ? 'center' : 'center',
+    gap: isPhone ? 8 : 16,
+    marginBottom: 8,
   },
-
+  heroImage: {
+    width: isPhone ? '100%' : 420,
+    height: isPhone ? 280 : 360,
+    alignSelf: 'center',
+  },
+  heroText: {
+    flex: 1,
+    alignItems: isPhone ? 'center' : 'flex-start',
+  },
+  title: {
+    fontSize: isPhone ? 24 : 28,
+    fontWeight: '800',
+    color: '#fff',
+    backgroundColor: GREEN,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 6,
+  },
+  subtitle: {
+    marginTop: 8, color: GOLD, fontSize: isPhone ? 14 : 16, fontWeight: '700', textAlign: isPhone ? 'center' : 'left',
+  },
   desc: {
-    color: '#3b3b3b',
-    fontSize: isSmall ? 13 : 14,
-    lineHeight: isSmall ? 18 : 20,
-    textAlign: 'center',
-    marginBottom: 4,
+    marginTop: 6, color: '#3b3b3b', fontSize: isPhone ? 13 : 14, lineHeight: isPhone ? 18 : 20,
+    textAlign: isPhone ? 'center' : 'left',
   },
 
   sectionTitle: { fontSize: 14, fontWeight: '800', color: GREEN, alignSelf: 'center', marginTop: 8 },
@@ -185,34 +192,40 @@ const styles = StyleSheet.create({
     marginTop: 8,
     flexDirection: 'row',
     flexWrap: 'wrap',
-    justifyContent: 'center',    // centered on all screens
-    gap: 10,
+    justifyContent: 'center',
+    gap: 12,
   },
 
-  // Buttons made wider so text never clips on phones
+  // Wider & taller buttons; lineHeight matches font size to prevent clipping
   choiceBtn: {
+    minWidth: BTN_MIN_W,
     height: BTN_H,
-    minWidth: 140,                // wider than before
-    paddingHorizontal: 14,
+    paddingHorizontal: 16,
     borderWidth: 1, borderColor: GREEN, borderRadius: 12,
     backgroundColor: BG_CREAM,
     alignItems: 'center', justifyContent: 'center',
   },
   choiceBtnSelected: { backgroundColor: GREEN, borderColor: GREEN },
-  choiceText: { fontSize: isSmall ? 13 : 14, fontWeight: '700', color: GREEN },
+  choiceText: {
+    fontSize: BTN_FONT,
+    lineHeight: BTN_FONT + 2,
+    fontWeight: '700',
+    color: GREEN,
+    textAlign: 'center',
+  },
   choiceTextSelected: { color: BG_CREAM },
 
   qtyRow: { flexDirection: 'row', alignItems: 'center', gap: 14, justifyContent: 'center', marginTop: 6 },
   qtyBtn: { height: BTN_H, width: BTN_H, alignItems: 'center', justifyContent: 'center', borderRadius: 10, backgroundColor: GREEN },
-  qtyBtnText: { color: BG_CREAM, fontSize: isSmall ? 18 : 22, fontWeight: '800' },
-  qtyText: { minWidth: 36, textAlign: 'center', fontSize: isSmall ? 16 : 18, fontWeight: '800', color: GREEN },
+  qtyBtnText: { color: BG_CREAM, fontSize: isSmallPhone ? 18 : 22, lineHeight: (isSmallPhone ? 18 : 22) + 2, fontWeight: '800' },
+  qtyText: { minWidth: 36, textAlign: 'center', fontSize: isSmallPhone ? 16 : 18, lineHeight: (isSmallPhone ? 16 : 18) + 2, fontWeight: '800', color: GREEN },
 
-  priceValue: { fontSize: isSmall ? 22 : 24, fontWeight: '900', color: GREEN },
-  note: { fontSize: isSmall ? 12 : 13, color: GOLD, marginTop: 2 },
+  priceValue: { fontSize: isSmallPhone ? 22 : 24, fontWeight: '900', color: GREEN },
+  note: { fontSize: isSmallPhone ? 12 : 13, color: GOLD, marginTop: 2 },
 
   primaryBtn: {
     marginTop: 8, height: BTN_H, borderRadius: 12, backgroundColor: GREEN,
     alignItems: 'center', justifyContent: 'center', alignSelf: 'center', paddingHorizontal: 18,
   },
-  primaryBtnText: { color: BG_CREAM, fontSize: isSmall ? 15 : 16, fontWeight: '800' },
+  primaryBtnText: { color: BG_CREAM, fontSize: BTN_FONT, lineHeight: BTN_FONT + 2, fontWeight: '800' },
 });
