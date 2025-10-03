@@ -41,12 +41,12 @@ export default function Layout() {
             gap: 8,
           }}
         >
-          <Link href="/"        style={{ fontWeight: '800', fontSize: 18, color: GREEN }}>Home</Link>
-          <Link href="/shop"    style={{ fontWeight: '800', fontSize: 18, color: GREEN }}>Shop</Link>
-          <Link href="/faq"     style={{ fontWeight: '800', fontSize: 18, color: GREEN }}>FAQs</Link>
-          <Link href="/story"   style={{ fontWeight: '800', fontSize: 18, color: GREEN }}>Our Story</Link>
+          <Link href="/" style={{ fontWeight: '800', fontSize: 18, color: GREEN }}>Home</Link>
+          <Link href="/shop" style={{ fontWeight: '800', fontSize: 18, color: GREEN }}>Shop</Link>
+          <Link href="/faq" style={{ fontWeight: '800', fontSize: 18, color: GREEN }}>FAQs</Link>
+          <Link href="/story" style={{ fontWeight: '800', fontSize: 18, color: GREEN }}>Our Story</Link>
           <Link href="/contact" style={{ fontWeight: '800', fontSize: 18, color: GREEN }}>Contact</Link>
-          <Link href="/cart"    style={{ fontWeight: '800', fontSize: 18, color: GREEN }}>Cart</Link>
+          {/* Cart removed from footer — it’s already in the header */}
         </View>
       </View>
     </SafeAreaView>
