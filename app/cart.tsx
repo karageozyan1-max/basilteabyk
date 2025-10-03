@@ -28,28 +28,27 @@ export default function CartPage() {
   const total = useMemo(() => unit * pack * qty, [unit, pack, qty]);
   const hasItem = pack > 0 && qty > 0;
 
-  function goCheckout() {
+  const goCheckout = () =>
     router.push({ pathname: '/checkout', params: { size, pack: String(pack), qty: String(qty) } });
-  }
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: BG_CREAM }}>
-      <ScrollView contentContainerStyle={styles.page} showsVerticalScrollIndicator={false}>
+      <ScrollView contentContainerStyle={{ padding: 20, paddingBottom: 54 }} showsVerticalScrollIndicator={false}>
         <View style={styles.card}>
+          <View style={styles.headerRow}>
+            <Image
+              source={require('../assets/images/basil-bottle.png')}
+              style={{ width: 64, height: 64, marginRight: 12 }}
+              resizeMode="contain"
+            />
+            <View style={{ flex: 1, minWidth: 0 }}>
+              <Text style={styles.title}>Your Cart</Text>
+              <Text style={styles.subtitle}>{hasItem ? `${qty} × ${pack}-pack • ${size}` : 'No items'}</Text>
+            </View>
+          </View>
+
           {hasItem ? (
             <>
-              <View style={styles.headerRow}>
-                <Image
-                  source={require('../assets/images/basil-bottle.png')}
-                  style={{ width: 64, height: 64, marginRight: 12 }}
-                  resizeMode="contain"
-                />
-                <View style={{ flex: 1, minWidth: 0 }}>
-                  <Text style={styles.title}>Your Cart</Text>
-                  <Text style={styles.subtitle}>{qty} × {pack}-pack • {size}</Text>
-                </View>
-              </View>
-
               <View style={{ marginTop: 14 }}>
                 <Text style={styles.priceLabel}>Total</Text>
                 <Text style={styles.priceValue}>${total.toFixed(2)}</Text>
@@ -69,8 +68,7 @@ export default function CartPage() {
             </>
           ) : (
             <>
-              <Text style={styles.title}>Your Cart</Text>
-              <Text style={{ color: GOLD, marginTop: 6 }}>Your cart is empty.</Text>
+              <Text style={{ color: GOLD, marginTop: 10 }}>Your cart is empty.</Text>
 
               <TouchableOpacity style={styles.primaryBtn} onPress={() => router.push('/shop')}>
                 <Text style={styles.primaryBtnText}>Go to Shop</Text>
@@ -88,7 +86,6 @@ export default function CartPage() {
 }
 
 const styles = StyleSheet.create({
-  page: { padding: 20 },
   card: {
     backgroundColor: BG_CREAM,
     borderRadius: 14,
@@ -113,7 +110,7 @@ const styles = StyleSheet.create({
     alignSelf: 'flex-start',
   },
   subtitle: {
-    marginTop: 6, color: GOLD, flexShrink: 1, minWidth: 0, flexWrap: 'wrap', textAlign: 'left',
+    marginTop: 6, color: GOLD, flexShrink: 1, minWidth: 0, flexWrap: 'wrap',
     fontSize: isSmall ? 13 : 15, fontWeight: '600',
   },
 
