@@ -238,9 +238,9 @@ const styles = StyleSheet.create({
   borderColor: GREEN,
   borderRadius: 10,
   backgroundColor: BG_CREAM,
-  alignItems: 'center',
   justifyContent: 'center',
-  alignSelf: 'center',
+  alignItems: 'center',
+  alignSelf: 'center',
   overflow: 'visible',         // be lenient
 },
 choiceBtnSelected: { backgroundColor: GREEN, borderColor: GREEN },
