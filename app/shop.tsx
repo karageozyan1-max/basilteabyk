@@ -15,7 +15,7 @@ const PACK_OPTIONS = [2, 6, 12];
 
 const { width } = Dimensions.get('window');
 const isSmall = width < 380;
-const BTN_H = isSmall ? 44 : 52;
+const BTN_H = isSmall ? 42 : 48;
 
 export default function ShopScreen() {
   const router = useRouter();
@@ -35,41 +35,43 @@ export default function ShopScreen() {
       <ScrollView contentContainerStyle={{ padding: 20, paddingBottom: 54 }} showsVerticalScrollIndicator={false}>
         <View style={styles.card}>
 
-          {/* Top: Big image + title */}
+          {/* Header row with tiny brand + Cart button */}
+          <View style={styles.headerRow}>
+            <Image
+              source={require('../assets/images/basil-bottle.png')}
+              style={{ width: 42, height: 42, marginRight: 10 }}
+              resizeMode="contain"
+            />
+            <View style={{ flex: 1, minWidth: 0 }}>
+              <Text style={styles.title}>Shop — Basil Tea by K</Text>
+              <Text style={styles.subtitle}>Honey-infused basil tea in glass bottles</Text>
+            </View>
+            <TouchableOpacity style={styles.headerCartBtn} onPress={() => router.push('/cart')}>
+              <Text style={{ color: GREEN, fontWeight: '700' }}>Cart</Text>
+            </TouchableOpacity>
+          </View>
+
+          {/* Big product image */}
           <Image
             source={require('../assets/images/basil-bottle.png')}
             style={styles.heroImage}
             resizeMode="contain"
           />
 
-          <Text style={styles.title}>Shop — Basil Tea by K</Text>
-          <Text style={styles.subtitle}>Honey-infused basil iced tea</Text>
+          {/* Simple description */}
+          <Text style={styles.desc}>
+            Lightly sweet, clean, and refreshing. Real basil brewed in small batches, balanced with honey. Best served chilled.
+          </Text>
 
-          {/* Product description */}
-          <View style={styles.descBlock}>
-            <Text style={styles.descLine}>
-              • Small-batch basil tea brewed with real basil leaves, balanced with wildflower honey.
-            </Text>
-            <Text style={styles.descLine}>
-              • Naturally refreshing, lightly sweet, and bottled in recyclable glass.
-            </Text>
-            <Text style={styles.descLine}>
-              • No concentrates • No artificial flavors • Just clean, crisp flavor.
-            </Text>
-            <Text style={styles.descLine}>
-              • Enjoy chilled straight from the bottle or poured over ice with a lemon slice.
-            </Text>
-          </View>
-
-          {/* Size (centered buttons) */}
+          {/* Size */}
           <Text style={styles.sectionTitle}>Size</Text>
           <View style={styles.centerRow}>
             <Choice label="8 oz"  selected={size === '8oz'}  onPress={() => setSize('8oz')} />
             <Choice label="12 oz" selected={size === '12oz'} onPress={() => setSize('12oz')} />
           </View>
 
-          {/* Pack (centered, wraps neatly) */}
-          <Text style={[styles.sectionTitle, { marginTop: 18 }]}>Pack</Text>
+          {/* Pack */}
+          <Text style={[styles.sectionTitle, { marginTop: 16 }]}>Pack</Text>
           <View style={styles.centerRow}>
             {PACK_OPTIONS.map((p) => (
               <Choice key={p} label={`${p}-pack`} selected={pack === p} onPress={() => setPack(p)} />
@@ -77,7 +79,7 @@ export default function ShopScreen() {
           </View>
 
           {/* Quantity */}
-          <Text style={[styles.sectionTitle, { marginTop: 18 }]}>Quantity</Text>
+          <Text style={[styles.sectionTitle, { marginTop: 16 }]}>Quantity</Text>
           <View style={styles.qtyRow}>
             <QtyBtn label="–" onPress={() => setQty((q) => Math.max(1, q - 1))} />
             <Text style={styles.qtyText}>{qty}</Text>
@@ -85,7 +87,7 @@ export default function ShopScreen() {
           </View>
 
           {/* Price + CTA */}
-          <View style={{ marginTop: 12, alignItems: 'center' }}>
+          <View style={{ marginTop: 10, alignItems: 'center' }}>
             <Text style={styles.priceValue}>${total.toFixed(2)}</Text>
             <Text style={styles.note}>{qty} × {pack}-pack • {size}</Text>
           </View>
@@ -110,7 +112,10 @@ function Choice({
       style={[styles.choiceBtn, selected && styles.choiceBtnSelected]}
       accessibilityState={{ selected }}
     >
-      <Text style={[styles.choiceText, selected && styles.choiceTextSelected]} numberOfLines={1}>
+      <Text
+        style={[styles.choiceText, selected && styles.choiceTextSelected]}
+        numberOfLines={1}
+      >
         {label}
       </Text>
     </TouchableOpacity>
@@ -139,103 +144,75 @@ const styles = StyleSheet.create({
     width: '100%',
   },
 
-  /* Bigger, centered hero image */
-  heroImage: {
-    alignSelf: 'center',
-    width: '100%',
-    height: isSmall ? 220 : 280, // bigger on larger screens
-    marginBottom: 10,
-  },
+  headerRow: { flexDirection: 'row', alignItems: 'center', marginBottom: 8 },
 
   title: {
-    fontSize: isSmall ? 20 : 24,
+    fontSize: isSmall ? 18 : 20,
     fontWeight: '800',
     color: '#fff',
     backgroundColor: GREEN,
-    paddingHorizontal: 12,
-    paddingVertical: 6,
+    paddingHorizontal: 10,
+    paddingVertical: 4,
     borderRadius: 6,
-    alignSelf: 'center', // centered title
+    alignSelf: 'flex-start',
   },
-  subtitle: {
-    marginTop: 8,
-    color: GOLD,
-    textAlign: 'center',
-    fontSize: isSmall ? 14 : 16,
-    fontWeight: '700',
+  subtitle: { marginTop: 4, color: GOLD, fontSize: isSmall ? 12 : 14, fontWeight: '600' },
+  headerCartBtn: {
+    paddingVertical: 6, paddingHorizontal: 10,
+    borderWidth: 1, borderColor: '#eadccf', borderRadius: 10, backgroundColor: BG_CREAM,
+    minWidth: 56, alignItems: 'center', justifyContent: 'center',
   },
 
-  /* Description block */
-  descBlock: {
-    marginTop: 12,
-    gap: 4,
+  heroImage: {
+    alignSelf: 'center',
+    width: '100%',
+    height: isSmall ? 240 : 300, // bigger
+    marginTop: 4,
+    marginBottom: 6,
   },
-  descLine: {
+
+  desc: {
     color: '#3b3b3b',
     fontSize: isSmall ? 13 : 14,
     lineHeight: isSmall ? 18 : 20,
-    flexShrink: 1,
-    minWidth: 0,
-    flexWrap: 'wrap',
-    textAlign: 'left',
+    textAlign: 'center',
+    marginBottom: 4,
   },
 
-  sectionTitle: {
-    fontSize: 14,
-    fontWeight: '800',
-    marginTop: 18,
-    color: GREEN,
-    alignSelf: 'center',
-  },
+  sectionTitle: { fontSize: 14, fontWeight: '800', color: GREEN, alignSelf: 'center', marginTop: 8 },
 
-  /* Centered row for choices */
   centerRow: {
-    marginTop: 10,
+    marginTop: 8,
     flexDirection: 'row',
     flexWrap: 'wrap',
-    justifyContent: 'center',  // 👈 centers the buttons
+    justifyContent: 'center',    // centered on all screens
     gap: 10,
   },
 
-  /* Choice buttons: fixed height, flexible width, centered text */
+  // Buttons made wider so text never clips on phones
   choiceBtn: {
     height: BTN_H,
-    minWidth: 120,           // gives each button some width
-    maxWidth: 180,
-    paddingHorizontal: 12,
-    borderWidth: 1,
-    borderColor: GREEN,
-    borderRadius: 10,
+    minWidth: 140,                // wider than before
+    paddingHorizontal: 14,
+    borderWidth: 1, borderColor: GREEN, borderRadius: 12,
     backgroundColor: BG_CREAM,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: 'center', justifyContent: 'center',
   },
   choiceBtnSelected: { backgroundColor: GREEN, borderColor: GREEN },
-  choiceText: { fontSize: isSmall ? 13 : 14, fontWeight: '700', color: GREEN, textAlign: 'center' },
+  choiceText: { fontSize: isSmall ? 13 : 14, fontWeight: '700', color: GREEN },
   choiceTextSelected: { color: BG_CREAM },
 
-  /* Quantity */
   qtyRow: { flexDirection: 'row', alignItems: 'center', gap: 14, justifyContent: 'center', marginTop: 6 },
-  qtyBtn: {
-    height: BTN_H, width: BTN_H,
-    alignItems: 'center', justifyContent: 'center',
-    borderRadius: 10, backgroundColor: GREEN,
-  },
+  qtyBtn: { height: BTN_H, width: BTN_H, alignItems: 'center', justifyContent: 'center', borderRadius: 10, backgroundColor: GREEN },
   qtyBtnText: { color: BG_CREAM, fontSize: isSmall ? 18 : 22, fontWeight: '800' },
   qtyText: { minWidth: 36, textAlign: 'center', fontSize: isSmall ? 16 : 18, fontWeight: '800', color: GREEN },
 
-  /* Price + CTA */
   priceValue: { fontSize: isSmall ? 22 : 24, fontWeight: '900', color: GREEN },
   note: { fontSize: isSmall ? 12 : 13, color: GOLD, marginTop: 2 },
+
   primaryBtn: {
-    marginTop: 10,
-    height: BTN_H,
-    borderRadius: 10,
-    backgroundColor: GREEN,
-    alignItems: 'center',
-    justifyContent: 'center',
-    alignSelf: 'center',
-    paddingHorizontal: 18,
+    marginTop: 8, height: BTN_H, borderRadius: 12, backgroundColor: GREEN,
+    alignItems: 'center', justifyContent: 'center', alignSelf: 'center', paddingHorizontal: 18,
   },
   primaryBtnText: { color: BG_CREAM, fontSize: isSmall ? 15 : 16, fontWeight: '800' },
 });
