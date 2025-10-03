@@ -5,24 +5,27 @@ import { View, Text, ScrollView, TouchableOpacity, Image, StyleSheet, Dimensions
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { SIZE_PRICES } from './prices';
+import { useCart, SizeKey } from './CartContext';
 
 const BG_CREAM = '#fdf6ec';
 const GREEN = '#0b3d2e';
 const GOLD = '#c7a45a';
 
-type SizeKey = '8oz' | '12oz';
 const PACK_OPTIONS = [2, 6, 12];
 
 const { width } = Dimensions.get('window');
-const isPhone = width < 768;         // stack on phones, side-by-side on bigger screens
+const isPhone = width < 768;
 const isSmallPhone = width < 380;
 
-const BTN_FONT = isSmallPhone ? 14 : 16;
-const BTN_H = isSmallPhone ? 48 : 52; // taller to avoid clipping
-const BTN_MIN_W = isPhone ? 150 : 200;
+// Button sizing that does NOT clip text
+const BTN_FONT = isSmallPhone ? 15 : isPhone ? 16 : 17;
+const BTN_H = isSmallPhone ? 48 : isPhone ? 52 : 56;
+const BTN_MIN_W = isPhone ? 166 : 220;
 
 export default function ShopScreen() {
   const router = useRouter();
+  const { addItem } = useCart();
+
   const [size, setSize] = useState<SizeKey>('8oz');
   const [pack, setPack] = useState<number>(PACK_OPTIONS[0]);
   const [qty, setQty] = useState<number>(1);
@@ -30,16 +33,17 @@ export default function ShopScreen() {
   const unit = SIZE_PRICES[size];
   const total = useMemo(() => unit * pack * qty, [unit, pack, qty]);
 
-  function goToCart() {
-    router.push({ pathname: '/cart', params: { size, pack: String(pack), qty: String(qty) } });
+  function handleAddToCart() {
+    const id = `${size}-${pack}`;
+    addItem({ id, size, pack, qty, unitPrice: unit });
+    router.push('/cart');
   }
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: BG_CREAM }}>
       <ScrollView contentContainerStyle={{ padding: 20, paddingBottom: 54 }} showsVerticalScrollIndicator={false}>
         <View style={styles.card}>
-
-          {/* Top bar with page Cart button (NO tiny bottle) */}
+          {/* only a Cart button on the right */}
           <View style={styles.topBar}>
             <View style={{ flex: 1 }} />
             <TouchableOpacity style={styles.headerCartBtn} onPress={() => router.push('/cart')}>
@@ -47,7 +51,7 @@ export default function ShopScreen() {
             </TouchableOpacity>
           </View>
 
-          {/* Hero area: image + title/desc (responsive layout) */}
+          {/* hero: image + text */}
           <View style={styles.heroRow}>
             <Image
               source={require('../assets/images/basil-bottle.png')}
@@ -58,19 +62,17 @@ export default function ShopScreen() {
               <Text style={styles.title}>Basil Tea by K</Text>
               <Text style={styles.subtitle}>Honey-infused basil tea in glass bottles</Text>
               <Text style={styles.desc}>
-                Lightly sweet, clean, and refreshing. Real basil brewed in small batches, balanced with honey. Best served chilled.
+                Lightly sweet, clean, and refreshing. Real basil brewed in small batches, balanced with honey.
               </Text>
             </View>
           </View>
 
-          {/* Size */}
           <Text style={styles.sectionTitle}>Size</Text>
           <View style={styles.centerRow}>
             <Choice label="8 oz"  selected={size === '8oz'}  onPress={() => setSize('8oz')} />
             <Choice label="12 oz" selected={size === '12oz'} onPress={() => setSize('12oz')} />
           </View>
 
-          {/* Pack */}
           <Text style={[styles.sectionTitle, { marginTop: 16 }]}>Pack</Text>
           <View style={styles.centerRow}>
             {PACK_OPTIONS.map((p) => (
@@ -78,7 +80,6 @@ export default function ShopScreen() {
             ))}
           </View>
 
-          {/* Quantity */}
           <Text style={[styles.sectionTitle, { marginTop: 16 }]}>Quantity</Text>
           <View style={styles.qtyRow}>
             <QtyBtn label="–" onPress={() => setQty((q) => Math.max(1, q - 1))} />
@@ -86,23 +87,21 @@ export default function ShopScreen() {
             <QtyBtn label="+" onPress={() => setQty((q) => Math.min(99, q + 1))} />
           </View>
 
-          {/* Price + CTA */}
           <View style={{ marginTop: 10, alignItems: 'center' }}>
             <Text style={styles.priceValue}>${total.toFixed(2)}</Text>
             <Text style={styles.note}>{qty} × {pack}-pack • {size}</Text>
           </View>
 
-          <TouchableOpacity style={styles.primaryBtn} onPress={goToCart}>
+          <TouchableOpacity style={styles.primaryBtn} onPress={handleAddToCart}>
             <Text style={styles.primaryBtnText}>Add to Cart</Text>
           </TouchableOpacity>
-
         </View>
       </ScrollView>
     </SafeAreaView>
   );
 }
 
-/* --- Reusable bits --- */
+/* Buttons */
 
 function Choice({
   label, selected, onPress,
@@ -113,10 +112,7 @@ function Choice({
       style={[styles.choiceBtn, selected && styles.choiceBtnSelected]}
       accessibilityState={{ selected }}
     >
-      <Text
-        style={[styles.choiceText, selected && styles.choiceTextSelected]}
-        numberOfLines={1}
-      >
+      <Text style={[styles.choiceText, selected && styles.choiceTextSelected]} numberOfLines={1}>
         {label}
       </Text>
     </TouchableOpacity>
@@ -131,7 +127,7 @@ function QtyBtn({ label, onPress }: { label: string; onPress: () => void }) {
   );
 }
 
-/* --- Styles --- */
+/* Styles */
 
 const styles = StyleSheet.create({
   card: {
@@ -145,7 +141,6 @@ const styles = StyleSheet.create({
     width: '100%',
   },
 
-  /* top-right cart button */
   topBar: { flexDirection: 'row', alignItems: 'center', marginBottom: 6 },
   headerCartBtn: {
     paddingVertical: 6, paddingHorizontal: 10,
@@ -153,22 +148,15 @@ const styles = StyleSheet.create({
     minWidth: 56, alignItems: 'center', justifyContent: 'center',
   },
 
-  /* hero: image + text, responsive */
   heroRow: {
     flexDirection: isPhone ? 'column' : 'row',
-    alignItems: isPhone ? 'center' : 'center',
+    alignItems: 'center',
     gap: isPhone ? 8 : 16,
     marginBottom: 8,
   },
-  heroImage: {
-    width: isPhone ? '100%' : 420,
-    height: isPhone ? 280 : 360,
-    alignSelf: 'center',
-  },
-  heroText: {
-    flex: 1,
-    alignItems: isPhone ? 'center' : 'flex-start',
-  },
+  heroImage: { width: isPhone ? '100%' : 420, height: isPhone ? 280 : 360, alignSelf: 'center' },
+  heroText: { flex: 1, alignItems: isPhone ? 'center' : 'flex-start' },
+
   title: {
     fontSize: isPhone ? 24 : 28,
     fontWeight: '800',
@@ -178,25 +166,15 @@ const styles = StyleSheet.create({
     paddingVertical: 6,
     borderRadius: 6,
   },
-  subtitle: {
-    marginTop: 8, color: GOLD, fontSize: isPhone ? 14 : 16, fontWeight: '700', textAlign: isPhone ? 'center' : 'left',
-  },
-  desc: {
-    marginTop: 6, color: '#3b3b3b', fontSize: isPhone ? 13 : 14, lineHeight: isPhone ? 18 : 20,
-    textAlign: isPhone ? 'center' : 'left',
-  },
+  subtitle: { marginTop: 8, color: GOLD, fontSize: isPhone ? 14 : 16, fontWeight: '700', textAlign: isPhone ? 'center' : 'left' },
+  desc: { marginTop: 6, color: '#3b3b3b', fontSize: isPhone ? 13 : 14, lineHeight: isPhone ? 18 : 20, textAlign: isPhone ? 'center' : 'left' },
 
   sectionTitle: { fontSize: 14, fontWeight: '800', color: GREEN, alignSelf: 'center', marginTop: 8 },
 
   centerRow: {
-    marginTop: 8,
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'center',
-    gap: 12,
+    marginTop: 8, flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center', gap: 12,
   },
 
-  // Wider & taller buttons; lineHeight matches font size to prevent clipping
   choiceBtn: {
     minWidth: BTN_MIN_W,
     height: BTN_H,
@@ -206,19 +184,13 @@ const styles = StyleSheet.create({
     alignItems: 'center', justifyContent: 'center',
   },
   choiceBtnSelected: { backgroundColor: GREEN, borderColor: GREEN },
-  choiceText: {
-    fontSize: BTN_FONT,
-    lineHeight: BTN_FONT + 2,
-    fontWeight: '700',
-    color: GREEN,
-    textAlign: 'center',
-  },
+  choiceText: { fontSize: BTN_FONT, lineHeight: BTN_FONT + 6, fontWeight: '700', color: GREEN, textAlign: 'center' },
   choiceTextSelected: { color: BG_CREAM },
 
   qtyRow: { flexDirection: 'row', alignItems: 'center', gap: 14, justifyContent: 'center', marginTop: 6 },
   qtyBtn: { height: BTN_H, width: BTN_H, alignItems: 'center', justifyContent: 'center', borderRadius: 10, backgroundColor: GREEN },
-  qtyBtnText: { color: BG_CREAM, fontSize: isSmallPhone ? 18 : 22, lineHeight: (isSmallPhone ? 18 : 22) + 2, fontWeight: '800' },
-  qtyText: { minWidth: 36, textAlign: 'center', fontSize: isSmallPhone ? 16 : 18, lineHeight: (isSmallPhone ? 16 : 18) + 2, fontWeight: '800', color: GREEN },
+  qtyBtnText: { color: BG_CREAM, fontSize: BTN_FONT + 2, lineHeight: BTN_FONT + 8, fontWeight: '800' },
+  qtyText: { minWidth: 36, textAlign: 'center', fontSize: BTN_FONT, lineHeight: BTN_FONT + 6, fontWeight: '800', color: GREEN },
 
   priceValue: { fontSize: isSmallPhone ? 22 : 24, fontWeight: '900', color: GREEN },
   note: { fontSize: isSmallPhone ? 12 : 13, color: GOLD, marginTop: 2 },
@@ -227,5 +199,5 @@ const styles = StyleSheet.create({
     marginTop: 8, height: BTN_H, borderRadius: 12, backgroundColor: GREEN,
     alignItems: 'center', justifyContent: 'center', alignSelf: 'center', paddingHorizontal: 18,
   },
-  primaryBtnText: { color: BG_CREAM, fontSize: BTN_FONT, lineHeight: BTN_FONT + 2, fontWeight: '800' },
+  primaryBtnText: { color: BG_CREAM, fontSize: BTN_FONT, lineHeight: BTN_FONT + 6, fontWeight: '800' },
 });
