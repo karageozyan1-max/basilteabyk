@@ -8,7 +8,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 const BG_CREAM = '#fdf6ec';
 const GREEN = '#0b3d2e';
 const BORDER = '#eadccf';
-const FOOTER_H = 48; // compact footer
+const FOOTER_H = 38; // shorter footer
 
 export default function Layout() {
   const router = useRouter();
@@ -17,8 +17,8 @@ export default function Layout() {
   const NavItem = ({ label, href }: { label: string; href: string }) => {
     const isActive = pathname === href || (href === '/' && (pathname === '/' || pathname === ''));
     return (
-      <TouchableOpacity onPress={() => router.push(href)} style={{ paddingHorizontal: 4 }}>
-        <Text style={{ color: GREEN, fontWeight: isActive ? '800' : '700', fontSize: 15 }}>
+      <TouchableOpacity onPress={() => router.push(href)} style={{ paddingHorizontal: 6 }}>
+        <Text style={{ color: GREEN, fontWeight: isActive ? '800' : '700', fontSize: 14 }}>
           {label}
         </Text>
       </TouchableOpacity>
@@ -27,12 +27,10 @@ export default function Layout() {
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: BG_CREAM }}>
-      {/* leave just enough room so content never sits under the footer */}
       <View style={{ flex: 1, paddingBottom: FOOTER_H + 6 }}>
         <Stack screenOptions={{ headerShown: false }} />
       </View>
 
-      {/* sticky footer */}
       <View
         style={{
           position: 'absolute',
@@ -43,8 +41,8 @@ export default function Layout() {
           flexDirection: 'row',
           alignItems: 'center',
           justifyContent: 'space-around',
-          paddingHorizontal: 10,
-          paddingVertical: 4, // tight so no big blank strip
+          paddingHorizontal: 8,
+          paddingVertical: 2, // trimmed
         }}
       >
         <NavItem label="Home" href="/" />
@@ -52,7 +50,7 @@ export default function Layout() {
         <NavItem label="FAQs" href="/faqs" />
         <NavItem label="Our Story" href="/story" />
         <NavItem label="Contact" href="/contact" />
-        <NavItem label="Cart" href="/cart" />
+        {/* No Cart here – you have a cart button in the page header */}
       </View>
     </SafeAreaView>
   );
