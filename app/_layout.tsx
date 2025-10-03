@@ -1,3 +1,4 @@
+// app/_layout.tsx
 import React from 'react';
 import { SafeAreaView, View } from 'react-native';
 import { Slot, Link } from 'expo-router';
@@ -9,12 +10,12 @@ const BORDER = '#e4dccf';
 export default function Layout() {
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: BG_CREAM }}>
-      {/* Main content (pages render here) */}
+      {/* Page content fills the screen */}
       <View style={{ flex: 1 }}>
         <Slot />
       </View>
 
-      {/* Footer */}
+      {/* Footer sits AFTER content (not absolute) */}
       <View
         style={{
           height: 50,
