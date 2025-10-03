@@ -20,9 +20,9 @@ const isPhone = width < 768;
 const isSmallPhone = width < 380;
 
 // ——— Compact button sizing (smaller than before, still readable)
-const BTN_FONT  = isSmallPhone ? 14 : isPhone ? 15 : 16;
-const BTN_H     = isSmallPhone ? 44   : isPhone ? 48 : 52;
-const BTN_MIN_W = isSmallPhone ? 140  : isPhone ? 160 : 190;
+const BTN_FONT  = isSmallPhone ? 13.5 : isPhone ? 14.5 : 16;
+const BTN_H     = isSmallPhone ? 42   : isPhone ? 46 : 52;
+const BTN_MIN_W = isSmallPhone ? 150  : isPhone ? 168 : 212;
 
 // Footer in _layout.tsx is 50px; add a little buffer
 const FOOTER_PAD = 64;
@@ -234,11 +234,11 @@ const styles = StyleSheet.create({
   choiceBtnSelected: { backgroundColor: GREEN, borderColor: GREEN },
   choiceText: {
     fontSize: BTN_FONT,
+    lineHeight: BTN_FONT + 4,
     fontWeight: '700',
     color: GREEN,
     textAlign: 'center',
-    includeFontPadding: false,        // helps with cutoff
-    allowFontScaling: false,
+    includeFontPadding: false,        // helps with cutoff,
   },
   choiceTextSelected: { color: BG_CREAM },
 
