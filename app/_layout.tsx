@@ -47,36 +47,37 @@ export default function Layout() {
         <Stack screenOptions={{ headerShown: false }} />
 
         {/* Compact sticky footer */}
-        <View
-          style={{
-            position: 'absolute',
-            left: 0,
-            right: 0,
-            bottom: 0,
-            height: 50,                 // shorter footer
-            backgroundColor: BG_CREAM,
-            borderTopWidth: 1,
-            borderTopColor: BORDER,
-            paddingHorizontal: 6,
-          }}
-        >
-          <View
-            style={{
-              flex: 1,
-              flexDirection: 'row',
-              alignItems: 'center',
-              justifyContent: 'space-evenly', // bring items closer
-              gap: 4,
-            }}
-          >
-            <FooterItem label="Home" href="/" />
-            <FooterItem label="Shop" href="/shop" />
-            <FooterItem label="FAQs" href="/faq" />
-            <FooterItem label="Our Story" href="/story" />
-            <FooterItem label="Contact" href="/contact" />
-          </View>
-        </View>
-      </SafeAreaView>
+       {/* Compact sticky footer */}
+<View
+  style={{
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    bottom: 0,
+    height: 50,
+    backgroundColor: BG_CREAM,
+    borderTopWidth: 1,
+    borderTopColor: BORDER,
+    paddingHorizontal: 6,
+  }}
+>
+  <View
+    style={{
+      flex: 1,
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'center',   // center them instead of spreading out
+      gap: 16,                    // small space between words
+    }}
+  >
+    <FooterItem label="Home" href="/" />
+    <FooterItem label="Shop" href="/shop" />
+    <FooterItem label="FAQs" href="/faq" />
+    <FooterItem label="Our Story" href="/story" />
+    <FooterItem label="Contact" href="/contact" />
+  </View>
+</View>
+      </SafeAreaView>
     </CartProvider>
   );
 }
