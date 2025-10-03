@@ -3,8 +3,8 @@
 import React, { useMemo } from 'react';
 import { View, Text, Image, StyleSheet, ScrollView, TouchableOpacity, Dimensions } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useRouter, useLocalSearchParams } from 'expo-router';
-import { SIZE_PRICES } from './prices';
+import { useRouter } from 'expo-router';
+import { useCart } from './CartContext';
 
 const BG_CREAM = '#fdf6ec';
 const GREEN = '#0b3d2e';
@@ -14,49 +14,81 @@ const { width } = Dimensions.get('window');
 const isSmall = width < 380;
 const BTN_H = isSmall ? 42 : 48;
 
-type SizeKey = '8oz' | '12oz';
-
 export default function CartPage() {
   const router = useRouter();
-  const params = useLocalSearchParams<{ size?: string; pack?: string; qty?: string }>();
+  const { items, updateQty, removeItem, clearCart, subtotal } = useCart();
 
-  const size: SizeKey = (params.size as SizeKey) || '8oz';
-  const pack = Math.max(0, parseInt(params.pack || '0', 10));
-  const qty  = Math.max(1, parseInt(params.qty || '1', 10));
+  const FREE_SHIP_THRESHOLD = 50;
+  const SHIPPING_FLAT = 6.99;
+  const TAX_RATE = 0.08;
 
-  const unit = SIZE_PRICES[size] ?? 0;
-  const total = useMemo(() => unit * pack * qty, [unit, pack, qty]);
-  const hasItem = pack > 0 && qty > 0;
+  const shipping = subtotal === 0 || subtotal >= FREE_SHIP_THRESHOLD ? 0 : SHIPPING_FLAT;
+  const tax = subtotal * TAX_RATE;
+  const total = subtotal + shipping + tax;
 
-  const goCheckout = () =>
-    router.push({ pathname: '/checkout', params: { size, pack: String(pack), qty: String(qty) } });
+  const hasItem = items.length > 0;
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: BG_CREAM }}>
       <ScrollView contentContainerStyle={{ padding: 20, paddingBottom: 54 }} showsVerticalScrollIndicator={false}>
         <View style={styles.card}>
-          <View style={styles.headerRow}>
-            {hasItem && ( // 👈 only show bottle image if there is an item
-              <Image
-                source={require('../assets/images/basil-bottle.png')}
-                style={{ width: 56, height: 56, marginRight: 12 }}
-                resizeMode="contain"
-              />
-            )}
-            <View style={{ flex: 1, minWidth: 0 }}>
-              <Text style={styles.title}>Your Cart</Text>
-              <Text style={styles.subtitle}>{hasItem ? `${qty} × ${pack}-pack • ${size}` : 'No items'}</Text>
-            </View>
-          </View>
+          <Text style={styles.title}>Your Cart</Text>
 
-          {hasItem ? (
+          {!hasItem ? (
             <>
-              <View style={{ marginTop: 14 }}>
-                <Text style={styles.priceLabel}>Total</Text>
-                <Text style={styles.priceValue}>${total.toFixed(2)}</Text>
-              </View>
+              <Text style={{ color: GOLD, marginTop: 8 }}>Your cart is empty.</Text>
+              <TouchableOpacity style={styles.primaryBtn} onPress={() => router.push('/shop')}>
+                <Text style={styles.primaryBtnText}>Go to Shop</Text>
+              </TouchableOpacity>
+            </>
+          ) : (
+            <>
+              {/* Items */}
+              {items.map((i) => (
+                <View key={i.id} style={styles.itemRow}>
+                  <Image
+                    source={require('../assets/images/basil-bottle.png')}
+                    style={{ width: 56, height: 56, borderRadius: 8, marginRight: 10 }}
+                    resizeMode="cover"
+                  />
+                  <View style={{ flex: 1, minWidth: 0 }}>
+                    <Text style={styles.itemName}>Basil Tea — {i.size}</Text>
+                    <Text style={styles.itemMeta}>{i.pack}-pack • ${i.unitPrice.toFixed(2)} per bottle</Text>
+                    <View style={styles.qtyRow}>
+                      <QtyBtn onPress={() => updateQty(i.id, i.qty - 1)} label="–" />
+                      <Text style={styles.qtyText}>{i.qty}</Text>
+                      <QtyBtn onPress={() => updateQty(i.id, i.qty + 1)} label="+" />
+                      <TouchableOpacity onPress={() => removeItem(i.id)} style={{ marginLeft: 8 }}>
+                        <Text style={{ color: '#a33', fontWeight: '700' }}>Remove</Text>
+                      </TouchableOpacity>
+                    </View>
+                  </View>
+                  <Text style={styles.itemPrice}>
+                    ${(i.unitPrice * i.pack * i.qty).toFixed(2)}
+                  </Text>
+                </View>
+              ))}
 
-              <TouchableOpacity style={styles.primaryBtn} onPress={goCheckout}>
+              {/* Totals */}
+              <View style={{ height: 10 }} />
+              <Row label="Subtotal" value={`$${subtotal.toFixed(2)}`} />
+              <Row label="Shipping" value={shipping === 0 ? 'FREE' : `$${shipping.toFixed(2)}`} />
+              <Row label={`Tax (8%)`} value={`$${tax.toFixed(2)}`} />
+              <View style={{ height: 6 }} />
+              <Row label="Total" value={`$${total.toFixed(2)}`} bold />
+
+              {/* Free shipping message */}
+              {subtotal < FREE_SHIP_THRESHOLD && subtotal > 0 && (
+                <Text style={{ color: GOLD, marginTop: 6, fontWeight: '700' }}>
+                  Add ${(FREE_SHIP_THRESHOLD - subtotal).toFixed(2)} more to get FREE shipping 🎉
+                </Text>
+              )}
+
+              {/* Actions */}
+              <TouchableOpacity
+                style={[styles.primaryBtn, { marginTop: 12 }]}
+                onPress={() => router.push('/checkout')}
+              >
                 <Text style={styles.primaryBtnText}>Checkout</Text>
               </TouchableOpacity>
 
@@ -64,26 +96,31 @@ export default function CartPage() {
                 <Text style={styles.secondaryBtnText}>Continue Shopping</Text>
               </TouchableOpacity>
 
-              <TouchableOpacity style={styles.secondaryBtn} onPress={() => router.back()}>
-                <Text style={styles.secondaryBtnText}>Back</Text>
-              </TouchableOpacity>
-            </>
-          ) : (
-            <>
-              <Text style={{ color: GOLD, marginTop: 10 }}>Your cart is empty.</Text>
-
-              <TouchableOpacity style={styles.primaryBtn} onPress={() => router.push('/shop')}>
-                <Text style={styles.primaryBtnText}>Go to Shop</Text>
-              </TouchableOpacity>
-
-              <TouchableOpacity style={styles.secondaryBtn} onPress={() => router.back()}>
-                <Text style={styles.secondaryBtnText}>Back</Text>
+              <TouchableOpacity style={styles.secondaryBtn} onPress={() => clearCart()}>
+                <Text style={styles.secondaryBtnText}>Clear Cart</Text>
               </TouchableOpacity>
             </>
           )}
         </View>
       </ScrollView>
     </SafeAreaView>
+  );
+}
+
+function Row({ label, value, bold }: { label: string; value: string; bold?: boolean }) {
+  return (
+    <View style={styles.row}>
+      <Text style={[styles.rowLabel, bold && styles.rowBold]}>{label}</Text>
+      <Text style={[styles.rowValue, bold && styles.rowBold]}>{value}</Text>
+    </View>
+  );
+}
+
+function QtyBtn({ label, onPress }: { label: string; onPress: () => void }) {
+  return (
+    <TouchableOpacity onPress={onPress} style={styles.qtyBtn}>
+      <Text style={styles.qtyBtnText}>{label}</Text>
+    </TouchableOpacity>
   );
 }
 
@@ -94,12 +131,10 @@ const styles = StyleSheet.create({
     padding: 18,
     borderWidth: 1,
     borderColor: '#eadccf',
-    maxWidth: 920,
+    maxWidth: 1000,
     alignSelf: 'center',
     width: '100%',
   },
-
-  headerRow: { flexDirection: 'row', alignItems: 'center' },
 
   title: {
     fontSize: isSmall ? 18 : 22,
@@ -111,24 +146,39 @@ const styles = StyleSheet.create({
     borderRadius: 6,
     alignSelf: 'flex-start',
   },
-  subtitle: {
-    marginTop: 6, color: GOLD, flexShrink: 1, minWidth: 0, flexWrap: 'wrap',
-    fontSize: isSmall ? 13 : 15, fontWeight: '600',
-  },
 
-  priceLabel: { fontSize: 12, color: GOLD },
-  priceValue: { fontSize: isSmall ? 20 : 22, fontWeight: '800', marginTop: 2, color: GREEN },
+  itemRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: '#eadccf',
+    gap: 6,
+  },
+  itemName: { fontSize: isSmall ? 14 : 16, fontWeight: '700', color: GREEN },
+  itemMeta: { fontSize: isSmall ? 12 : 13, color: GOLD, marginTop: 2 },
+  itemPrice: { fontSize: isSmall ? 14 : 16, fontWeight: '700', color: GREEN },
+
+  qtyRow: { flexDirection: 'row', alignItems: 'center', marginTop: 6 },
+  qtyBtn: { height: 36, width: 36, borderRadius: 8, backgroundColor: GREEN, alignItems: 'center', justifyContent: 'center' },
+  qtyBtnText: { color: BG_CREAM, fontSize: 18, fontWeight: '800' },
+  qtyText: { width: 30, textAlign: 'center', fontSize: 16, fontWeight: '800', color: GREEN },
+
+  row: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginVertical: 4 },
+  rowLabel: { fontSize: isSmall ? 13 : 14, color: '#333' },
+  rowValue: { fontSize: isSmall ? 13 : 14, color: '#333' },
+  rowBold: { fontWeight: '800', color: GREEN },
 
   primaryBtn: {
-    marginTop: 16, height: BTN_H, borderRadius: 10, backgroundColor: GREEN,
+    height: BTN_H, borderRadius: 10, backgroundColor: GREEN,
     alignItems: 'center', justifyContent: 'center',
   },
-  primaryBtnText: { color: BG_CREAM, fontSize: isSmall ? 14 : 15, fontWeight: '700' },
+  primaryBtnText: { color: BG_CREAM, fontWeight: '700' },
 
   secondaryBtn: {
     marginTop: 10, height: BTN_H, borderRadius: 10,
     borderWidth: 1, borderColor: GREEN, backgroundColor: BG_CREAM,
     alignItems: 'center', justifyContent: 'center',
   },
-  secondaryBtnText: { fontSize: isSmall ? 14 : 15, fontWeight: '700', color: GREEN },
+  secondaryBtnText: { fontWeight: '700', color: GREEN },
 });
