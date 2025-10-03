@@ -1,61 +1,44 @@
-// app/_layout.tsx
-import React from 'react';
-import { View } from 'react-native';
-import { Slot, Link } from 'expo-router';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { View, Text } from 'react-native';
+import { Link } from 'expo-router';
 
-const BG_CREAM = '#fdf6ec';
-const BORDER   = '#eadccf';
-const GREEN    = '#0b3d2e';
-const FOOTER_H = 48; // footer height
+const BG_CREAM = '#faf6ec';
+const BORDER = '#e4dccf';
+const GREEN = '#0b3d2e';
 
-export default function Layout() {
+export default function Layout({ children }: { children: React.ReactNode }) {
   return (
-    <View style={{ flex: 1, backgroundColor: BG_CREAM }}>
-      {/* Main content gets bottom padding so it can scroll past the sticky footer */}
-      <View
-        style={{
-          flex: 1,
-          paddingBottom: FOOTER_H + 12, // <-- space so footer never covers content
-          minHeight: '100%',
-          // On web, ensure scrolling is allowed even if a child sets flex:
-          overflow: 'auto',
-        }}
-      >
-        <Slot />
+    <SafeAreaView style={{ flex: 1, backgroundColor: BG_CREAM }}>
+      {/* Main content */}
+      <View style={{ flex: 1 }}>
+        {children}
       </View>
 
-      {/* Sticky footer (does not block scroll/taps outside the links) */}
+      {/* Sticky footer */}
       <View
-        pointerEvents="box-none" // let scroll/taps pass through the empty areas
         style={{
-          position: 'fixed', // bulletproof on web; stays pinned
+          position: 'absolute',
           left: 0,
           right: 0,
           bottom: 0,
-          height: FOOTER_H,
+          height: 40,
+          backgroundColor: BG_CREAM,
+          borderTopWidth: 1,
+          borderTopColor: BORDER,
+          flexDirection: 'row',
+          alignItems: 'center',
+          justifyContent: 'space-around',
+          paddingHorizontal: 4,
+          paddingVertical: 2,
           zIndex: 10,
         }}
       >
-        <View
-          pointerEvents="auto" // only the row handles touches
-          style={{
-            height: '100%',
-            backgroundColor: BG_CREAM,
-            borderTopWidth: 1,
-            borderTopColor: BORDER,
-            flexDirection: 'row',
-            alignItems: 'center',
-            justifyContent: 'space-around',
-            paddingHorizontal: 8,
-          }}
-        >
-          <Link href="/"        style={{ fontWeight: '800', fontSize: 16, color: GREEN }}>Home</Link>
-          <Link href="/shop"    style={{ fontWeight: '800', fontSize: 16, color: GREEN }}>Shop</Link>
-          <Link href="/faq"     style={{ fontWeight: '800', fontSize: 16, color: GREEN }}>FAQs</Link>
-          <Link href="/story"   style={{ fontWeight: '800', fontSize: 16, color: GREEN }}>Our Story</Link>
-          <Link href="/contact" style={{ fontWeight: '800', fontSize: 16, color: GREEN }}>Contact</Link>
-        </View>
+        <Link href="/" style={{ fontWeight: '800', fontSize: 18, color: GREEN }}>Home</Link>
+        <Link href="/shop" style={{ fontWeight: '800', fontSize: 18, color: GREEN }}>Shop</Link>
+        <Link href="/faq" style={{ fontWeight: '800', fontSize: 18, color: GREEN }}>FAQs</Link>
+        <Link href="/story" style={{ fontWeight: '800', fontSize: 18, color: GREEN }}>Our Story</Link>
+        <Link href="/contact" style={{ fontWeight: '800', fontSize: 18, color: GREEN }}>Contact</Link>
       </View>
-    </View>
+    </SafeAreaView>
   );
 }
