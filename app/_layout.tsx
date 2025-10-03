@@ -46,7 +46,7 @@ export default function Layout() {
           <Link href="/faq" style={{ fontWeight: '800', fontSize: 18, color: GREEN }}>FAQs</Link>
           <Link href="/story" style={{ fontWeight: '800', fontSize: 18, color: GREEN }}>Our Story</Link>
           <Link href="/contact" style={{ fontWeight: '800', fontSize: 18, color: GREEN }}>Contact</Link>
-          {/* Cart removed from footer — it’s already in the header */}
+          {/* Cart is not in the footer since you already have it in the header */}
         </View>
       </View>
     </SafeAreaView>
