@@ -1,125 +1,24 @@
-import React, { useState } from 'react';
-import { SafeAreaView, ScrollView, View, Text, Image, TouchableOpacity, StyleSheet } from 'react-native';
-import { useRouter } from 'expo-router';
+// app/shop.tsx
+import React from 'react';
+import { View, Text, ScrollView } from 'react-native';
 
-const BG_CREAM = '#fdfcf5';
-const GREEN = '#0b3d2e';
-const BORDER = '#e4dccf';
-
-export default function ShopScreen() {
-  const router = useRouter();
-  const [size, setSize] = useState('8oz');
-  const [pack, setPack] = useState('6 Pack');
-  const [quantity, setQuantity] = useState(1);
-
-  const prices: Record<string, number> = {
-    '8oz-6 Pack': 18, '8oz-12 Pack': 34,
-    '12oz-6 Pack': 28, '12oz-12 Pack': 52,
-  };
-  const total = prices[`${size}-${pack}`] * quantity;
-
+export default function Shop() {
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: BG_CREAM }}>
+    <View style={{ flex: 1, backgroundColor: '#fdfcf5' }}>
       <ScrollView
-        contentContainerStyle={{ padding: 18, paddingBottom: 100 }}
+        style={{ flex: 1 }}
+        contentContainerStyle={{ padding: 24 }}
         showsVerticalScrollIndicator={true}
       >
-        {/* top bar */}
-        <View style={styles.topBar}>
-          <TouchableOpacity style={styles.headerCartBtn} onPress={() => router.push('/cart')}>
-            <Text style={{ color: GREEN, fontWeight: '700' }}>Cart</Text>
-          </TouchableOpacity>
-        </View>
+        <Text style={{ fontSize: 22, fontWeight: '800', marginBottom: 16 }}>
+          Shop – Scroll Test
+        </Text>
 
-        {/* hero */}
-        <View style={styles.heroRow}>
-          <Image
-            source={require('../assets/images/basil-bottle.png')}
-            style={styles.heroImage}
-            resizeMode="contain"
-          />
-          <View style={{ flex: 1 }}>
-            <Text style={styles.title}>Basil Tea by K</Text>
-            <Text style={styles.subtitle}>Honey-infused basil tea</Text>
-            <Text style={styles.desc}>Small-batch, lightly sweet, refreshing.</Text>
-          </View>
-        </View>
+        {/* FORCE SCROLLING: big spacer */}
+        <View style={{ height: 1400, backgroundColor: '#fff2', borderWidth: 1, borderColor: '#eee' }} />
 
-        {/* size */}
-        <Text style={styles.sectionTitle}>Choose Size</Text>
-        <View style={styles.btnRow}>
-          {['8oz', '12oz'].map((s) => (
-            <TouchableOpacity
-              key={s}
-              style={[styles.optionBtn, size === s && styles.selectedBtn]}
-              onPress={() => setSize(s)}
-            >
-              <Text style={[styles.optionText, size === s && styles.selectedText]}>{s}</Text>
-            </TouchableOpacity>
-          ))}
-        </View>
-
-        {/* pack */}
-        <Text style={styles.sectionTitle}>Choose Pack</Text>
-        <View style={styles.btnRow}>
-          {['6 Pack', '12 Pack'].map((p) => (
-            <TouchableOpacity
-              key={p}
-              style={[styles.optionBtn, pack === p && styles.selectedBtn]}
-              onPress={() => setPack(p)}
-            >
-              <Text style={[styles.optionText, pack === p && styles.selectedText]}>{p}</Text>
-            </TouchableOpacity>
-          ))}
-        </View>
-
-        {/* quantity */}
-        <Text style={styles.sectionTitle}>Quantity</Text>
-        <View style={styles.qtyRow}>
-          <TouchableOpacity style={styles.qtyBtn} onPress={() => setQuantity(Math.max(1, quantity - 1))}>
-            <Text style={styles.qtyText}>−</Text>
-          </TouchableOpacity>
-          <Text style={styles.qtyValue}>{quantity}</Text>
-          <TouchableOpacity style={styles.qtyBtn} onPress={() => setQuantity(quantity + 1)}>
-            <Text style={styles.qtyText}>+</Text>
-          </TouchableOpacity>
-        </View>
-
-        {/* price + add */}
-        <View style={styles.addCartBox}>
-          <Text style={styles.price}>${total.toFixed(2)}</Text>
-          <TouchableOpacity style={styles.addCartBtn} onPress={() => router.push('/cart')}>
-            <Text style={styles.addCartText}>Add to Cart</Text>
-          </TouchableOpacity>
-        </View>
-
-        {/* big spacer JUST to prove scrolling works; remove later */}
-        <View style={{ height: 800 }} />
+        <Text style={{ marginTop: 16 }}>Bottom reached ✅</Text>
       </ScrollView>
-    </SafeAreaView>
+    </View>
   );
 }
-
-const styles = StyleSheet.create({
-  topBar: { flexDirection: 'row', justifyContent: 'flex-end', marginBottom: 12 },
-  headerCartBtn: { paddingHorizontal: 12, paddingVertical: 8, borderWidth: 1, borderColor: BORDER, borderRadius: 6, backgroundColor: '#fff' },
-  heroRow: { flexDirection: 'row', marginBottom: 18, alignItems: 'center' },
-  heroImage: { width: 120, height: 160, marginRight: 16 },
-  title: { fontSize: 22, fontWeight: '800', color: GREEN, marginBottom: 4 },
-  subtitle: { fontSize: 16, fontWeight: '600', color: GREEN, marginBottom: 6 },
-  desc: { fontSize: 14, color: '#444' },
-  sectionTitle: { fontSize: 16, fontWeight: '700', color: GREEN, marginTop: 8, marginBottom: 8 },
-  btnRow: { flexDirection: 'row', justifyContent: 'center', flexWrap: 'wrap', gap: 10, marginBottom: 12 },
-  optionBtn: { borderWidth: 1, borderColor: BORDER, borderRadius: 8, paddingVertical: 10, paddingHorizontal: 18, backgroundColor: '#fff', marginHorizontal: 6 },
-  optionText: { fontSize: 14, fontWeight: '700', color: GREEN },
-  selectedBtn: { backgroundColor: GREEN, borderColor: GREEN },
-  selectedText: { color: BG_CREAM },
-  qtyRow: { flexDirection: 'row', justifyContent: 'center', alignItems: 'center', gap: 14, marginBottom: 16 },
-  qtyBtn: { borderWidth: 1, borderColor: BORDER, borderRadius: 6, paddingHorizontal: 16, paddingVertical: 6, backgroundColor: '#fff' },
-  qtyText: { fontSize: 20, fontWeight: '800', color: GREEN },
-  qtyValue: { fontSize: 18, fontWeight: '800', color: GREEN, minWidth: 28, textAlign: 'center' },
-  addCartBox: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginTop: 8, padding: 14, borderWidth: 1, borderColor: BORDER, borderRadius: 10, backgroundColor: '#fff' },
-  price: { fontSize: 18, fontWeight: '900', color: GREEN },
-  addCartBtn: { backgroundColor: GREEN, borderRadius: 8, paddingVertical: 10, paddingHorizontal: 18 },
-  addCartText: { color: BG_CREAM, fontWeight: '800', fontSize: 16 },
-});
