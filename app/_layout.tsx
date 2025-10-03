@@ -1,18 +1,22 @@
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { View } from 'react-native';
-import { Link } from 'expo-router';
+import { View, ScrollView } from 'react-native';
+import { Link, Slot } from 'expo-router';
 
 const BG_CREAM = '#faf6ec';
 const BORDER = '#e4dccf';
 const GREEN = '#0b3d2e';
 
-export default function Layout({ children }: { children: React.ReactNode }) {
+export default function Layout() {
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: BG_CREAM }}>
-      {/* Main content with padding for footer */}
-      <View style={{ flex: 1, paddingBottom: 50 }}>
-        {children}
-      </View>
+      {/* Main scrollable content */}
+      <ScrollView
+        style={{ flex: 1 }}
+        contentContainerStyle={{ paddingBottom: 60 }}
+        showsVerticalScrollIndicator={false}
+      >
+        <Slot /> 
+      </ScrollView>
 
       {/* Sticky footer */}
       <View
@@ -28,7 +32,6 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           flexDirection: 'row',
           alignItems: 'center',
           justifyContent: 'space-evenly',
-          paddingHorizontal: 4,
           zIndex: 10,
         }}
       >
