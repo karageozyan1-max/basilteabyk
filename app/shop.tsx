@@ -1,4 +1,3 @@
-// app/shop.tsx
 import React, { useState } from 'react';
 import { SafeAreaView, ScrollView, View, Text, Image, TouchableOpacity, StyleSheet } from 'react-native';
 import { useRouter } from 'expo-router';
@@ -23,16 +22,16 @@ export default function ShopScreen() {
     <SafeAreaView style={{ flex: 1, backgroundColor: BG_CREAM }}>
       <ScrollView
         contentContainerStyle={{ padding: 18, paddingBottom: 100 }}
-        showsVerticalScrollIndicator={false}
+        showsVerticalScrollIndicator={true}
       >
-        {/* Top bar */}
+        {/* top bar */}
         <View style={styles.topBar}>
           <TouchableOpacity style={styles.headerCartBtn} onPress={() => router.push('/cart')}>
             <Text style={{ color: GREEN, fontWeight: '700' }}>Cart</Text>
           </TouchableOpacity>
         </View>
 
-        {/* Product hero */}
+        {/* hero */}
         <View style={styles.heroRow}>
           <Image
             source={require('../assets/images/basil-bottle.png')}
@@ -46,7 +45,7 @@ export default function ShopScreen() {
           </View>
         </View>
 
-        {/* Size */}
+        {/* size */}
         <Text style={styles.sectionTitle}>Choose Size</Text>
         <View style={styles.btnRow}>
           {['8oz', '12oz'].map((s) => (
@@ -60,7 +59,7 @@ export default function ShopScreen() {
           ))}
         </View>
 
-        {/* Pack */}
+        {/* pack */}
         <Text style={styles.sectionTitle}>Choose Pack</Text>
         <View style={styles.btnRow}>
           {['6 Pack', '12 Pack'].map((p) => (
@@ -74,7 +73,7 @@ export default function ShopScreen() {
           ))}
         </View>
 
-        {/* Quantity */}
+        {/* quantity */}
         <Text style={styles.sectionTitle}>Quantity</Text>
         <View style={styles.qtyRow}>
           <TouchableOpacity style={styles.qtyBtn} onPress={() => setQuantity(Math.max(1, quantity - 1))}>
@@ -86,7 +85,7 @@ export default function ShopScreen() {
           </TouchableOpacity>
         </View>
 
-        {/* Price + Add */}
+        {/* price + add */}
         <View style={styles.addCartBox}>
           <Text style={styles.price}>${total.toFixed(2)}</Text>
           <TouchableOpacity style={styles.addCartBtn} onPress={() => router.push('/cart')}>
@@ -94,8 +93,8 @@ export default function ShopScreen() {
           </TouchableOpacity>
         </View>
 
-        {/* TEMP spacer to prove scroll works; remove later */}
-        <View style={{ height: 600 }} />
+        {/* big spacer JUST to prove scrolling works; remove later */}
+        <View style={{ height: 800 }} />
       </ScrollView>
     </SafeAreaView>
   );
