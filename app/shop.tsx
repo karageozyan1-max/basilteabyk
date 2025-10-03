@@ -51,20 +51,44 @@ export default function ShopScreen() {
     router.push('/cart');
   }
 
-  return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: BG_CREAM }}>
-      <ScrollView
-        contentContainerStyle={{ padding: 18, paddingBottom: FOOTER_PAD }}
-        showsVerticalScrollIndicator={false}
-      >
-        <View style={styles.card}>
-          {/* top-right Cart button */}
-          <View style={styles.topBar}>
-            <View style={{ flex: 1 }} />
-            <TouchableOpacity style={styles.headerCartBtn} onPress={() => router.push('/cart')}>
-              <Text style={{ color: GREEN, fontWeight: '700' }}>Cart</Text>
-            </TouchableOpacity>
+ return (
+  <SafeAreaView style={{ flex: 1, backgroundColor: BG_CREAM }}>
+    <ScrollView
+      contentContainerStyle={{ padding: 18, paddingBottom: FOOTER_PAD }}
+      showsVerticalScrollIndicator={false}
+    >
+      <View style={styles.card}>
+        {/* top-right cart button */}
+        <View style={styles.topBar}>
+          <TouchableOpacity
+            style={styles.headerCartBtn}
+            onPress={() => router.push('/cart')}
+          >
+            <Text style={{ color: GREEN, fontWeight: '700' }}>Cart</Text>
+          </TouchableOpacity>
+        </View>
+
+        {/* hero image + short text */}
+        <View style={styles.heroRow}>
+          <Image
+            source={require('../assets/images/basil-bottle.png')}
+            style={styles.heroImage}
+            resizeMode="contain"
+          />
+          <View style={styles.heroText}>
+            <Text style={styles.title}>Basil Tea by K</Text>
+            <Text style={styles.subtitle}>Honey-infused basil tea in glass bottles</Text>
+            <Text style={styles.desc}>
+              Lightly sweet and refreshing. Real basil brewed in small batches, balanced with honey.
+            </Text>
           </View>
+        </View>
+
+        {/* 👉 All the rest of your shop page (size buttons, packs, qty, add to cart, etc) goes here */}
+      </View>
+    </ScrollView>   {/* ✅ Move this down here */}
+  </SafeAreaView>
+)
 
           {/* hero image + short text */}
           <View style={styles.heroRow}>
