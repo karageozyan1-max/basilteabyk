@@ -12,7 +12,7 @@ const GOLD = '#c7a45a';
 
 const { width } = Dimensions.get('window');
 const isSmall = width < 380;
-const BTN_H = isSmall ? 44 : 52;
+const BTN_H = isSmall ? 42 : 48;
 
 type SizeKey = '8oz' | '12oz';
 
@@ -36,11 +36,13 @@ export default function CartPage() {
       <ScrollView contentContainerStyle={{ padding: 20, paddingBottom: 54 }} showsVerticalScrollIndicator={false}>
         <View style={styles.card}>
           <View style={styles.headerRow}>
-            <Image
-              source={require('../assets/images/basil-bottle.png')}
-              style={{ width: 64, height: 64, marginRight: 12 }}
-              resizeMode="contain"
-            />
+            {hasItem && ( // 👈 only show bottle image if there is an item
+              <Image
+                source={require('../assets/images/basil-bottle.png')}
+                style={{ width: 56, height: 56, marginRight: 12 }}
+                resizeMode="contain"
+              />
+            )}
             <View style={{ flex: 1, minWidth: 0 }}>
               <Text style={styles.title}>Your Cart</Text>
               <Text style={styles.subtitle}>{hasItem ? `${qty} × ${pack}-pack • ${size}` : 'No items'}</Text>
