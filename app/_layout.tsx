@@ -61,7 +61,7 @@ export default function Layout() {
     alignItems: 'center'
     justifyContent: 'space-around',
     paddingHorizontal: 4,
-    paddingVertical: 2,
+    paddingVertical: 2
   }}
 >
       <View
