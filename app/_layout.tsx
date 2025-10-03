@@ -53,24 +53,24 @@ export default function Layout() {
     left: 0,
     right: 0,
     bottom: 0,
-    height: 50,
+    height: 40,
     backgroundColor: BG_CREAM,
     borderTopWidth: 1,
     borderTopColor: BORDER,
     flexDirection: 'row',
     alignItems: 'center'
-    justifyContent: 10,
-    paddingHorizontal: 6,
-    paddingVertical: 6,
+    justifyContent: 'space-around',
+    paddingHorizontal: 4,
+    paddingVertical: 2,
   }}
-          
+>
       <View
     style={{
       flex: 1,
       flexDirection: 'row',
       alignItems: 'center',
       justifyContent: 'center',
-      gap: 4,  // more space between bold items
+      gap: 8,  // more space between bold items
     }}
   >
     <FooterItem label="Home" href="/" style={{ fontWeight: '800', fontSize: 20, color: GREEN }} />
