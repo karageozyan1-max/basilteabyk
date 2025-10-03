@@ -19,10 +19,17 @@ const { width } = Dimensions.get('window');
 const isPhone = width < 768;
 const isSmallPhone = width < 380;
 
-// ——— Compact button sizing (smaller than before, still readable)
-const BTN_FONT  = isSmallPhone ? 13.5 : isPhone ? 14.5 : 16;
-const BTN_H     = isSmallPhone ? 42   : isPhone ? 46 : 52;
-const BTN_MIN_W = isSmallPhone ? 150  : isPhone ? 168 : 212;
+// responsive sizing (small phone / phone / desktop)
+const BTN_FONT  = isSmallPhone ? 13.5 : isPhone ? 14.5 : 16;
+const BTN_H     = isSmallPhone ? 44   : isPhone ? 48   : 52;
+
+// a width that scales with the viewport, but never too tiny
+// -> prevents cut off on desktop, still fits on phones
+const BTN_MIN_W =
+  Math.max(
+    isSmallPhone ? 160 : isPhone ? 176 : 240,
+    Math.floor(width * (isPhone ? 0.48 : 0.26)) // ~48% on phone rows, ~26% on desktop rows
+  );
 
 // Footer in _layout.tsx is 50px; add a little buffer
 const FOOTER_PAD = 64;
@@ -115,25 +122,26 @@ export default function ShopScreen() {
 
 /* small components */
 
-function Choice({ label, selected, onPress }:{
-  label: string; selected: boolean; onPress: () => void;
+function Choice({ label, selected, onPress }: {
+  label: string; selected: boolean; onPress: () => void;
 }) {
-  return (
-    <TouchableOpacity
-      onPress={onPress}
-      style={[styles.choiceBtn, selected && styles.choiceBtnSelected]}
-      accessibilityState={{ selected }}
-    >
-      <Text
-        style={[styles.choiceText, selected && styles.choiceTextSelected]} 
+  return (
+    <TouchableOpacity
+      onPress={onPress}
+      style={[styles.choiceBtn, selected && styles.choiceBtnSelected]}
+      accessibilityState={{ selected }}
+      activeOpacity={0.8}
+    >
+      <Text
+        style={[styles.choiceText, selected && styles.choiceTextSelected]}
         numberOfLines={1}
         ellipsizeMode="clip"
-        allowFontScaling={false}
-    >
-        {label}
-      </Text>
-    </TouchableOpacity>
-  );
+        allowFontScaling={true}
+      >
+        {label}
+      </Text>
+    </TouchableOpacity>
+  );
 }
 
 function QtyBtn({ label, onPress }:{ label: string; onPress: () => void }) {
@@ -221,26 +229,29 @@ const styles = StyleSheet.create({
 
   // —— smaller choice buttons (no clipping)
   choiceBtn: {
-    minWidth: BTN_MIN_W,
-    height: BTN_H,
-    paddingHorizontal: 14,
-    borderWidth: 1,
-    borderColor: GREEN,
-    borderRadius: 10,
-    backgroundColor: BG_CREAM,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  choiceBtnSelected: { backgroundColor: GREEN, borderColor: GREEN },
-  choiceText: {
-    fontSize: BTN_FONT,
-    lineHeight: BTN_FONT + 4,
-    fontWeight: '700',
-    color: GREEN,
-    textAlign: 'center',
-    includeFontPadding: false,        // helps with cutoff,
-  },
-  choiceTextSelected: { color: BG_CREAM },
+  minWidth: BTN_MIN_W,
+  minHeight: BTN_H,            // ⬅️ was `height`; minHeight avoids vertical crop
+  paddingHorizontal: 16,
+  borderWidth: 1,
+  borderColor: GREEN,
+  borderRadius: 10,
+  backgroundColor: BG_CREAM,
+  alignItems: 'center',
+  justifyContent: 'center',
+  alignSelf: 'center',
+  overflow: 'visible',         // be lenient
+},
+choiceBtnSelected: { backgroundColor: GREEN, borderColor: GREEN },
+
+choiceText: {
+  fontSize: BTN_FONT,
+  lineHeight: Math.round(BTN_FONT * 1.35), // more headroom
+  fontWeight: '700',
+  color: GREEN,
+  textAlign: 'center',
+  includeFontPadding: true,    // ⬅️ turn ON to stop ascender/descender clipping
+},
+choiceTextSelected: { color: BG_CREAM },
 
   qtyRow: { flexDirection: 'row', alignItems: 'center', gap: 12, justifyContent: 'center', marginTop: 4 },
   qtyBtn: {
