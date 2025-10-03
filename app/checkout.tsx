@@ -33,11 +33,12 @@ export default function CheckoutScreen() {
   const shipping = useMemo(() => (subtotal >= FREE_SHIP_THRESHOLD || subtotal === 0 ? 0 : SHIPPING_FLAT), [subtotal]);
   const tax = useMemo(() => subtotal * TAX_RATE, [subtotal]);
   const total = useMemo(() => subtotal + shipping + tax, [subtotal, shipping, tax]);
+
   const hasItem = pack > 0 && qty > 0;
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: BG_CREAM }}>
-      <ScrollView contentContainerStyle={styles.page} showsVerticalScrollIndicator={false}>
+      <ScrollView contentContainerStyle={{ padding: 20, paddingBottom: 54 }} showsVerticalScrollIndicator={false}>
         <View style={styles.card}>
           <Text style={styles.title}>Checkout</Text>
 
@@ -94,7 +95,10 @@ export default function CheckoutScreen() {
                 <Text style={styles.primaryBtnText}>Place Order</Text>
               </TouchableOpacity>
 
-              <TouchableOpacity style={styles.secondaryBtn} onPress={() => router.push({ pathname: '/cart', params: { size, pack: String(pack), qty: String(qty) } })}>
+              <TouchableOpacity
+                style={styles.secondaryBtn}
+                onPress={() => router.push({ pathname: '/cart', params: { size, pack: String(pack), qty: String(qty) } })}
+              >
                 <Text style={styles.secondaryBtnText}>Back to Cart</Text>
               </TouchableOpacity>
 
@@ -119,7 +123,6 @@ function Row({ label, value, bold }: { label: string; value: string; bold?: bool
 }
 
 const styles = StyleSheet.create({
-  page: { padding: 20 },
   card: {
     backgroundColor: BG_CREAM,
     borderRadius: 14,
