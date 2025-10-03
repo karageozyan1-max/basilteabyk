@@ -1,12 +1,12 @@
 // app/_layout.tsx
 import React from 'react';
-import { View } from 'react-native';
-import { Slot } from 'expo-router';
+import { Stack } from 'expo-router';
+import { CartProvider } from './CartContext'; // <= this is the key
 
 export default function Layout() {
   return (
-    <View style={{ flex: 1 }}>
-      <Slot />
-    </View>
+    <CartProvider>
+      <Stack screenOptions={{ headerTitleAlign: 'center' }} />
+    </CartProvider>
   );
 }
