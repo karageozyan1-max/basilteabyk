@@ -47,35 +47,34 @@ export default function Layout() {
         <Stack screenOptions={{ headerShown: false }} />
 
         {/* Compact sticky footer */}
-       {/* Compact sticky footer */}
 <View
-  style={{
-    position: 'absolute',
-    left: 0,
-    right: 0,
-    bottom: 0,
-    height: 50,
-    backgroundColor: BG_CREAM,
-    borderTopWidth: 1,
-    borderTopColor: BORDER,
-    paddingHorizontal: 6,
-  }}
+  style={{
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    bottom: 0,
+    height: 55,
+    backgroundColor: BG_CREAM,
+    borderTopWidth: 1,
+    borderTopColor: BORDER,
+    paddingHorizontal: 6,
+  }}
 >
-  <View
-    style={{
-      flex: 1,
-      flexDirection: 'row',
-      alignItems: 'center',
-      justifyContent: 'center',   // center them instead of spreading out
-      gap: 16,                    // small space between words
-    }}
-  >
-    <FooterItem label="Home" href="/" />
-    <FooterItem label="Shop" href="/shop" />
-    <FooterItem label="FAQs" href="/faq" />
-    <FooterItem label="Our Story" href="/story" />
-    <FooterItem label="Contact" href="/contact" />
-  </View>
+  <View
+    style={{
+      flex: 1,
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'center',
+      gap: 22,  // more space between bold items
+    }}
+  >
+    <FooterItem label="Home" href="/" style={{ fontWeight: '700', fontSize: 16, color: GREEN }} />
+    <FooterItem label="Shop" href="/shop" style={{ fontWeight: '700', fontSize: 16, color: GREEN }} />
+    <FooterItem label="FAQs" href="/faq" style={{ fontWeight: '700', fontSize: 16, color: GREEN }} />
+    <FooterItem label="Our Story" href="/story" style={{ fontWeight: '700', fontSize: 16, color: GREEN }} />
+    <FooterItem label="Contact" href="/contact" style={{ fontWeight: '700', fontSize: 16, color: GREEN }} />
+  </View>
 </View>
       </SafeAreaView>
     </CartProvider>
