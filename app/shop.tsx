@@ -216,8 +216,8 @@ const styles = StyleSheet.create({
 
   // —— smaller choice buttons (no clipping)
   choiceBtn: {
-    minWidth: BTN_MIN_W,
-    height: BTN_H,
+    minWidth: 148,
+    height: 44,
     paddingHorizontal: 12,
     borderWidth: 1,
     borderColor: GREEN,
@@ -228,8 +228,8 @@ const styles = StyleSheet.create({
   },
   choiceBtnSelected: { backgroundColor: GREEN, borderColor: GREEN },
   choiceText: {
-    fontSize: BTN_FONT,
-    lineHeight: BTN_FONT + 4,
+    fontSize: 14,
+    lineHeight: 16,
     fontWeight: '700',
     color: GREEN,
     textAlign: 'center',
