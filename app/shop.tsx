@@ -107,13 +107,16 @@ export default function ShopScreen() {
           </View>
 
           {/* Size */}
+  <View>
           <Text style={styles.sectionTitle}>Size</Text>
           <View style={styles.centerRow}>
             <Choice label="8 oz"  selected={size === '8oz'}  onPress={() => setSize('8oz')} />
             <Choice label="12 oz" selected={size === '12oz'} onPress={() => setSize('12oz')} />
           </View>
+    </View>
 
           {/* Pack */}
+  <View>
           <Text style={[styles.sectionTitle, { marginTop: 14 }]}>Pack</Text>
           <View style={styles.centerRow}>
             {PACK_OPTIONS.map((p) => (
@@ -122,6 +125,7 @@ export default function ShopScreen() {
           </View>
 
           {/* Quantity */}
+    <View>
           <Text style={[styles.sectionTitle, { marginTop: 14 }]}>Quantity</Text>
           <View style={styles.qtyRow}>
             <QtyBtn label="–" onPress={() => setQty((q) => Math.max(1, q - 1))} />
