@@ -1,12 +1,10 @@
 'use client';
 
-import React, { createContext, useContext, useMemo, useReducer } from 'react';
-
-export type SizeKey = '8oz' | '12oz';
+import React, { createContext, useContext, useReducer, useMemo, useEffect } from 'react';
 
 export type CartItem = {
-  id: string;            // stable key (size-pack)
-  size: SizeKey;
+  id: string;       // stable key
+  sizeKey: string;
   pack: number;
   qty: number;
   unitPrice: number;
@@ -22,22 +20,15 @@ type Action =
 
 function reducer(state: State, action: Action): State {
   switch (action.type) {
-    case 'ADD': {
-      const existing = state.items.find(i => i.id === action.payload.id);
-      if (existing) {
-        return {
-          items: state.items.map(i =>
-            i.id === existing.id ? { ...i, qty: Math.min(99, i.qty + action.payload.qty) } : i
-          ),
-        };
-      }
-      return { items: [...state.items, action.payload] };
-    }
+    case 'ADD':
+      return {
+        items: state.items.find(i => i.id === action.payload.id)
+          ? state.items.map(i => i.id === action.payload.id ? action.payload : i)
+          : [...state.items, action.payload],
+      };
     case 'UPDATE_QTY':
       return {
-        items: state.items
-          .map(i => (i.id === action.id ? { ...i, qty: Math.max(1, Math.min(99, action.qty)) } : i))
-          .filter(i => i.qty > 0),
+        items: state.items.map(i => i.id === action.id ? { ...i, qty: Math.max(1, action.qty) } : i),
       };
     case 'REMOVE':
       return { items: state.items.filter(i => i.id !== action.id) };
@@ -48,60 +39,43 @@ function reducer(state: State, action: Action): State {
   }
 }
 
-const CartCtx = createContext<{
-  items: CartItem[];
-  addItem: (item: CartItem) => void;
-  updateQty: (id: string, qty: number) => void;
-  removeItem: (id: string) => void;
-  clearCart: () => void;
-  subtotal: number;
-} | null>(null);
+const CartCtx = createContext<any>(null);
 
 export function CartProvider({ children }: { children: React.ReactNode }) {
-  const [state, dispatch] = useReducer(reducer, { items: [] });
+  const [state, dispatch] = useReducer(reducer, { items: [] });
 
-  // Rehydrate once on mount
-  React.useEffect(() => {
-    if (typeof window === 'undefined') return;
-    try {
-      const saved = localStorage.getItem('cart:v1');
-      if (saved) {
-        const items = JSON.parse(saved);
-        if (Array.isArray(items)) {
-          dispatch({ type: 'CLEAR' });
-          for (const it of items) dispatch({ type: 'ADD', payload: it });
-        }
-      }
-    } catch {}
-  }, []);
+  // persist cart in localStorage
+  useEffect(() => {
+    const stored = localStorage.getItem('cart');
+    if (stored) {
+      try {
+        const parsed = JSON.parse(stored);
+        if (parsed.items) {
+          parsed.items.forEach((it: CartItem) => dispatch({ type: 'ADD', payload: it }));
+        }
+      } catch {}
+    }
+  }, []);
 
-  // Persist whenever items change
-  React.useEffect(() => {
-    if (typeof window === 'undefined') return;
-    try {
-      localStorage.setItem('cart:v1', JSON.stringify(state.items));
-    } catch {}
-  }, [state.items]);
+  useEffect(() => {
+    localStorage.setItem('cart', JSON.stringify(state));
+  }, [state]);
 
-  const subtotal = useMemo(
-    () => state.items.reduce((sum, i) => sum + i.unitPrice * i.qty, 0),
-    [state.items]
-  );
+  const subtotal = useMemo(
+    () => state.items.reduce((sum, i) => sum + i.unitPrice * i.pack * i.qty, 0),
+    [state.items]
+  );
 
-  const value = useMemo(
-    () => ({
-      items: state.items,
-      addItem: (item: CartItem) => dispatch({ type: 'ADD', payload: item }),
-      updateQty: (id: string, qty: number) =>
-        dispatch({ type: 'UPDATE_QTY', id, qty }),
-      removeItem: (id: string) => dispatch({ type: 'REMOVE', id }),
-      clearCart: () => dispatch({ type: 'CLEAR' }),
-      subtotal, // ✅ use your existing subtotal here
-    }),
-    [state.items, subtotal]
-  );
+  const value = useMemo(() => ({
+    items: state.items,
+    addItem: (item: CartItem) => dispatch({ type: 'ADD', payload: item }),
+    updateQty: (id: string, qty: number) => dispatch({ type: 'UPDATE_QTY', id, qty }),
+    removeItem: (id: string) => dispatch({ type: 'REMOVE', id }),
+    clearCart: () => dispatch({ type: 'CLEAR' }),
+    subtotal,
+  }), [state.items, subtotal]);
 
-  return <CartCtx.Provider value={value}>{children}</CartCtx.Provider>;
+  return <CartCtx.Provider value={value}>{children}</CartCtx.Provider>;
 }
 
 export function useCart() {
