@@ -1,21 +1,15 @@
-// app/_layout.tsx
-'use client';
-
 import React from 'react';
-import { View } from 'react-native';
-import { Stack, Link } from 'expo-router';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { View, SafeAreaView } from 'react-native';
+import { Link } from 'expo-router';
 
-// ---- Theme colors
-const BG_CREAM = '#f4f0e6';
-const GREEN    = '#0b3d2e';
-const BORDER   = '#e4dccf';
+const BG_CREAM = '#fdf6ec';
+const BORDER = '#eadccf';
+const GREEN = '#0b3d2e';
 
-export default function Layout() {
+export default function Layout({ children }: { children: React.ReactNode }) {
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: BG_CREAM }}>
-      {/* Render all pages here */}
-      <Stack screenOptions={{ headerShown: false }} />
+      {children}
 
       {/* Sticky footer */}
       <View
@@ -28,26 +22,44 @@ export default function Layout() {
           backgroundColor: BG_CREAM,
           borderTopWidth: 1,
           borderTopColor: BORDER,
-          justifyContent: 'center',
+          flexDirection: 'row',
+          alignItems: 'center',
+          justifyContent: 'space-around',
+          paddingHorizontal: 4,
+          paddingVertical: 2,
           zIndex: 10,
         }}
       >
-        <View
-          style={{
-            flexDirection: 'row',
-            alignItems: 'center',
-            justifyContent: 'space-around',
-            paddingHorizontal: 6,
-            gap: 8,
-          }}
+        <Link
+          href="/"
+          style={{ fontWeight: '800', fontSize: 18, color: GREEN }}
         >
-          <Link href="/" style={{ fontWeight: '800', fontSize: 18, color: GREEN }}>Home</Link>
-          <Link href="/shop" style={{ fontWeight: '800', fontSize: 18, color: GREEN }}>Shop</Link>
-          <Link href="/faq" style={{ fontWeight: '800', fontSize: 18, color: GREEN }}>FAQs</Link>
-          <Link href="/story" style={{ fontWeight: '800', fontSize: 18, color: GREEN }}>Our Story</Link>
-          <Link href="/contact" style={{ fontWeight: '800', fontSize: 18, color: GREEN }}>Contact</Link>
-          {/* Cart is not in the footer since you already have it in the header */}
-        </View>
+          Home
+        </Link>
+        <Link
+          href="/shop"
+          style={{ fontWeight: '800', fontSize: 18, color: GREEN }}
+        >
+          Shop
+        </Link>
+        <Link
+          href="/faq"
+          style={{ fontWeight: '800', fontSize: 18, color: GREEN }}
+        >
+          FAQs
+        </Link>
+        <Link
+          href="/story"
+          style={{ fontWeight: '800', fontSize: 18, color: GREEN }}
+        >
+          Our Story
+        </Link>
+        <Link
+          href="/contact"
+          style={{ fontWeight: '800', fontSize: 18, color: GREEN }}
+        >
+          Contact
+        </Link>
       </View>
     </SafeAreaView>
   );
