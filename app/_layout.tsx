@@ -1,38 +1,14 @@
-// app/_layout.tsx
 import React from 'react';
-import { SafeAreaView, View } from 'react-native';
-import { Slot, Link } from 'expo-router';
+import { View } from 'react-native';
+import { Slot } from 'expo-router';
 
 const BG_CREAM = '#fdfcf5';
-const GREEN = '#0b3d2e';
-const BORDER = '#e4dccf';
 
 export default function Layout() {
-  return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: BG_CREAM }}>
-      {/* Page content fills the screen */}
-      <View style={{ flex: 1 }}>
-        <Slot />
-      </View>
-
-      {/* Footer sits AFTER content (not absolute) */}
-      <View
-        style={{
-          height: 50,
-          backgroundColor: BG_CREAM,
-          borderTopWidth: 1,
-          borderTopColor: BORDER,
-          flexDirection: 'row',
-          alignItems: 'center',
-          justifyContent: 'space-around',
-        }}
-      >
-        <Link href="/" style={{ fontWeight: '800', fontSize: 18, color: GREEN }}>Home</Link>
-        <Link href="/shop" style={{ fontWeight: '800', fontSize: 18, color: GREEN }}>Shop</Link>
-        <Link href="/faq" style={{ fontWeight: '800', fontSize: 18, color: GREEN }}>FAQs</Link>
-        <Link href="/story" style={{ fontWeight: '800', fontSize: 18, color: GREEN }}>Our Story</Link>
-        <Link href="/contact" style={{ fontWeight: '800', fontSize: 18, color: GREEN }}>Contact</Link>
-      </View>
-    </SafeAreaView>
-  );
+  // zero footer, zero absolute positioning — nothing can block scroll
+  return (
+    <View style={{ flex: 1, backgroundColor: BG_CREAM }}>
+      <Slot />
+    </View>
+  );
 }
