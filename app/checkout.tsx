@@ -8,58 +8,51 @@ const SHIPPING_FLAT = 6.99;
 const TAX_RATE = 0.08;
 
 export default function CheckoutScreen() {
-  const router = useRouter();
-  const { items, subtotal } = useCart();
+  const { items, subtotal, clearCart } = useCart();  // ✅ from context
 
-  const shipping = subtotal >= FREE_SHIP_THRESHOLD || subtotal === 0 ? 0 : SHIPPING_FLAT;
-  const tax = subtotal * TAX_RATE;
-  const total = subtotal + shipping + tax;
-  const hasItems = items.length > 0;
+  const shipping = subtotal >= 50 ? 0 : 6.99;
+  const tax = subtotal * 0.08;
+  const total = subtotal + shipping + tax;
 
-  return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: '#fdf6ec' }}>
-      <ScrollView contentContainerStyle={{ padding: 20, paddingBottom: 64 }} showsVerticalScrollIndicator={false}>
-        <Text style={styles.title}>Checkout</Text>
+  if (items.length === 0) {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <Text>Your cart is empty.</Text>
+      </View>
+    );
+  }
 
-        {!hasItems ? (
-          <>
-            <Text style={{ color: '#b38c2c', marginTop: 6 }}>Your cart is empty.</Text>
-            <TouchableOpacity style={styles.primaryBtn} onPress={() => router.push('/shop')}>
-              <Text style={styles.primaryBtnText}>Go to Shop</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.secondaryBtn} onPress={() => router.back()}>
-              <Text style={styles.secondaryBtnText}>Back</Text>
-            </TouchableOpacity>
-          </>
-        ) : (
-          <>
-            {items.map((it, idx) => (
-              <View key={idx} style={styles.itemRow}>
-                <Image source={require('../assets/images/basil-bottle.png')} style={{ width: 64, height: 64, borderRadius: 8, marginRight: 10 }} />
-                <View style={{ flex: 1 }}>
-                  <Text style={styles.itemName}>Basil Tea — {it.sizeKey}</Text>
-                  <Text style={styles.itemPrice}>${it.unitPrice.toFixed(2)} × {it.qty} = ${(it.unitPrice * it.qty).toFixed(2)}</Text>
-                </View>
-              </View>
-            ))}
+  return (
+    <SafeAreaView style={{ flex: 1 }}>
+      <ScrollView>
+        <Text style={styles.title}>Checkout</Text>
 
-            <Row label="Subtotal" value={`$${subtotal.toFixed(2)}`} />
-            <Row label="Shipping" value={shipping === 0 ? 'FREE' : `$${shipping.toFixed(2)}`} />
-            <Row label={`Tax (${Math.round(TAX_RATE * 100)}%)`} value={`$${tax.toFixed(2)}`} />
-            <Row label="Total" value={`$${total.toFixed(2)}`} bold />
+        {items.map((item, index) => (
+          <View key={index} style={styles.itemRow}>
+            <Text>{item.sizeKey} – ${item.unitPrice.toFixed(2)}</Text>
+            <Text>Qty: {item.qty}</Text>
+          </View>
+        ))}
 
-            {subtotal >= FREE_SHIP_THRESHOLD && (
-              <Text style={styles.freeMsg}>You unlocked FREE shipping! You saved ${SHIPPING_FLAT.toFixed(2)} 🎉</Text>
-            )}
+        <View>
+          <Text>Subtotal: ${subtotal.toFixed(2)}</Text>
+          <Text>Shipping: ${shipping.toFixed(2)}</Text>
+          <Text>Tax: ${tax.toFixed(2)}</Text>
+          <Text style={{ fontWeight: 'bold' }}>Total: ${total.toFixed(2)}</Text>
+        </View>
 
-            <TouchableOpacity style={styles.primaryBtn} onPress={() => router.replace('/order-success')}>
-              <Text style={styles.primaryBtnText}>Place Order</Text>
-            </TouchableOpacity>
-          </>
-        )}
-      </ScrollView>
-    </SafeAreaView>
-  );
+        <TouchableOpacity
+          style={styles.primaryBtn}
+          onPress={() => {
+            clearCart(); 
+            router.replace('/order-success');
+          }}
+        >
+          <Text style={styles.primaryBtnText}>Place Order</Text>
+        </TouchableOpacity>
+      </ScrollView>
+    </SafeAreaView>
+  );
 }
 
 function Row({ label, value, bold }: { label: string; value: string; bold?: boolean }) {
