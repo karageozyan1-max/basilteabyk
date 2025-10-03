@@ -56,10 +56,10 @@ export default function ShopScreen() {
     <ScrollView
       contentContainerStyle={{ padding: 18, paddingBottom: FOOTER_PAD }}
       showsVerticalScrollIndicator={false}
-    >
-      <View style={styles.card}>
-        {/* top-right cart button */}
-        <View style={styles.topBar}>
+      <View style={styles.card}>
+       {/* top-right cart button */}
+        
+        <View style={styles.topBar}>
           <TouchableOpacity
             style={styles.headerCartBtn}
             onPress={() => router.push('/cart')}
@@ -106,46 +106,48 @@ export default function ShopScreen() {
             </View>
           </View>
 
-          {/* Size */}
-  <View>
-          <Text style={styles.sectionTitle}>Size</Text>
-          <View style={styles.centerRow}>
-            <Choice label="8 oz"  selected={size === '8oz'}  onPress={() => setSize('8oz')} />
-            <Choice label="12 oz" selected={size === '12oz'} onPress={() => setSize('12oz')} />
-          </View>
-    </View>
+         {/* ====== Size ====== */}
+<View>
+  <Text style={styles.sectionTitle}>Size</Text>
+  <View style={styles.centerRow}>
+    <Choice label="8 oz"  selected={size === '8oz'}  onPress={() => setSize('8oz')} />
+    <Choice label="12 oz" selected={size === '12oz'} onPress={() => setSize('12oz')} />
+  </View>
+</View>
 
-          {/* Pack */}
-  <View>
-          <Text style={[styles.sectionTitle, { marginTop: 14 }]}>Pack</Text>
-          <View style={styles.centerRow}>
-            {PACK_OPTIONS.map((p) => (
-              <Choice key={p} label={`${p}-pack`} selected={pack === p} onPress={() => setPack(p)} />
-            ))}
-          </View>
+{/* ====== Pack ====== */}
+<View>
+  <Text style={[styles.sectionTitle, { marginTop: 14 }]}>Pack</Text>
+  <View style={styles.centerRow}>
+    {PACK_OPTIONS.map((p) => (
+      <Choice key={p} label={`${p}-pack`} selected={pack === p} onPress={() => setPack(p)} />
+    ))}
+  </View>
+</View>
 
-          {/* Quantity */}
-    <View>
-          <Text style={[styles.sectionTitle, { marginTop: 14 }]}>Quantity</Text>
-          <View style={styles.qtyRow}>
-            <QtyBtn label="–" onPress={() => setQty((q) => Math.max(1, q - 1))} />
-            <Text style={styles.qtyText}>{qty}</Text>
-            <QtyBtn label="+" onPress={() => setQty((q) => Math.min(99, q + 1))} />
-          </View>
+      {/* ===== Quantity ===== */}
+      <Text style={[styles.sectionTitle, { marginTop: 14 }]}>Quantity</Text>
+      <View style={styles.qtyRow}>
+        <QtyBtn label="-" onPress={() => setQty(Math.max(1, qty - 1))} />
+        <Text style={styles.qtyBtnText}>{qty}</Text>
+        <QtyBtn label="+" onPress={() => setQty(Math.min(99, qty + 1))} />
+      </View>
 
-          {/* Price + CTA */}
-          <View style={{ marginTop: 8, alignItems: 'center' }}>
-            <Text style={styles.priceValue}>${total.toFixed(2)}</Text>
-            <Text style={styles.note}>{qty} × {pack}-pack • {size}</Text>
-          </View>
+      {/* ===== Price + CTA ===== */}
+      <View style={{ marginTop: 8, alignItems: 'center' }}>
+        <Text style={styles.priceValue}>${total.toFixed(2)}</Text>
+        <Text style={styles.note}>
+          {qty} × {pack}-pack @ {size}
+        </Text>
 
-          <TouchableOpacity style={styles.primaryBtn} onPress={handleAddToCart}>
-            <Text style={styles.primaryBtnText}>Add to Cart</Text>
-          </TouchableOpacity>
-        </View>
-      </ScrollView>
-    </SafeAreaView>
-  );
+        <TouchableOpacity style={styles.primaryBtn} onPress={handleAddToCart}>
+          <Text style={styles.primaryBtnText}>Add to Cart</Text>
+        </TouchableOpacity>
+      </View> {/* ✅ closes Price + CTA view */}
+      
+    </ScrollView>
+  </SafeAreaView>
+);
 }
 
 /* small components */
