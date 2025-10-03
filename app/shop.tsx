@@ -124,7 +124,12 @@ function Choice({ label, selected, onPress }:{
       style={[styles.choiceBtn, selected && styles.choiceBtnSelected]}
       accessibilityState={{ selected }}
     >
-      <Text style={[styles.choiceText, selected && styles.choiceTextSelected]} numberOfLines={1}>
+      <Text
+        style={[styles.choiceText, selected && styles.choiceTextSelected]} 
+        numberOfLines={1}
+        ellipsizeMode="clip"
+        allowFontScaling={false}
+    >
         {label}
       </Text>
     </TouchableOpacity>
@@ -216,9 +221,9 @@ const styles = StyleSheet.create({
 
   // —— smaller choice buttons (no clipping)
   choiceBtn: {
-    minWidth: 160,
-    height: 44,
+    minWidth: 136,
     paddingHorizontal: 14,
+    paddingVertical: 10,
     borderWidth: 1,
     borderColor: GREEN,
     borderRadius: 10,
@@ -228,13 +233,12 @@ const styles = StyleSheet.create({
   },
   choiceBtnSelected: { backgroundColor: GREEN, borderColor: GREEN },
   choiceText: {
-    fontSize: 13,
-    lineHeight: 16,
-    fontWeight: '600',
+    fontSize: 15,
+    lineHeight: 18,
+    fontWeight: '700',
     color: GREEN,
     textAlign: 'center',
     includeFontPadding: false,  // helps with cutoff
-    allowFontScaling: false,  // stops zoom cutting
   },
   choiceTextSelected: { color: BG_CREAM },
 
