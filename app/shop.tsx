@@ -1,4 +1,3 @@
-// app/shop.tsx
 'use client';
 
 import React, { useMemo, useState } from 'react';
@@ -8,28 +7,22 @@ import { useRouter } from 'expo-router';
 import { SIZE_PRICES } from './prices';
 import { useCart, SizeKey } from './CartContext';
 
-// Theme colors
-const BG_CREAM = '#fdf6ec';
+const BG_CREAM = '#faf0e6';
 const GREEN = '#0b3d2e';
 const GOLD = '#c7a45a';
-const BORDER = '#eadccf';
+const BORDER = '#eacdcf';
 
 const PACK_OPTIONS = [2, 6, 12];
 
-// Screen dimensions
 const { width } = Dimensions.get('window');
 const isPhone = width < 768;
 const isSmallPhone = width < 380;
 
-// Responsive sizing
 const BTN_FONT = isSmallPhone ? 13.5 : isPhone ? 14.5 : 16;
-const BTN_H = isSmallPhone ? 42 : isPhone ? 48 : 52;
+const BTN_H = isSmallPhone ? 44 : isPhone ? 48 : 52;
 const BTN_MIN_W = isSmallPhone ? 132 : isPhone ? 148 : 180;
 
-// Footer padding
-const FOOTER_PAD = 64;
-
-export default function ShopScreen() {
+const ShopScreen = () => {
   const router = useRouter();
   const { addItem } = useCart();
 
@@ -49,232 +42,162 @@ export default function ShopScreen() {
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: BG_CREAM }}>
       <ScrollView
-        contentContainerStyle={{ padding: 18, paddingBottom: FOOTER_PAD }}
+        contentContainerStyle={{
+          padding: 18,
+          paddingBottom: 100, // room for footer so content can scroll
+        }}
         showsVerticalScrollIndicator={false}
       >
-        <View style={styles.card}>
-          {/* Top-right cart button */}
-          <View style={styles.topBar}>
-            <TouchableOpacity style={styles.headerCartBtn} onPress={() => router.push('/cart')}>
-              <Text style={{ color: GREEN, fontWeight: '700' }}>Cart</Text>
-            </TouchableOpacity>
-          </View>
-
-          {/* Hero image + text */}
-          <View style={styles.heroRow}>
-            <Image
-              source={require('../assets/images/basil-bottle.png')}
-              style={styles.heroImage}
-              resizeMode="contain"
-            />
-            <View style={styles.heroText}>
-              <Text style={styles.title}>Basil Tea by K</Text>
-              <Text style={styles.subtitle}>Honey-infused basil tea in glass bottles</Text>
-              <Text style={styles.desc}>
-                Lightly sweet and refreshing. Real basil brewed in small batches, balanced with honey.
-              </Text>
-            </View>
-          </View>
-
-          {/* Size */}
-          <Text style={styles.sectionTitle}>Size</Text>
-          <View style={styles.centerRow}>
-            <Choice label="8 oz" selected={size === '8oz'} onPress={() => setSize('8oz')} />
-            <Choice label="12 oz" selected={size === '12oz'} onPress={() => setSize('12oz')} />
-          </View>
-
-          {/* Pack */}
-          <Text style={[styles.sectionTitle, { marginTop: 14 }]}>Pack</Text>
-          <View style={styles.centerRow}>
-            {PACK_OPTIONS.map((p) => (
-              <Choice key={p} label={`${p}-pack`} selected={pack === p} onPress={() => setPack(p)} />
-            ))}
-          </View>
-
-          {/* Quantity */}
-          <Text style={[styles.sectionTitle, { marginTop: 14 }]}>Quantity</Text>
-          <View style={styles.qtyRow}>
-            <QtyBtn label="-" onPress={() => setQty(Math.max(1, qty - 1))} />
-            <Text style={styles.qtyText}>{qty}</Text>
-            <QtyBtn label="+" onPress={() => setQty(Math.min(99, qty + 1))} />
-          </View>
-
-          {/* Price + Add to Cart */}
-          <View style={{ marginTop: 8, alignItems: 'center' }}>
-            <Text style={styles.priceValue}>${total.toFixed(2)}</Text>
-            <Text style={styles.note}>
-              {qty} × {pack}-pack × {size}
-            </Text>
-          </View>
-
-          <TouchableOpacity style={styles.primaryBtn} onPress={handleAddToCart}>
-            <Text style={styles.primaryBtnText}>Add to Cart</Text>
+        {/* top-right cart button */}
+        <View style={styles.topBar}>
+          <TouchableOpacity style={styles.headerCartBtn} onPress={() => router.push('/cart')}>
+            <Text style={{ color: GREEN, fontWeight: '700' }}>Cart</Text>
           </TouchableOpacity>
         </View>
+
+        {/* hero image + short text */}
+        <View style={styles.heroRow}>
+          <Image
+            source={require('../assets/images/basil-bottle.png')}
+            style={styles.heroImage}
+            resizeMode="contain"
+          />
+          <View style={styles.heroText}>
+            <Text style={styles.title}>Basil Tea by K</Text>
+            <Text style={styles.subtitle}>Honey-infused basil tea in glass bottles</Text>
+            <Text style={styles.desc}>
+              Lightly sweet and refreshing. Real basil brewed in small batches, balanced with honey.
+            </Text>
+          </View>
+        </View>
+
+        {/* Size */}
+        <Text style={styles.sectionTitle}>Size</Text>
+        <View style={styles.centerRow}>
+          <Choice label="8 oz" selected={size === '8oz'} onPress={() => setSize('8oz')} />
+          <Choice label="12 oz" selected={size === '12oz'} onPress={() => setSize('12oz')} />
+        </View>
+
+        {/* Pack */}
+        <Text style={[styles.sectionTitle, { marginTop: 14 }]}>Pack</Text>
+        <View style={styles.centerRow}>
+          {PACK_OPTIONS.map((p) => (
+            <Choice key={p} label={`${p}-pack`} selected={pack === p} onPress={() => setPack(p)} />
+          ))}
+        </View>
+
+        {/* Quantity */}
+        <Text style={[styles.sectionTitle, { marginTop: 14 }]}>Quantity</Text>
+        <View style={styles.qtyRow}>
+          <QtyBtn label="–" onPress={() => setQty(Math.max(1, qty - 1))} />
+          <Text style={styles.qtyBtnText}>{qty}</Text>
+          <QtyBtn label="+" onPress={() => setQty(Math.min(99, qty + 1))} />
+        </View>
+
+        {/* Price + CTA */}
+        <View style={{ marginTop: 8, alignItems: 'center' }}>
+          <Text style={styles.priceValue}>${total.toFixed(2)}</Text>
+          <Text style={styles.note}>({qty} × {pack}-pack · {size})</Text>
+        </View>
+
+        <TouchableOpacity style={styles.primaryBtn} onPress={handleAddToCart}>
+          <Text style={styles.primaryBtnText}>Add to Cart</Text>
+        </TouchableOpacity>
       </ScrollView>
     </SafeAreaView>
   );
-}
+};
 
-// Small components
-function Choice({ label, selected, onPress }: { label: string; selected: boolean; onPress: () => void }) {
-  return (
-    <TouchableOpacity
-      onPress={onPress}
-      style={[styles.choiceBtn, selected && styles.choiceBtnSelected]}
-      accessibilityState={{ selected }}
-    >
-      <Text style={[styles.choiceText, selected && styles.choiceTextSelected]} numberOfLines={1}>
-        {label}
-      </Text>
-    </TouchableOpacity>
-  );
-}
-
-function QtyBtn({ label, onPress }: { label: string; onPress: () => void }) {
-  return (
-    <TouchableOpacity onPress={onPress} style={styles.qtyBtn}>
-      <Text style={styles.qtyBtnText}>{label}</Text>
-    </TouchableOpacity>
-  );
-}
-
-// Styles
+// ---------- Styles ----------
 const styles = StyleSheet.create({
-  card: {
-    backgroundColor: BG_CREAM,
-    borderRadius: 14,
-    padding: 16,
-  },
   topBar: {
     alignItems: 'flex-end',
+    marginBottom: 16,
   },
   headerCartBtn: {
-    padding: 6,
+    padding: 8,
+    borderRadius: 6,
+    borderWidth: 1,
+    borderColor: GREEN,
   },
   heroRow: {
     flexDirection: 'row',
-    marginTop: 12,
     alignItems: 'center',
+    marginBottom: 20,
   },
   heroImage: {
     width: 120,
     height: 120,
-    marginRight: 12,
+    marginRight: 16,
   },
-  heroText: {
-    flex: 1,
-  },
-  title: {
-    fontSize: 20,
-    fontWeight: '800',
-    color: GREEN,
-  },
-  subtitle: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: GOLD,
-    marginTop: 4,
-  },
-  desc: {
-    fontSize: 14,
-    color: GREEN,
-    marginTop: 6,
-  },
-  sectionTitle: {
-    fontSize: 16,
-    fontWeight: '700',
-    color: GREEN,
-    marginTop: 10,
-  },
+  heroText: { flex: 1 },
+  title: { fontSize: 22, fontWeight: '800', color: GREEN, marginBottom: 6 },
+  subtitle: { fontSize: 16, fontWeight: '600', color: GOLD, marginBottom: 4 },
+  desc: { fontSize: 14, color: '#333' },
+  sectionTitle: { fontSize: 16, fontWeight: '700', color: GREEN, marginBottom: 6 },
   centerRow: {
-    marginTop: 6,
     flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
     flexWrap: 'wrap',
-    justifyContent: 'center',
-    alignItems: 'center',
-    gap: 12,
-    width: '100%',
-  },
-  choiceBtn: {
-    minWidth: BTN_MIN_W,
-    minHeight: BTN_H,
-    paddingHorizontal: 14,
-    borderWidth: 1,
-    borderColor: GREEN,
-    borderRadius: 10,
-    backgroundColor: BG_CREAM,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  choiceBtnSelected: {
-    backgroundColor: GREEN,
-    borderColor: GREEN,
-  },
-  choiceText: {
-    fontSize: BTN_FONT,
-    lineHeight: Math.round(BTN_FONT * 1.35),
-    fontWeight: '700',
-    color: GREEN,
-    textAlign: 'center',
-    includeFontPadding: true,
-  },
-  choiceTextSelected: {
-    color: BG_CREAM,
+    gap: 10,
+    marginBottom: 12,
   },
   qtyRow: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 12,
     justifyContent: 'center',
-    marginTop: 4,
+    marginTop: 6,
   },
   qtyBtn: {
-    height: BTN_H - 6,
-    width: BTN_H - 6,
+    height: BTN_H,
+    width: BTN_H,
     alignItems: 'center',
     justifyContent: 'center',
-    borderRadius: 10,
     backgroundColor: GREEN,
+    borderRadius: 6,
   },
-  qtyBtnText: {
-    color: BG_CREAM,
-    fontSize: BTN_FONT + 2,
-    lineHeight: BTN_FONT + 6,
-    fontWeight: '800',
-  },
-  qtyText: {
-    minWidth: 30,
-    textAlign: 'center',
-    fontSize: BTN_FONT,
-    lineHeight: BTN_FONT + 4,
-    fontWeight: '800',
-    color: GREEN,
-  },
-  priceValue: {
-    fontSize: isSmallPhone ? 20 : 22,
-    fontWeight: '900',
-    color: GREEN,
-  },
-  note: {
-    fontSize: isSmallPhone ? 12 : 13,
-    color: GOLD,
-    marginTop: 2,
-  },
+  qtyBtnText: { fontSize: 18, fontWeight: '700', color: BG_CREAM, minWidth: 30, textAlign: 'center' },
+  priceValue: { fontSize: 20, fontWeight: '700', color: GREEN },
+  note: { fontSize: 13, color: '#666', marginTop: 4 },
   primaryBtn: {
-    marginTop: 8,
+    marginTop: 14,
     height: BTN_H,
     borderRadius: 10,
     backgroundColor: GREEN,
     alignItems: 'center',
     justifyContent: 'center',
     alignSelf: 'center',
-    paddingHorizontal: 16,
+    paddingHorizontal: 24,
   },
-  primaryBtnText: {
-    color: BG_CREAM,
-    fontSize: BTN_FONT,
-    lineHeight: BTN_FONT + 4,
-    fontWeight: '800',
-  },
+  primaryBtnText: { color: BG_CREAM, fontSize: BTN_FONT + 2, fontWeight: '800' },
 });
+
+// ---------- Reusable Choice Component ----------
+const Choice = ({ label, selected, onPress }: { label: string; selected: boolean; onPress: () => void }) => (
+  <TouchableOpacity
+    onPress={onPress}
+    style={{
+      minWidth: BTN_MIN_W,
+      height: BTN_H,
+      paddingHorizontal: 10,
+      borderWidth: 1,
+      borderColor: selected ? GREEN : BORDER,
+      backgroundColor: selected ? GREEN : BG_CREAM,
+      borderRadius: 10,
+      alignItems: 'center',
+      justifyContent: 'center',
+    }}
+  >
+    <Text style={{ color: selected ? BG_CREAM : GREEN, fontSize: BTN_FONT, fontWeight: '700' }}>{label}</Text>
+  </TouchableOpacity>
+);
+
+const QtyBtn = ({ label, onPress }: { label: string; onPress: () => void }) => (
+  <TouchableOpacity style={styles.qtyBtn} onPress={onPress}>
+    <Text style={{ color: BG_CREAM, fontSize: 22, fontWeight: '800' }}>{label}</Text>
+  </TouchableOpacity>
+);
+
+export default ShopScreen;
