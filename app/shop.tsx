@@ -56,6 +56,8 @@ export default function ShopScreen() {
     <ScrollView
       contentContainerStyle={{ padding: 18, paddingBottom: FOOTER_PAD }}
       showsVerticalScrollIndicator={false}
+      >
+    
       <View style={styles.card}>
        {/* top-right cart button */}
         
@@ -312,3 +314,5 @@ choiceTextSelected: { color: BG_CREAM },
   },
   primaryBtnText: { color: BG_CREAM, fontSize: BTN_FONT, lineHeight: BTN_FONT + 4, fontWeight: '800' },
 });
+
+export default ShopScreen;
