@@ -216,24 +216,24 @@ const styles = StyleSheet.create({
 
   // —— smaller choice buttons (no clipping)
   choiceBtn: {
-    minWidth: 120,
-    height: 40,
-    paddingHorizontal: 16,
+    minWidth: 160,
+    height: 44,
+    paddingHorizontal: 14,
     borderWidth: 1,
     borderColor: GREEN,
-    borderRadius: 8,
+    borderRadius: 10,
     backgroundColor: BG_CREAM,
     alignItems: 'center',
     justifyContent: 'center',
   },
   choiceBtnSelected: { backgroundColor: GREEN, borderColor: GREEN },
   choiceText: {
-    fontSize: 14,
+    fontSize: 13,
     lineHeight: 16,
-    fontWeight: '700',
+    fontWeight: '600',
     color: GREEN,
     textAlign: 'center',
-    includeFontPaddinf: false,  // helps with cutoff
+    includeFontPadding: false,  // helps with cutoff
     allowFontScaling: false,  // stops zoom cutting
   },
   choiceTextSelected: { color: BG_CREAM },
