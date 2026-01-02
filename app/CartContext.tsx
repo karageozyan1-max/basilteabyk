@@ -42,20 +42,8 @@ function reducer(state: State, action: Action): State {
 const CartCtx = createContext<any>(null);
 
 export function CartProvider({ children }: { children: React.ReactNode }) {
- const [state, dispatch] = useReducer(reducer, { items: [] }, () => {
-  if (typeof window === "undefined") return { items: [] };
-
-  try {
-    const stored = localStorage.getItem("cart");
-    return stored ? JSON.parse(stored) : { items: [] };
-  } catch {
-    return { items: [] };
-  }
-});
+ const [state, dispatch] = useReducer(reducer, { items: [] }, 
   
-useEffect(() => {
-  localStorage.removeItem("cart");
-}, []);
   useEffect(() => {
     localStorage.setItem('cart', JSON.stringify(state));
   }, [state]);
