@@ -42,20 +42,16 @@ function reducer(state: State, action: Action): State {
 const CartCtx = createContext<any>(null);
 
 export function CartProvider({ children }: { children: React.ReactNode }) {
-  const [state, dispatch] = useReducer(reducer, { items: [] });
+ const [state, dispatch] = useReducer(reducer, { items: [] }, () => {
+  if (typeof window === "undefined") return { items: [] };
 
-  // persist cart in localStorage
-  useEffect(() => {
-    const stored = localStorage.getItem('cart');
-    if (stored) {
-      try {
-        const parsed = JSON.parse(stored);
-        if (parsed.items) {
-          parsed.items.forEach((it: CartItem) => dispatch({ type: 'ADD', payload: it }));
-        }
-      } catch {}
-    }
-  }, []);
+  try {
+    const stored = localStorage.getItem("cart");
+    return stored ? JSON.parse(stored) : { items: [] };
+  } catch {
+    return { items: [] };
+  }
+});
 
   useEffect(() => {
     localStorage.setItem('cart', JSON.stringify(state));
