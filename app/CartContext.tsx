@@ -52,7 +52,10 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     return { items: [] };
   }
 });
-
+  
+useEffect(() => {
+  localStorage.removeItem("cart");
+}, []);
   useEffect(() => {
     localStorage.setItem('cart', JSON.stringify(state));
   }, [state]);
