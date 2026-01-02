@@ -102,9 +102,18 @@ export default function CartScreen() {
   <Text style={styles.btnPrimaryText}>Checkout</Text>
 </TouchableOpacity>
 
-            <TouchableOpacity style={[styles.btn, styles.btnGhost]} onPress={clearCart}>
-              <Text style={styles.btnGhostText}>Clear Cart</Text>
-            </TouchableOpacity>
+           <TouchableOpacity
+  style={[styles.btn, styles.btnGhost]}
+  onPress={() => {
+    clearCart();
+    if (typeof window !== "undefined") {
+      localStorage.removeItem("cart");
+    }
+  }}
+>
+  <Text style={styles.btnGhostText}>Reset Cart</Text>
+</TouchableOpacity>
+
 
             <Link href="/shop" asChild>
               <TouchableOpacity style={[styles.btn, styles.btnGhost]}>
