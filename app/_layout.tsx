@@ -19,16 +19,15 @@ export default function RootLayout() {
     <SafeAreaProvider>
       <GestureHandlerRootView style={{ flex: 1 }}>
         <CartProvider>
-          <View style={{ flex: 1, width: "100%", alignItems: "center" }}>
-            <View style={{ flex: 1, width: "100%", maxWidth: 1200 }}>
-              <Stack
-                screenOptions={{
-                  headerShown: false,
-                  animation: "default",
-                }}
-              />
-            </View>
-
+         <View style={{ flex: 1, width: "100%", alignItems: "center" }}>
+  <View style={{ flex: 1, width: "100%", maxWidth: 1200 }}>
+    <Stack
+      screenOptions={{
+        headerShown: false,
+        animation: "default",
+      }}
+    />
+  </View>
             <BottomNavigation />
           </View>
         </CartProvider>
