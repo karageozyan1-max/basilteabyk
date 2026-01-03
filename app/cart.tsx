@@ -98,8 +98,12 @@ export default function CartScreen() {
             {/* Actions */}
            <TouchableOpacity
   style={[styles.btn, styles.btnPrimary]}
-  onPress={() => router.push("/checkout")}
->
+ <Link href="/checkout" asChild>
+  <TouchableOpacity style={[styles.btn, styles.btnPrimary]}>
+    <Text style={styles.btnPrimaryText}>Checkout</Text>
+  </TouchableOpacity>
+</Link>
+
   <Text style={styles.btnPrimaryText}>Checkout</Text>
 </TouchableOpacity>
 
