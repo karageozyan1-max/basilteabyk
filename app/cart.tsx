@@ -3,7 +3,7 @@
 
 import React from 'react';
 import { View, Text, ScrollView, TouchableOpacity, StyleSheet, SafeAreaView } from 'react-native';
-import { Link } from 'expo-router';
+import { Link, useRouter } from 'expo-router';
 import { useCart } from './CartContext';
 
 const FREE_SHIP_THRESHOLD = 50;
@@ -12,6 +12,7 @@ const TAX_RATE = 0.08;
 
 export default function CartScreen() {
   const { items, updateQty, removeItem, clearCart, subtotal } = useCart();
+    const router = useRouter();
 
   const shipping = subtotal >= FREE_SHIP_THRESHOLD || subtotal === 0 ? 0 : SHIPPING_FLAT;
   const tax = subtotal * TAX_RATE;
