@@ -45,8 +45,8 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
  const [state, dispatch] = useReducer(reducer, { items: [] }, 
   
   useEffect(() => {
-    localStorage.setItem('cart', JSON.stringify(state));
-  }, [state]);
+  localStorage.setItem('cart', JSON.stringify(state));
+}, [state]);
 
   const subtotal = useMemo(
     () => state.items.reduce((sum, i) => sum + i.unitPrice * i.pack * i.qty, 0),
