@@ -26,7 +26,7 @@ export default function StoryScreen() {
         {/* Hero Image */}
         <View style={[commonStyles.section, { alignItems: 'center', paddingVertical: 20 }]}>
           <Image
-            source={{ uri: 'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=600&h=400&fit=crop' }}
+            source={{ uri: 'https://dengarden.com/.image/c_fill%2Cw_1200%2Ch_900%2Cg_faces%3Acenter/MzowMDAwMDAwMDAwMDY5ODE4/shutterstock_2193679433.jpg' }}
             style={{ width: '100%', height: 200, borderRadius: 12 }}
             resizeMode="cover"
           />
@@ -125,22 +125,22 @@ export default function StoryScreen() {
           
           <View style={{ flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between' }}>
             <Image
-              source={{ uri: 'https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=180&h=180&fit=crop' }}
+              source={{ uri: 'https://gardenerspath.com/wp-content/uploads/2020/09/Tips-for-Growing-Basil-In-Winter-FB.jpg' }}
               style={{ width: '48%', height: 120, borderRadius: 8, marginBottom: 12 }}
               resizeMode="cover"
             />
             <Image
-              source={{ uri: 'https://images.unsplash.com/photo-1558642452-9d2a7deb7f62?w=180&h=180&fit=crop' }}
+              source={{ uri: 'https://gardenerspath.com/wp-content/uploads/2020/09/Basil-Growing-in-the-Sunshine.jpg' }}
               style={{ width: '48%', height: 120, borderRadius: 8, marginBottom: 12 }}
               resizeMode="cover"
             />
             <Image
-              source={{ uri: 'https://images.unsplash.com/photo-1587049352846-4a222e784d38?w=180&h=180&fit=crop' }}
+              source={{ uri: 'https://cdn7.dissolve.com/p/D2137_37_039/D2137_37_039_0004_600.jpg' }}
               style={{ width: '48%', height: 120, borderRadius: 8, marginBottom: 12 }}
               resizeMode="cover"
             />
             <Image
-              source={{ uri: 'https://images.unsplash.com/photo-1544787219-7f47ccb76574?w=180&h=180&fit=crop' }}
+              source={{ uri: 'https://www.housedigest.com/img/gallery/16-mistakes-everyone-makes-when-growing-basil/intro-1758138160.jpg' }}
               style={{ width: '48%', height: 120, borderRadius: 8, marginBottom: 12 }}
               resizeMode="cover"
             />
