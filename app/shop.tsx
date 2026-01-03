@@ -4,21 +4,24 @@ import { commonStyles, colors, buttonStyles } from '../styles/commonStyles';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import Icon from '../components/Icon';
+import { useCart } from './CartContext'; // ✅ ADD THIS
 
 export default function ShopScreen() {
   const router = useRouter();
+  const { addItem } = useCart(); // ✅ ADD THIS
+
   const [selectedSize, setSelectedSize] = useState('8oz');
   const [packSize, setPackSize] = useState(6);
 
   // Updated bottle prices
-  const bottlePrices = {
+  const bottlePrices: Record<string, number> = {
     '8oz': 4.99,
-    '12oz': 6.99
+    '12oz': 6.99,
   };
 
   const sizes = [
     { label: '8oz Bottle', value: '8oz', price: 4.99 },
-    { label: '12oz Bottle', value: '12oz', price: 6.99 }
+    { label: '12oz Bottle', value: '12oz', price: 6.99 },
   ];
 
   const packSizes = [6, 12];
@@ -26,20 +29,29 @@ export default function ShopScreen() {
   const faqs = [
     {
       question: 'How should I store the tea?',
-      answer: 'Keep refrigerated and consume within 7 days of opening. Shake well before serving.'
+      answer: 'Keep refrigerated and consume within 7 days of opening. Shake well before serving.',
     },
     {
       question: 'Is this tea caffeinated?',
-      answer: 'No, our basil tea is naturally caffeine-free, making it perfect for any time of day.'
+      answer: 'No, our basil tea is naturally caffeine-free, making it perfect for any time of day.',
     },
     {
       question: 'What are the ingredients?',
-      answer: 'Basil leaves, purified water, natural honey, lemon essence (trace). Nothing artificial.'
-    }
+      answer: 'Basil leaves, purified water, natural honey, lemon essence (trace). Nothing artificial.',
+    },
   ];
 
   const handleAddToCart = () => {
-    console.log(`Added pack of ${packSize} x ${selectedSize} Basil Tea to cart`);
+    const unitPrice = bottlePrices[selectedSize];
+
+    addItem({
+      id: `basil-tea:${selectedSize}:${packSize}`, // ✅ unique per size+pack
+      sizeKey: selectedSize,
+      pack: packSize,
+      qty: 1,
+      unitPrice,
+    });
+
     alert(`Added pack of ${packSize} x ${selectedSize} Basil Tea with Honey to cart!`);
   };
 
@@ -72,7 +84,7 @@ export default function ShopScreen() {
         <View style={commonStyles.section}>
           <Text style={commonStyles.title}>Basil Tea with Honey</Text>
           <Text style={commonStyles.priceText}>${price.toFixed(2)}</Text>
-          
+
           <Text style={[commonStyles.text, { marginBottom: 20 }]}>
             A refreshing blend of basil tea infused with natural honey—smooth, lightly sweet, and calming.
           </Text>
@@ -92,21 +104,25 @@ export default function ShopScreen() {
                     borderColor: selectedSize === size.value ? colors.primary : colors.border,
                     backgroundColor: selectedSize === size.value ? colors.primary : colors.backgroundAlt,
                     marginRight: 8,
-                    alignItems: 'center'
-                  }
+                    alignItems: 'center',
+                  },
                 ]}
                 onPress={() => setSelectedSize(size.value)}
               >
-                <Text style={[
-                  commonStyles.textMedium,
-                  { color: selectedSize === size.value ? colors.textLight : colors.text }
-                ]}>
+                <Text
+                  style={[
+                    commonStyles.textMedium,
+                    { color: selectedSize === size.value ? colors.textLight : colors.text },
+                  ]}
+                >
                   {size.label}
                 </Text>
-                <Text style={[
-                  commonStyles.textSmall,
-                  { color: selectedSize === size.value ? colors.textLight : colors.grey }
-                ]}>
+                <Text
+                  style={[
+                    commonStyles.textSmall,
+                    { color: selectedSize === size.value ? colors.textLight : colors.grey },
+                  ]}
+                >
                   ${size.price.toFixed(2)}
                 </Text>
               </TouchableOpacity>
@@ -127,14 +143,16 @@ export default function ShopScreen() {
                   borderColor: packSize === size ? colors.primary : colors.border,
                   backgroundColor: packSize === size ? colors.primary : colors.backgroundAlt,
                   marginRight: 8,
-                  alignItems: 'center'
+                  alignItems: 'center',
                 }}
                 onPress={() => setPackSize(size)}
               >
-                <Text style={[
-                  commonStyles.textMedium,
-                  { color: packSize === size ? colors.textLight : colors.text }
-                ]}>
+                <Text
+                  style={[
+                    commonStyles.textMedium,
+                    { color: packSize === size ? colors.textLight : colors.text },
+                  ]}
+                >
                   Pack of {size}
                 </Text>
               </TouchableOpacity>
@@ -143,9 +161,7 @@ export default function ShopScreen() {
 
           {/* Add to Cart Button */}
           <TouchableOpacity style={buttonStyles.primary} onPress={handleAddToCart}>
-            <Text style={commonStyles.buttonText}>
-              Add to Cart - ${price.toFixed(2)}
-            </Text>
+            <Text style={commonStyles.buttonText}>Add to Cart - ${price.toFixed(2)}</Text>
           </TouchableOpacity>
         </View>
 
@@ -170,23 +186,18 @@ export default function ShopScreen() {
         <View style={commonStyles.section}>
           <Text style={[commonStyles.heading, { marginBottom: 16 }]}>Brewing & Serving</Text>
           <Text style={commonStyles.text}>
-            Chill and sip over ice for a refreshing treat, or warm gently for a cozy experience. 
-            Always shake well before serving to ensure the perfect blend of flavors.
+            Chill and sip over ice for a refreshing treat, or warm gently for a cozy experience. Always shake well before serving to ensure the perfect blend of flavors.
           </Text>
         </View>
 
         {/* FAQs */}
         <View style={[commonStyles.section, { paddingTop: 40 }]}>
           <Text style={[commonStyles.subtitle, { marginBottom: 24 }]}>Frequently Asked Questions</Text>
-          
+
           {faqs.map((faq, index) => (
             <View key={index} style={[commonStyles.card, { marginBottom: 16 }]}>
-              <Text style={[commonStyles.textMedium, { marginBottom: 8 }]}>
-                {faq.question}
-              </Text>
-              <Text style={commonStyles.text}>
-                {faq.answer}
-              </Text>
+              <Text style={[commonStyles.textMedium, { marginBottom: 8 }]}>{faq.question}</Text>
+              <Text style={commonStyles.text}>{faq.answer}</Text>
             </View>
           ))}
         </View>
