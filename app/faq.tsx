@@ -15,7 +15,7 @@ export default function FAQScreen() {
       category: 'Product',
       questions: [
         {
-          question: 'What ingredients are in Basil Tea with Honey?',
+          question: 'What ingredients are in Basil Tea?',
           answer: 'Our tea contains basil leaves, purified water, natural honey, and a trace of lemon essence. We use no artificial flavors, colors, or preservatives.'
         },
         {
