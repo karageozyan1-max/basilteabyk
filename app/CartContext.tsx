@@ -42,10 +42,21 @@ function reducer(state: State, action: Action): State {
 const CartCtx = createContext<any>(null);
 
 export function CartProvider({ children }: { children: React.ReactNode }) {
- const [state, dispatch] = useReducer(reducer, { items: [] }, 
+const [state, dispatch] = useReducer(reducer, { items: [] }, (init) => {
+  if (typeof window === "undefined") return init;
+  try {
+    const stored = window.localStorage.getItem("cart");
+    return stored ? JSON.parse(stored) : init;
+  } catch {
+    return init;
+  }
+});
   
-  useEffect(() => {
-  localStorage.setItem('cart', JSON.stringify(state));
+ useEffect(() => {
+  if (typeof window === "undefined") return;
+  try {
+    window.localStorage.setItem("cart", JSON.stringify(state));
+  } catch {}
 }, [state]);
 
   const subtotal = useMemo(
