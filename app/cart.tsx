@@ -3,7 +3,7 @@
 
 import React from 'react';
 import { View, Text, ScrollView, TouchableOpacity, StyleSheet, SafeAreaView } from 'react-native';
-import { Link, useRouter } from 'expo-router';
+import { Link } from 'expo-router';
 import { useCart } from './CartContext';
 
 const FREE_SHIP_THRESHOLD = 50;
@@ -12,7 +12,6 @@ const TAX_RATE = 0.08;
 
 export default function CartScreen() {
   const { items, updateQty, removeItem, clearCart, subtotal } = useCart();
-    const router = useRouter();
 
   const shipping = subtotal >= FREE_SHIP_THRESHOLD || subtotal === 0 ? 0 : SHIPPING_FLAT;
   const tax = subtotal * TAX_RATE;
@@ -68,7 +67,7 @@ export default function CartScreen() {
                 </View>
 
                 <View style={{ alignItems: 'flex-end', marginLeft: 10 }}>
-                  <Text style={styles.lineTotal}>${(it.unitPrice * it.qty).toFixed(2)}</Text>
+<Text style={styles.lineTotal}>${(it.unitPrice * it.pack * it.qty).toFixed(2)}</Text>
                   <TouchableOpacity onPress={() => removeItem(it.id)}>
                     <Text style={styles.remove}>Remove</Text>
                   </TouchableOpacity>
@@ -95,31 +94,26 @@ export default function CartScreen() {
               </Text>
             )}
 
-            {/* Actions */}
-           <TouchableOpacity
-  style={[styles.btn, styles.btnPrimary]}
- <Link href="/checkout" asChild>
+           {/* Actions */}
+<Link href="/checkout" asChild>
   <TouchableOpacity style={[styles.btn, styles.btnPrimary]}>
     <Text style={styles.btnPrimaryText}>Checkout</Text>
   </TouchableOpacity>
 </Link>
 
-  <Text style={styles.btnPrimaryText}>Checkout</Text>
-</TouchableOpacity>
-
-           <TouchableOpacity
+<TouchableOpacity
   style={[styles.btn, styles.btnGhost]}
   onPress={() => {
     clearCart();
     if (typeof window !== "undefined") {
-      localStorage.removeItem("cart");
+      window.localStorage.removeItem("cart");
     }
   }}
 >
   <Text style={styles.btnGhostText}>Reset Cart</Text>
 </TouchableOpacity>
 
-
+              
             <Link href="/shop" asChild>
               <TouchableOpacity style={[styles.btn, styles.btnGhost]}>
                 <Text style={styles.btnGhostText}>Continue Shopping</Text>
