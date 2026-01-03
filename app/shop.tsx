@@ -52,7 +52,7 @@ export default function ShopScreen() {
       unitPrice,
     });
 
-    alert(`Added pack of ${packSize} x ${selectedSize} Basil Tea with Honey to cart!`);
+    alert(`Added pack of ${packSize} x ${selectedSize} Basil Tea to cart!`);
   };
 
   const price = bottlePrices[selectedSize] * packSize;
@@ -82,7 +82,7 @@ export default function ShopScreen() {
 
         {/* Product Info */}
         <View style={commonStyles.section}>
-          <Text style={commonStyles.title}>Basil Tea with Honey</Text>
+          <Text style={commonStyles.title}>Basil Tea</Text>
           <Text style={commonStyles.priceText}>${price.toFixed(2)}</Text>
 
           <Text style={[commonStyles.text, { marginBottom: 20 }]}>
