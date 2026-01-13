@@ -54,7 +54,7 @@ export default function FAQScreen() {
       questions: [
         {
           question: 'How much does shipping cost?',
-          answer: 'We offer free shipping on orders over $25. For orders under $25, shipping is $4.99 within the continental US.'
+          answer: 'We offer free shipping on orders over $50. For orders under $50, shipping is $4.99 within the continental US.'
         },
         {
           question: 'How long does shipping take?',
