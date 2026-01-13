@@ -185,7 +185,7 @@ export default function CartScreen() {
 
           {shipping > 0 && (
             <Text style={[commonStyles.textSmall, { textAlign: 'center', marginBottom: 20, color: colors.secondary }]}>
-              Add ${(25 - subtotal).toFixed(2)} more for free shipping!
+              Add ${(50 - subtotal).toFixed(2)} more for free shipping!
             </Text>
           )}
 
