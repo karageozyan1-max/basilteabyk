@@ -11,7 +11,7 @@ export default function CartScreen() {
 
   const { items, subtotal, updateQty, removeItem, clearCart } = useCart(); // ✅ REAL CART DATA
 
-  const shipping = subtotal >= 25 ? 0 : 4.99;
+  const shipping = subtotal >= 50 ? 0 : 4.99;
   const tax = subtotal * 0.08; // 8% tax
   const total = subtotal + shipping + tax;
 
