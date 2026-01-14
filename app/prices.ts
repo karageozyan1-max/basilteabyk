@@ -1,14 +1,8 @@
 // app/prices.ts
-export const PRICES = {
-  "8oz" : {
-    single: 4.99,
-    pack6: 26.99
-    pack12: 49.99,
-  },
-  "12oz" : {
-single: 6.99,
-  pack6: 36.99,
-  pack12: 64.99,
-},
+// app/prices.ts
+export const SIZE_PRICES: Record<string, number> = {
+  '8oz': 4.99,
+  '12oz': 6.99,
 };
+
 export const formatPrice= (n: number) => '$${n.toFixed(2)}';
