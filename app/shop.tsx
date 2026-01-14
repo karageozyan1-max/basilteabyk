@@ -5,6 +5,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import Icon from '../components/Icon';
 import { useCart } from './CartContext'; // ✅ ADD THIS
+import { PRICES, formatPrice } from './prices';
 
 export default function ShopScreen() {
   const router = useRouter();
@@ -13,15 +14,10 @@ export default function ShopScreen() {
   const [selectedSize, setSelectedSize] = useState('8oz');
   const [packSize, setPackSize] = useState(6);
 
-  // Updated bottle prices
-  const bottlePrices: Record<string, number> = {
-    '8oz': 4.99,
-    '12oz': 6.99,
-  };
 
   const sizes = [
-    { label: '8oz Bottle', value: '8oz', price: 4.99 },
-    { label: '12oz Bottle', value: '12oz', price: 6.99 },
+    { label: '8oz Bottle', value: '8oz', price: PRICES['8oz'].single },
+    { label: '12oz Bottle', value: '12oz', price: PRICES['12oz'].single },
   ];
 
   const packSizes = [6, 12];
@@ -42,7 +38,7 @@ export default function ShopScreen() {
   ];
 
   const handleAddToCart = () => {
-    const unitPrice = bottlePrices[selectedSize];
+    const unitPrice = packSize === 6 ? PRICES[selectedSize].pack6 : PRICES[selectedSize].pack12;
 
     addItem({
       id: `basil-tea:${selectedSize}:${packSize}`, // ✅ unique per size+pack
@@ -55,7 +51,7 @@ export default function ShopScreen() {
     alert(`Added pack of ${packSize} x ${selectedSize} Basil Tea to cart!`);
   };
 
-  const price = bottlePrices[selectedSize] * packSize;
+  const price = packSize === 6 ? PRICES[selectedSize].pack6 : PRICES[selectedSize].pack12;
 
   return (
     <SafeAreaView style={commonStyles.container}>
@@ -161,7 +157,7 @@ export default function ShopScreen() {
 
           {/* Add to Cart Button */}
           <TouchableOpacity style={buttonStyles.primary} onPress={handleAddToCart}>
-            <Text style={commonStyles.buttonText}>Add to Cart - ${price.toFixed(2)}</Text>
+            <Text style={commonStyles.buttonText}>Add to Cart - {formatPrice(price)}</Text>
           </TouchableOpacity>
         </View>
 
